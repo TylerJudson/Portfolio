@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='styles.css'>
+    
+    <title>Star Catchers</title>
+</head>
+<body>
+    <div id="startScreen" class="screen">
+        <div id="startUI" class="UI">
+            <h1 class="title">Star Catchers</h1>
+            <button id="startButton">Start</button>
+            <button id="howToPlayButton">How to Play</button>
+        </div>
+    </div>
+
+    <div id="helpScreen" class="screen">
+        <div id="helpUI" class="UI">
+            <h1 id="helpTitle" class="title">How To Play</h1>
+            <ul id="rules">
+                <li>The goal is to have a higher score than your opponent at the end of the game.</li>
+                <li>The wasd keys control movement for red and the arrow keys control movement for blue.</li>
+                <li>Collect stars using your rocket to gain points.</li>
+                <li>Collecting a yellow star will earn you 1 point.</li>
+                <li>Collecting stars of the same color as your rocket will earn you 3 points!</li>
+                <li>Collecting stars of the opposing color will dock you 1 point!</li>
+                <li>Good Luck!</li>
+            </ul>
+            <button id="back">Back</button>
+        </div>
+    </div>
+    
+    <div id="gameScreen">
+        <p id="redScore">Score: 0</p>
+        <p id="blueScore">Score: 0</p>
+        <p id="timer">100</p>
+        <canvas></canvas>
+    </div>
+
+    <div id="endScreen" class="screen">
+        <div id="endUI" class="UI">
+            <h1 id="endTitle" class="title"></h1>
+            <button id="playAgainButton">Play Again?</button>
+        </div>
+    </div>
+    
+    <script type="module" src="src/index.js"></script>
+</body>
+</html>

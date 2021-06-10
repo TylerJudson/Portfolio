@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>whiteBoard</title>
+    <link rel='stylesheet' href='styles.css'>
+</head>
+<body>
+    <canvas></canvas>
+    <div id="SettingsUI">
+        <div id="Settings">
+
+            <h1 id="SettingsTitle">Settings</h1>
+            <hr>
+
+            <div class="options" id="LineColorOption">
+                <h2>Line Color</h2>
+                <hr>
+                <div id="erase">
+                    <button id="PaintButton">Paint</button>
+                    <button id="EarseButton">Erase</button>
+                </div>
+                <div id="colors">
+                    <div class="row">
+                        <button class="colorOption" id="redButton" style="background-color:red;"></button>
+                        <button class="colorOption" id="goldButton" style="background-color: gold;"></button>
+                        <button class="colorOption" id="cornFlowerBlueButton" style="background-color: cornflowerblue;"></button>
+                        <button class="colorOption" id="rebPurpleButton" style="background-color: rebeccapurple;"></button>
+                        <button class="colorOption" id="brownButton" style="background-color: saddlebrown;"></button>
+                    </div>
+                    <div class="row">
+                        <button class="colorOption" id="orangeButton" style="background-color: orange;"></button>
+                        <button class="colorOption" id="greenYellowButton" style="background-color: greenyellow;"></button>
+                        <button class="colorOption" id="blueButton" style="background-color: blue;"></button>
+                        <button class="colorOption" id="blueVioButton" style="background-color: blueviolet;"></button>
+                        <button class="colorOption" id="greyButton" style="background-color: grey;"></button>
+                    </div>
+                    <div class="row">
+                        <button class="colorOption" id="yellowButton" style="background-color: yellow;"></button>
+                        <button class="colorOption" id="limeButton" style="background-color: lime;"></button>
+                        <button class="colorOption" id="darkBlueButton" style="background-color: darkblue;"></button>
+                        <button class="colorOption" id="violetButton" style="background-color: violet;"></button>
+                        <button class="colorOption" id="blackButton" style="background-color: black;"></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="options" id="LineStyleOption">
+                <h2>Line Style</h2>
+                <hr>
+                <div id="PaintStyleOptions">
+                    <h3>Painting</h3>
+                    <div class="dropdown" style="float:left; margin-left: 100px;">
+                        <button class="dropbtn">Line Width</button>
+                        <div class="dropdown-content">
+                            <p id="p1">1</p>
+                            <p id="p5">5</p>
+                            <p id="p10">10</p>
+                            <p id="p20">20</p>
+                            <p id="p40">40</p>
+                            <p id="p100">100</p>
+                            <p id="p150">150</p>
+                            <p id="p200">200</p>
+                            <p id="p250">250</p>
+                            <p id="p300">300</p>
+                            <p id="p400">400</p>
+                        </div>
+                    </div>
+                    <div class="dropdown" style="float:right; margin-right: 100px;">
+                        <button class="dropbtn">Line Shape</button>
+                        <div class="dropdown-content">
+                            <p id="pFlat">Flat</p>
+                            <p id="pRound">Round</p>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div id="EraseStyleOptions">
+                    <h3>Erasing</h3>
+                    <div class="dropdown" style="float:left; margin-left: 100px;">
+                        <button class="dropbtn">Line Width</button>
+                        <div class="dropdown-content">
+                            <p id='e1'>1</p>
+                            <p id='e10'>10</p>
+                            <p id='e25'>25</p>
+                            <p id='e50'>50</p>
+                            <p id='e100'>100</p>
+                            <p id='e150'>150</p>
+                            <p id='e200'>200</p>
+                            <p id='e250'>250</p>
+                            <p id='e300'>300</p>
+                        </div>
+                    </div>
+                    <div class="dropdown" style="float:right; margin-right: 100px;">
+                        <button class="dropbtn">Line Shape</button>
+                        <div class="dropdown-content">
+                            <p id="eFlat">Flat</p>
+                            <p id="eRound">Round</p>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <div id="BottomOptions">
+                <button id="ClearScreen">Clear Screen</button>
+                <button id="Exit">Exit</button>
+            </div>
+            
+
+        </div>
+    </div>
+    <script type="module" src="src/index.js"></script>
+</body>
+</html>
