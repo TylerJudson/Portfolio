@@ -1,10 +1,29 @@
-import { World } from "./world/world";
+import { Display } from "./display.js";
+import { Engine } from "./engine.js";
+import { World } from "./world/world.js";
+
+let world;
+let display;
+let engine;
 
 function init() {
-
+    world = new World();
+    display = new Display(world.width, world.height);
+    engine = new Engine(update, render)
+    render();
+}
+function update() {
+    world.update();
+}
+function render() {
+    world.renderBackground(display.ctx);
+    world.render(display.ctx);
 }
 
-// //#region Functions
+
+
+//#region Functions
+
 // function drawBackground() {
 //     drawSky();
 //     drawStars();
@@ -98,10 +117,13 @@ function init() {
 //     max = Math.floor(max);
 //     return Math.floor(Math.random() * (max - min) + min);
 // }
-// //#endregion
+//#endregion
 
 
 
 
 
 onload = init;
+addEventListener("resize", () => {
+    display.resize();
+});

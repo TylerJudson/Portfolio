@@ -24,4 +24,8 @@ export class Display {
             this.ctx.scale(this.scale, this.scale);
         }
     }
+    clear() {
+        this.ctx.fillStyle = "blue";
+        this.ctx.fillRect(0, 0, this.width, this.height);
+    }
 }
