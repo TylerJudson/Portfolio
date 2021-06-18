@@ -1,6 +1,7 @@
 let width = 1900;
 let height = 985;
 
+let test = 0;
 let canvas = document.querySelector('canvas');
 let ctx = canvas.getContext("2d");
 
@@ -9,6 +10,8 @@ let centerY = height/2;
 
 canvas.width = width;
 canvas.height = height;
+
+
 
 function drawBackground() {
     drawSky();
