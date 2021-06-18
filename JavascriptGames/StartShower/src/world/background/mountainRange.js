@@ -16,7 +16,7 @@ export class MountainRange {
 export class LightGrayMountainRange extends MountainRange {
     constructor(worldWidth, worldHeight) {
         super(worldWidth, worldHeight);
-        this.colorValue = getRandomInt(10, 20);
+        this.colorValue = getRandomInt(10, 25);
         for (let i = 0; i <= getRandomInt(5, 15); i++) {
             let x1 = getRandomInt(-200, worldWidth - 100);
             let x2 = getRandomInt(x1 + 300, x1 + 1000);
@@ -28,7 +28,7 @@ export class LightGrayMountainRange extends MountainRange {
 export class GraymountainRange extends MountainRange {
     constructor(worldWidth, worldHeight) {
         super(worldWidth, worldHeight);
-        this.colorValue = getRandomInt(20, 30);
+        this.colorValue = getRandomInt(30, 45);
         for (let i = 0; i <= getRandomInt(3, 10); i++) {
             let x1 = getRandomInt(-300, worldWidth/4 * 3);
             let x2 = getRandomInt(x1 + 500, x1 + 1500);
@@ -41,7 +41,7 @@ export class GraymountainRange extends MountainRange {
 export class DarkGrayMountainRange extends MountainRange {
     constructor(worldWidth, worldHeight) {
         super(worldWidth, worldHeight);
-        this.colorValue = getRandomInt(30, 40);
+        this.colorValue = getRandomInt(50, 65);
         for (let i = 0; i <= getRandomInt(3, 10); i++) {
             let x1 = getRandomInt(-400, worldWidth/3 * 2);
             let x2 = getRandomInt(x1 + 1000, x1 + 1000);

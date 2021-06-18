@@ -10,7 +10,7 @@ function init() {
     world = new World();
     display = new Display(world.width, world.height);
     engine = new Engine(update, render)
-    render();
+    engine.start();
 }
 function update() {
     world.update();
