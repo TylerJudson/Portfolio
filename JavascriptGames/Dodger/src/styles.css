@@ -1,0 +1,13 @@
+body {
+  font-family: sans-serif;
+  background-color: black;
+}
+#gameScreen {
+  border: 1px solid white;
+}
+img {
+  display: none;
+}
+ul {
+  color: gray;
+}
