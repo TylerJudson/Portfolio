@@ -6,7 +6,7 @@ const ctx = canvas.getContext("2d");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
-let stars, particleStars, backgroundStars, w, h, cx, cy, backgroundGrad, ticker
+let stars, particleStars, backgroundStars, w, h, cx, cy, backgroundGrad, ticker, groundHeight
 
 
 
@@ -19,7 +19,7 @@ class Star {
         this.radius = radius;
         this.color = color;
         this.velocity = {
-            x: 0,
+            x: (Math.random() - 0.5) * 15,
             y: 3
         }
         this.friction = 0.8;
@@ -27,8 +27,8 @@ class Star {
     }
     shatter() {
         this.radius -= 3;
-        for (let i = 0; i < 8; i ++) {
-            particleStars.push(new StarParticle(this.x, this.y, 2))
+        for (let i = 0; i < getRandomInt(5, this.radius + 5); i ++) {
+            particleStars.push(new StarParticle(this.x, this.y, (Math.random() * (3 - 0.5) + 0.5)));
         }
     }
     draw() {
@@ -45,14 +45,21 @@ class Star {
     update() {
         this.draw();
 
-        // When ball hits the bottom of the screen
-        if (this.y + this.radius + this.velocity.y > h) {
+        // When ball hits the ground
+        if (this.y + this.radius + this.velocity.y > h - groundHeight) {
             this.velocity.y = -this.velocity.y * this.friction;
             this.shatter();
         }
         else {
             this.velocity.y += this.gravity;
         }
+
+        // When ball hits the side of the screen
+        if (this.x + this.radius + this.velocity.x > w || this.x - this.radius < 0){
+            this.velocity.x = -this.velocity.x * this.friction;
+            this.shatter();
+        }
+        this.x += this.velocity.x;
         this.y += this.velocity.y;
     }
 }
@@ -63,12 +70,12 @@ class StarParticle {
         this.y = y;
         this.radius = radius;
         this.velocity = {
-            x: getRandomInt(-5, 5),
-            y: getRandomInt(-15, 15)
+            x: getRandomInt(-10, 10),
+            y: getRandomInt(-30, 30)
         }
         this.friction = 0.8;
-        this.gravity = 0.25;
-        this.ttl = 100; // time to live
+        this.gravity = 2;
+        this.ttl = 75; // time to live
         this.opacity = 1;
     }
     draw() {
@@ -86,7 +93,7 @@ class StarParticle {
         this.draw();
 
         // When ball hits the bottom of the screen
-        if (this.y + this.radius + this.velocity.y > h) {
+        if (this.y + this.radius + this.velocity.y > h - groundHeight) {
             this.velocity.y = -this.velocity.y * this.friction;
         }
         else {
@@ -112,6 +119,7 @@ function init() {
     backgroundGrad = ctx.createLinearGradient(0, 0, 0, h);
     backgroundGrad.addColorStop(0, "#171e26");
     backgroundGrad.addColorStop(1, "#3f586b");
+    groundHeight = 100;
 
     stars = [];
     particleStars = [];
@@ -129,6 +137,7 @@ function animate() {
     clear();
     drawBackgroundStars();
     drawMountains();
+    drawFloor();
     updateStars();
     updateParticleStars();
 }
@@ -162,6 +171,10 @@ function drawMountainRange(amount, height, color) {
         ctx.closePath();
     }
 }
+function drawFloor() {
+    ctx.fillStyle = "#182028";
+    ctx.fillRect(0, h - groundHeight, w, groundHeight)
+}
 function updateStars() {
     stars.forEach(star => {
         star.update();
@@ -172,9 +185,10 @@ function updateStars() {
 
     ticker++
 
-    if (ticker % getRandomInt(50, 100) == 0) {
-        const x = Math.random() * w;
-        stars.push(new Star(x, -100, 12, "white"))
+    if (ticker % getRandomInt(20, 100) == 0) {
+        const r = (Math.random() * (12 - 6) + 6);
+        const x = Math.max(r, Math.random() * w - r);
+        stars.push(new Star(x, -100, r, "white"))
     }
 }
 function updateParticleStars() {
@@ -191,15 +205,15 @@ function updateParticleStars() {
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
-function distance(x1, y1, x2, y2) {
-    const deltaX = x2 - x1;
-    const deltaY = y2 - y1;
 
-    return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
-}
 function remove(element, array) {
     array.splice(array.indexOf(element), 1)
 }
+//#endregion
+
+
+
+
 init();
 animate();
 
