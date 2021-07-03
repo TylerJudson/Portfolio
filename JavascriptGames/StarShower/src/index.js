@@ -6,7 +6,7 @@ const ctx = canvas.getContext("2d");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
-let stars, particleStars, w, h, cx, cy
+let stars, particleStars, backgroundStars, w, h, cx, cy, backgroundGrad, ticker
 
 
 
@@ -36,8 +36,11 @@ class Star {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
         ctx.fillStyle = this.color;
+        ctx.shadowColor = "#E3EAEF";
+        ctx.shadowBlur = 20;
         ctx.fill();
         ctx.closePath();
+        ctx.restore();
     }
     update() {
         this.draw();
@@ -55,11 +58,10 @@ class Star {
 }
 
 class StarParticle {
-    constructor(x, y, radius, color) {
+    constructor(x, y, radius) {
         this.x = x;
         this.y = y;
         this.radius = radius;
-        this.color = color;
         this.velocity = {
             x: getRandomInt(-5, 5),
             y: getRandomInt(-15, 15)
@@ -73,9 +75,12 @@ class StarParticle {
         ctx.save();
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-        ctx.fillStyle = `rgba(255, 0, 0, ${this.opacity})`;
+        ctx.fillStyle = `rgba(227, 234, 239, ${this.opacity})`;
+        ctx.shadowColor = "#E3EAEF";
+        ctx.shadowBlur = 20;
         ctx.fill();
         ctx.closePath();
+        ctx.restore();
     }
     update() {
         this.draw();
@@ -103,22 +108,59 @@ function init() {
     h = canvas.height;
     cx = w/2;
     cy = h/2;
+    ticker = 0;
+    backgroundGrad = ctx.createLinearGradient(0, 0, 0, h);
+    backgroundGrad.addColorStop(0, "#171e26");
+    backgroundGrad.addColorStop(1, "#3f586b");
 
     stars = [];
     particleStars = [];
+    backgroundStars = [];
 
-    for (let i = 0; i < 1; i++) {
-        stars.push(new Star(cx, 30, 30, "blue"));
+    for (let i = 0; i < 150; i++) {
+        const x = getRandomInt(0, w);
+        const y = getRandomInt(0, h);
+        const r = Math.random() * 3;
+        backgroundStars.push(new Star(x, y, r, "white"))
     }
 }
 function animate() {
     requestAnimationFrame(animate);
     clear();
+    drawBackgroundStars();
+    drawMountains();
     updateStars();
     updateParticleStars();
 }
 function clear() {
-    ctx.clearRect(0, 0, w, h);
+    ctx.save();
+    ctx.fillStyle = backgroundGrad;
+    ctx.fillRect(0, 0, w, h);
+    ctx.restore();
+}
+function drawBackgroundStars() {
+    backgroundStars.forEach(star => {
+        star.draw();
+    });
+}
+function drawMountains() {
+    drawMountainRange(1, h - 50, "#384551");
+    drawMountainRange(2, h - 100, "#2B3843");
+    drawMountainRange(3, h - 300, "#26333E");
+}
+function drawMountainRange(amount, height, color) {
+    for (let i = 0; i < amount; i++) {
+        const mountainWidth = w / amount;
+
+        ctx.beginPath();
+        ctx.moveTo(i * mountainWidth, h);
+        ctx.lineTo(i * mountainWidth + mountainWidth + 325, h);
+        ctx.lineTo(i * mountainWidth + mountainWidth/2, h - height);
+        ctx.lineTo(i * mountainWidth - 325, h);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.closePath();
+    }
 }
 function updateStars() {
     stars.forEach(star => {
@@ -127,6 +169,13 @@ function updateStars() {
             remove(star, stars);
         }
     });
+
+    ticker++
+
+    if (ticker % getRandomInt(50, 100) == 0) {
+        const x = Math.random() * w;
+        stars.push(new Star(x, -100, 12, "white"))
+    }
 }
 function updateParticleStars() {
     particleStars.forEach(particle => {
