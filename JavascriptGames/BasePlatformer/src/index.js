@@ -2,6 +2,8 @@ import { Engine } from "./engine.js";
 import { Display } from "./display.js";
 import { World } from "./world/world.js";
 import { Controller } from "./controller.js";
+import { Jump, Movement } from "./utils/movement.js";
+import { Point } from "./utils/point.js";
 
 let world;
 let display;
@@ -16,22 +18,26 @@ function init() {
     engine = new Engine(update, render);
     engine.start();
 }
+
 function update() {
     updateController();
     world.update();
 }
+
 function updateController() {
     if (controller.up.active) {
-        world.player.jump();
+        world.player.move(new Jump());
     }
     if (controller.right.active) {
-        world.player.moveRight();
+        world.player.move(new Movement(new Point(0.5, 0)));
     }
     if (controller.left.active) {
-        world.player.moveLeft();
+        world.player.move(new Movement(new Point(-0.5, 0)));
     }
 }
+
 function render() {
+    display.clear();
     world.render(display.ctx);
 }
 

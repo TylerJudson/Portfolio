@@ -25,7 +25,6 @@ export class Display {
         }
     }
     clear() {
-        this.ctx.fillStyle = "blue";
-        this.ctx.fillRect(0, 0, this.width, this.height);
+        this.ctx.clearRect(0, 0, this.width, this.height);
     }
 }
