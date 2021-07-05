@@ -32,7 +32,6 @@ function update() {
     updateController();
     world.update();
 }
-
 function updateController() {
 
     if (controller.up.active) {
@@ -50,13 +49,17 @@ function render() {
     display.clear();
     world.render(display.ctx);
 }
-
-
-
-
-
-
 onload = init;
+
+
+
+
+
+
+
+
+
+
 
 
 addEventListener("resize", () => {

@@ -1,5 +1,7 @@
 body {
     background-color: rgb(23, 23, 23);
+    touch-action: manipulation;
+    user-select: none;
 }
 canvas {
     background-color: white;
@@ -19,6 +21,14 @@ button {
     bottom: 20%; 
 }
 @media screen and (max-width: 768px) {
+    #mobileUI {
+        position: absolute; 
+        width: 95%; 
+        bottom: 20%; 
+        visibility: visible;
+    }
+}
+@media screen and (max-height: 1024px) {
     #mobileUI {
         position: absolute; 
         width: 95%; 

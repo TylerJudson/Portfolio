@@ -1,4 +1,3 @@
-import { Point } from "../utils/point.js";
 import { Collider } from "./collider.js";
 
 export class Player {
