@@ -2,6 +2,8 @@ body {
     background-color: rgb(23, 23, 23);
     touch-action: manipulation;
     user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
 }
 canvas {
     background-color: white;
