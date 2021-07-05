@@ -15,6 +15,7 @@ button {
     width: 80px;
 }
 #mobileUI {
+    user-select: none;
     visibility: hidden;
     position: absolute; 
     width: 95%; 
