@@ -3,14 +3,14 @@ import { Point } from "../utils/point.js";
 import { Player } from "./player.js";
 
 export class World {
-    constructor() {
+    constructor(width, height, playerSize, playerImg) {
+        this.width = width;
+        this.height = height;
+
         this.friction = new Friction();
         this.gravity = new Gravity();
 
-        this.width = 700;
-        this.height = 400;
-
-        this.player = new Player(new Point(this.width/2, this.height/2), 10, "red");
+        this.player = new Player(new Point(this.width/2, this.height/2), playerSize, new Point(0,0), playerImg);
     }
     update() {
         this.gravity.apply(this.player.velocity);

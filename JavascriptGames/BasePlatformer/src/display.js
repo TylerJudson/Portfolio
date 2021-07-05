@@ -14,7 +14,7 @@ export class Display {
         if (window.innerWidth / window.innerHeight > this.widthHeightRatio) {
             this.canvas.width = (window.innerHeight - 30) * this.widthHeightRatio;
             this.canvas.height = window.innerHeight - 30;
-            this.scale = (window.innerHeight - 30)/this.height; 
+            this.scale = (window.innerHeight - 30)/this.height;
             this.ctx.scale(this.scale, this.scale);
         }
         else {

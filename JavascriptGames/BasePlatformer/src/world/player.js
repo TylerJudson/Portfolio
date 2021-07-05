@@ -2,23 +2,23 @@ import { Point } from "../utils/point.js";
 import { Collider } from "./collider.js";
 
 export class Player {
-    constructor(position, radius) {
+    constructor(position, size, initialVelocity, img, spinSpeed = 0.1) {
         this.position = position;
-        this.radius = radius;
-        this.diameter = radius * 2
-        this.radians = 0
-        this.velocity = new Point(0, 0);
+        this.radius = size/2;
+        this.diameter = size;
+        this.radians = 0;
+        this.spinSpeed = spinSpeed;
+        this.velocity = initialVelocity;
 
-        this.img = new Image();
-        this.img.src = "./img/Ball.png";
+        this.img = img;
 
-        this.collider = new Collider(position.x, position.y, radius * 2, radius * 2);
+        this.collider = new Collider(position.x, position.y, size, size);
     }
     update() {
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
         
-        this.radians += this.velocity.x/10;
+        this.radians += this.velocity.x * this.spinSpeed; 
 
         this.collider.update(this.x, this.y);
     }
