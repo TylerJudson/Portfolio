@@ -10,10 +10,16 @@ let display;
 let engine;
 let controller;
 
+const worldWidth = 700;
+const worldHeight = 400;
+const playerSize = 20;
+const playerRightSpeed = 0.5;
+const playerLeftSpeed = -0.5;
+
 function init() {
     let playerImg = new Image();
     playerImg.src = "./img/Ball.png";
-    world = new World(700, 400, 20, playerImg);
+    world = new World(worldWidth, worldHeight, playerSize, playerImg);
 
     display = new Display(world.width, world.height);
     controller = new Controller();
@@ -28,8 +34,6 @@ function update() {
 }
 
 function updateController() {
-    const playerRightSpeed = 0.5;
-    const playerLeftSpeed = -0.5;
 
     if (controller.up.active) {
         world.player.move(new Jump());

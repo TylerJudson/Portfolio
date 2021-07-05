@@ -12,7 +12,7 @@ export class Player {
 
         this.img = img;
 
-        this.collider = new Collider(position.x, position.y, size, size);
+        this.collider = new Collider(position, this.radius);
     }
     update() {
         this.position.x += this.velocity.x;
@@ -20,7 +20,7 @@ export class Player {
         
         this.radians += this.velocity.x * this.spinSpeed; 
 
-        this.collider.update(this.x, this.y);
+        this.collider.update(this.position);
     }
     render(ctx) {
         ctx.save();

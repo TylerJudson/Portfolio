@@ -1,4 +1,5 @@
 export class Display {
+    static frame = 30;
     constructor(width, height) {
         this.width = width;
         this.height = height;
@@ -12,15 +13,15 @@ export class Display {
     }
     resize() {
         if (window.innerWidth / window.innerHeight > this.widthHeightRatio) {
-            this.canvas.width = (window.innerHeight - 30) * this.widthHeightRatio;
-            this.canvas.height = window.innerHeight - 30;
-            this.scale = (window.innerHeight - 30)/this.height;
+            this.canvas.width = (window.innerHeight - Display.frame) * this.widthHeightRatio;
+            this.canvas.height = window.innerHeight - Display.frame;
+            this.scale = (window.innerHeight - Display.frame)/this.height;
             this.ctx.scale(this.scale, this.scale);
         }
         else {
-            this.canvas.width = window.innerWidth - 30;
-            this.canvas.height = (window.innerWidth - 30) / this.widthHeightRatio;
-            this.scale = (window.innerWidth - 30)/this.width;
+            this.canvas.width = window.innerWidth - Display.frame;
+            this.canvas.height = (window.innerWidth - Display.frame) / this.widthHeightRatio;
+            this.scale = (window.innerWidth - Display.frame)/this.width;
             this.ctx.scale(this.scale, this.scale);
         }
     }
