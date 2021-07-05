@@ -12,3 +12,17 @@ button {
     height: 50px;
     width: 80px;
 }
+#mobileUI {
+    visibility: hidden;
+    position: absolute; 
+    width: 95%; 
+    bottom: 20%; 
+}
+@media screen and (max-width: 768px) {
+    #mobileUI {
+        position: absolute; 
+        width: 95%; 
+        bottom: 20%; 
+        visibility: visible;
+    }
+}
