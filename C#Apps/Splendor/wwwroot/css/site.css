@@ -1,6 +1,7 @@
 
 :root {
     --purple: rgb(75, 0, 100);
+    --lightPurple: rgb(130, 0, 170);
     --purpleOpacity: rgba(80, 0, 120, 0.5);
 }
 
@@ -37,6 +38,13 @@ html {
 .btn-purple {
     color: white;
     background-color: var(--purple);
+}
+.btn-purple:hover {
+    color: black;
+    background-color: var(--lightPurple);
+}
+.btn-purple:focus {
+    box-shadow: 0 0 0 0.25rem var(--purpleOpacity);
 }
 
 body {

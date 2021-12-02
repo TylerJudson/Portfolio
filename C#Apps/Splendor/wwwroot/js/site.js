@@ -17,11 +17,11 @@ function CardScreen(ImageName, purchaseable) {
 
     let innerHtml = `
         <img class="mx-auto card" style="margin-top: 15rem;" src="Images/` + ImageName + `" width="50%"/>
-        <div class="container">
-            <div class="mx-auto col purple" style="width: 150px;">
+        <div class="container row mt-5">
+            <div class="col purple" style="width: 150px;">
                 <button class="mx-auto btn btn-outline-dark btn-lg" style="width: 150px;" onclick='ToggleScreen("CardScreen")'>Back</button>
             </div>
-            <div class="mx-auto col" style="width: 150px;">
+            <div class="col" style="width: 150px;">
                 <button class="mx-auto btn btn-purple btn-lg" style="width: 150px;" onclick='ToggleScreen("CardScreen")'>Purchase</button>
             </div>
         </div>
