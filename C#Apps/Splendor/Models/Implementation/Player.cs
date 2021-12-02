@@ -159,6 +159,7 @@
         public void Test()
         {
             ReservedCards.Add(new Card(1, Token.Emerald, 2, new Dictionary<Token, int>() { { Token.Ruby, 1 } }, "Level1-R-1P-4D.png"));
+            ReservedCards.Add(new Card(1, Token.Emerald, 2, new Dictionary<Token, int>() { { Token.Ruby, 1 } }, "Level2-O-2P-5E-3R.png"));
             Tokens[Token.Emerald] += 1;
 
             CardTokens[Token.Diamond] += 1;

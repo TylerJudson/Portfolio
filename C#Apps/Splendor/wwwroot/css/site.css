@@ -34,6 +34,11 @@ html {
     box-shadow: 0 0 0 0.25rem var(--purpleOpacity);
 }
 
+.btn-purple {
+    color: white;
+    background-color: var(--purple);
+}
+
 body {
   background-color: #191919;
   color: white;
@@ -51,4 +56,9 @@ body {
     top: 0;
     left: 0;
     position: fixed;
+}
+
+.card {
+    border: 2px solid gray;
+    border-radius: 7.5%;
 }

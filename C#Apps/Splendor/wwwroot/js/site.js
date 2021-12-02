@@ -14,14 +14,21 @@ function ToggleScreen(screenID) {
 }
 
 function CardScreen(ImageName, purchaseable) {
-    alert();
-    alert(ImageName);
-    alert(purchaseable);
-    `
-            <section id="CardScreen" class="OverlayScreen">
-                    <div class="mx-auto purple" style="width: 150px;">
-                        <button class="mx-auto btn btn-outline-dark btn-lg" style="width: 150px;" onclick="CardScreen()">Back</button>
-                    </div>
-            </section >
+
+    let innerHtml = `
+        <img class="mx-auto card" style="margin-top: 15rem;" src="Images/` + ImageName + `" width="50%"/>
+        <div class="container">
+            <div class="mx-auto col purple" style="width: 150px;">
+                <button class="mx-auto btn btn-outline-dark btn-lg" style="width: 150px;" onclick='ToggleScreen("CardScreen")'>Back</button>
+            </div>
+            <div class="mx-auto col" style="width: 150px;">
+                <button class="mx-auto btn btn-purple btn-lg" style="width: 150px;" onclick='ToggleScreen("CardScreen")'>Purchase</button>
+            </div>
+        </div>
     `;
+
+    let CardScreen = document.getElementById("CardScreen")
+
+    CardScreen.innerHTML = innerHtml;
+    CardScreen.style.display = "block";
 }

@@ -8,8 +8,6 @@
 
     string purple = "rgb(75, 0, 100)";
 
-    // This is the image name of the card needed to show when trying to purchase a card
-    string CardImage = "";
 }
 
 <!-- Options Screen -->
@@ -49,10 +47,7 @@
 
 <!-- Card Screen -->
     <section id="CardScreen" class="OverlayScreen">
-        <img class="img" src="Images/@CardImage" alt="@CardImage"/>
-        <div class="mx-auto purple" style="width: 150px;">
-            <button class="mx-auto btn btn-outline-dark btn-lg" style="width: 150px;" onclick='CardScreen()'>Back</button> 
-        </div>
+        <p style="color: black;">HEllo there</p>
     </section>
 
 
@@ -153,7 +148,7 @@
                         {
                             <!--TODO - Card is purchasable-->
                             <div class="col-4">
-                                <img class="col-12 p-0"  maxwidth="33%" style="border: 2px solid gray; border-radius: 7.5%;"  src="Images/@card.ImageName" alt=@card.ImageName onclick='CardScreen("@card.ImageName", false)'/>
+                                <img class="col-12 p-0 card"  maxwidth="33%" src="Images/@card.ImageName" alt=@card.ImageName onclick='CardScreen("@card.ImageName", false)'/>
                             </div>
                         }
                     }
