@@ -1,0 +1,320 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Splendor.Models.IGameBoard
+@{
+    string purple = "rgb(75, 0, 100)";
+
+    // This is the image name of the card needed to show when trying to purchase a card
+    string CardImage = "";
+}
+
+<!-- Options Screen -->
+
+    <section id="OptionsScreen" class="OverlayScreen">
+        <div class="mx-auto pt-5" style="width: 100%">
+            <h1 class="mt-5 px-auto text-body display-1 text-center" style="width: 100%">Options</h1>
+        </div>
+        <div style="margin-top: 23rem;">
+
+            <div class="mx-auto purple" style="width: 150px;">
+                <button class="mx-auto btn btn-outline-purple btn-lg" style="width: 150px;" onclick='ToggleScreen("OptionsScreen")'>Resume</button> 
+            </div>
+            <div class="mx-auto my-2" style="width: 200px;">
+                <button class="mx-auto btn btn-outline-danger btn-lg" style="width: 200px;" onclick='ToggleScreen("OptionsScreen")'>Exit Game</button> 
+            </div>
+            <div class="mx-auto my-2" style="width: 150px;">
+                <a class="mx-auto btn btn-outline-success btn-lg" style="width: 150px;" href="https://cdn.1j1ju.com/medias/7f/91/ba-splendor-rulebook.pdf" target="_blank" rel="noopener noreferrer" >Rules</a> 
+            </div>
+        </div>
+    </section>
+
+<!-- Options button -->
+    <nav class="navbar">   
+        <script>
+            
+        </script>
+        <div class="mx-3 btn" onclick='ToggleScreen("OptionsScreen")' > 
+            @for (int i = 0; i < 3; i++)
+            {
+                <svg width="0.8rem" height="1rem">
+                    <circle cx="50%" cy="50%" r="5" fill="gray"/>
+                </svg>
+            }
+         </div>
+    </nav>
+
+<!-- Card Screen -->
+    <section id="CardScreen" class="OverlayScreen">
+        <img class="img" src="Images/@CardImage" alt="@CardImage"/>
+        <div class="mx-auto purple" style="width: 150px;">
+            <button class="mx-auto btn btn-outline-dark btn-lg" style="width: 150px;" onclick='CardScreen()'>Back</button> 
+        </div>
+    </section>
+
+
+
+<br />
+<br />
+
+<section class="container row m-0 p-2">
+
+
+    <section class="row m-0 p-2">
+        @{ string borderColor = "gray"; }
+        @for (int i = 0; i < Model.Players.Count; i++)
+        {
+            @if (i == Model.CurrentPlayer)
+            {
+                borderColor = @purple;
+            }
+            else
+            {
+                borderColor = "gray";
+            }
+
+            <section class="container rounded-3 mt-3 mx-auto pb-1" style="border: 2px solid @borderColor;">
+                <div class="row container">
+                    <h3 class="row">@Model.Players[i].Name</h3>
+                    <table class="mb-1">
+                        <!--Total of Tokens + Cards-->
+                            <tr>
+                                <th></th>
+                                @{
+                                    Dictionary<Token, string> Colors = new Dictionary<Token, string>() { { Token.Emerald, "green" }, { Token.Diamond, "white" }, { Token.Sapphire, "blue" }, { Token.Onyx, "brown" }, { Token.Ruby, "red" } };
+                                }
+                                    @foreach(KeyValuePair<Token, string> kvp in Colors)
+                                    {
+                                        <th>
+                                            <svg width="3rem" height="3rem">
+                                                <text x="50%" y="50%" text-anchor="middle" fill=@kvp.Value stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@(Model.Players[i].Tokens[kvp.Key] + Model.Players[i].CardTokens[kvp.Key])</text>
+                                            </svg>
+                                        </th>
+                                    }
+
+                                    <th>
+                                        <svg width="3rem" height="3rem">
+                                                <text x="50%" y="50%" text-anchor="middle" fill="yellow" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[Token.Gold]</text>
+                                         </svg>
+                                    </th>
+                            </tr>
+
+                        <!--Total Tokens-->
+                            <tr>
+                                <td>
+                                    <svg width="3rem" height="3rem">
+                                        <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].NumberOfTokens()</text>
+                                    </svg>
+                                </td>
+                                @foreach(KeyValuePair<Token, string> kvp in Colors)
+                                {
+                                    <td>
+                                        <svg width="3rem" height="3rem">
+                                            <circle cx="50%" cy="50%" r="20" fill=@kvp.Value />
+                                            <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[kvp.Key]</text>
+                                        </svg>
+                                    </td>
+                                }
+
+                                <td>
+                                    <svg width="3rem" height="3rem">
+                                        <circle cx="50%" cy="50%" r="20" fill="yellow" />
+                                        <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[Token.Gold]</text>
+                                    </svg>
+                                </td>
+                            </tr>
+
+                        <!--Total Cards and Prestige Points-->
+                            <tr>
+                                <td>
+                                    <svg width="3rem" height="3rem">
+                                        <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].PrestigePoints</text>
+                                    </svg>
+                                </td>
+                                @foreach(KeyValuePair<Token, string> kvp in Colors)
+                                {
+                                    <td>
+                                        <svg width="3rem" height="3rem">
+                                            <rect x="10%" rx="10" ry="10" width="2.4rem" height="3rem" fill=@kvp.Value />
+                                            <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].CardTokens[kvp.Key]</text>
+                                        </svg>
+                                    </td>
+                                }
+                            </tr>
+                    </table>
+                </div>
+                <div class="row container m-0">
+                    @if (Model.Players[i].ReservedCards.Count > 0)
+                    {
+                        foreach (ICard card in Model.Players[i].ReservedCards)
+                        {
+                            <!--TODO - Card is purchasable-->
+                            <div class="col-4">
+                                <img class="col-12 p-0"  maxwidth="33%" style="border: 2px solid gray; border-radius: 7.5%;"  src="Images/@card.ImageName" alt=@card.ImageName onclick='CardScreen("@card.ImageName", false)'/>
+                            </div>
+                        }
+                    }
+                </div>
+            </section>
+        }
+    </section> 
+    
+    <section class="row">
+    </section>
+
+
+</section>
+
+
+
+@*
+    <section class="container row">
+
+
+        <div class="col container ">
+            @foreach(IPlayer player in @Model.Players)
+            {
+               <section class="row container border border-gray rounded mt-2 pb-2">
+                   <div class="col-6">
+                       <h3 class="row">@player.Name</h3>
+                       <table class="table-responsive">
+
+                           @*The total of both tokens and cards
+                           <tr>
+                               <th></th>
+                                @{
+                                    string[] Colors = new string[6] { "green", "white", "blue", "brown", "red", "yellow" };
+                                }
+                                @for(int i = 0; i < 6; i++)
+                                {
+                                    <th>
+                                            <svg width="3rem" height="3rem">
+                                            <text x="50%" y="50%" text-anchor="middle" fill=@Colors[i] stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">0</text>
+                                        </svg>
+                                    </th>
+                                }
+                           </tr>
+
+
+                           @*This is the players token total
+                           <tr>
+                               <td>
+                                    <svg width="3rem" height="3rem">
+                                        <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">0</text>
+                                    </svg>
+                               </td>
+                                @foreach(string color in Colors)
+                                {
+                                    <td>
+                                        <svg width="3rem" height="3rem">
+                                            <circle cx="50%" cy="50%" r="20" fill=@color />
+                                            <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">0</text>
+                                        </svg>
+                                    </td>
+                                }
+                           </tr>
+
+
+
+                           @*This is the players card total
+                           <tr>
+                           
+                            <td>
+                                <svg width="3rem" height="3rem">
+                                    <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">0</text>
+                                </svg>
+                            </td>
+                            @{
+                                Colors = new string[] {"green", "white", "blue", "brown", "red" };
+                            }
+                            @foreach(string color in Colors)
+                            {
+                                <td>
+                                    <svg width="3rem" height="3rem">
+                                        <rect x="15%" rx="10" ry="10" width="2.2rem" height="3rem" fill=@color />
+                                        <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">1</text>
+                                    </svg>
+                                </td>
+                            }
+                            <td></td>
+                           </tr>
+
+
+                       </table>
+                   </div>
+                    @*ReservedCards
+                   <div class="col-2 container p-0">
+                       <table>
+                            <tr>
+                            </tr>
+                       
+                       </table>
+                    
+                   </div>
+               </section>
+            }
+
+        </div>
+
+    @*
+
+
+
+
+       <div class="col container">
+
+            <section class="row container">
+                <div class="row">
+                    <button class="col" onclick="myOnclick();">Click me</button>
+                    <button class="col">Diamond</button>
+                    <button class="col">Sapphire</button>
+                    <button class="col">Ruby</button>
+                    <button class="col">Onyx</button>
+                    <button class="col">Gold</button>
+                    <a asp-controller="Game" asp-action="Index">reload page</a>
+                </div>
+                <div class="row">
+                    <button class="col">Emerald</button>
+                    <button class="col">Diamond</button>
+                    <button class="col">Sapphire</button>   
+                    <button class="col">Ruby</button>
+                    <button class="col">Onyx</button>
+                    <button class="col">Gold</button>
+                </div>
+            </section>
+
+
+
+
+
+            <section class="row container">
+                <div class="row">
+                    @foreach(INoble noble in @Model.Nobles)
+                   {
+                       <img class="col-md-3 img-fluid" src="Images/@noble.ImageName"/>
+                   }
+                </div>
+                <div class="row container">                                                                        
+                    <div class="row">
+                        @foreach(ICard card in @Model.Level3Cards)
+                        {
+                            <img class="col-md-3 img-fluid" src="Images/@card.ImageName" alt="@card.ImageName"/>
+                        }
+                    </div>
+                    <div class="row">
+                        @foreach(ICard card in @Model.Level2Cards)
+                        {
+                            <img class="col-md-3 img-fluid" src="Images/@card.ImageName" alt="@card.ImageName"/>
+                        }
+                    </div>
+                    <div class="row">
+                        @foreach(ICard card in @Model.Level1Cards)
+                        {
+                            <img class="col-md-3 img-fluid" src="Images/@card.ImageName" alt="@card.ImageName"/>
+                        }
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
+*@
