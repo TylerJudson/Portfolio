@@ -17,7 +17,7 @@ function CardScreen(ImageName, purchaseable) {
     alert();
     alert(ImageName);
     alert(purchaseable);
-    return `
+    `
             <section id="CardScreen" class="OverlayScreen">
                     <div class="mx-auto purple" style="width: 150px;">
                         <button class="mx-auto btn btn-outline-dark btn-lg" style="width: 150px;" onclick="CardScreen()">Back</button>
