@@ -9,7 +9,7 @@ namespace Splendor.Controllers
         private static IGameBoard GameBoard { get; set; }
 
         public GameController() {
-            GameBoard = new GameBoard(new List<IPlayer>() { new Player("Bob"), new Player("Jill"), new Player("Zack") });
+            GameBoard = new GameBoard(new List<IPlayer>() { new Player("Bob"), new Player("Jill") });
 
             GameBoard.Render();
         }

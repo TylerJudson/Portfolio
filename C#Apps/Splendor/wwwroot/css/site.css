@@ -1,7 +1,7 @@
 
 :root {
-    --purple: rgb(75, 0, 100);
-    --lightPurple: rgb(130, 0, 170);
+    --purple: rgb(110, 10, 150);
+    --darkPurple: rgba(60, 0, 90);
     --purpleOpacity: rgba(80, 0, 120, 0.5);
 }
 
@@ -22,6 +22,15 @@ html {
     min-height: 100%;
 }
 
+
+
+body {
+    background-color: #191919;
+    color: white;
+    margin-bottom: 60px;
+}
+
+
 .btn-outline-purple {
     color: var(--purple);
     border-color: var(--purple);
@@ -40,24 +49,17 @@ html {
     background-color: var(--purple);
 }
 .btn-purple:hover {
-    color: black;
-    background-color: var(--lightPurple);
+    color: white;   
+    background-color: var(--darkPurple);
 }
 .btn-purple:focus {
     box-shadow: 0 0 0 0.25rem var(--purpleOpacity);
 }
 
-body {
-  background-color: #191919;
-  color: white;
-  margin-bottom: 60px;
-}
-
-
 .OverlayScreen {
     display: none;
-    /*opacity: 0.2;*/
-    background: white;
+    opacity: 1;
+    background: rgb(23, 23, 23);
     width: 100%;
     height: 100%;
     z-index: 10;
@@ -69,4 +71,51 @@ body {
 .card {
     border: 2px solid gray;
     border-radius: 7.5%;
+}
+
+
+.token {
+    position: relative;
+    text-align: center;
+    color: white;
+}
+.token h1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.takingToken {
+    opacity: 0;
+    position: relative;
+    text-align: center;
+    color: white;
+}
+
+.takingToken h1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+.mt-10 {
+    margin-top: 15rem;
+}
+.mt-9 {
+    margin-top: 14rem;
+}
+.mt-8 {
+    margin-top: 12rem;
+}
+@media (min-width: 576px) {
+    .mt-sm-9 {
+        margin-top: 14rem;
+    }
+}
+@media (min-width: 768px) {
+    .mt-md-7 {
+        margin-top: 10rem;
+    }
 }

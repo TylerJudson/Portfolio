@@ -6,7 +6,7 @@
     ViewData["Title"] = "Splendor";
 
 
-    string purple = "rgb(75, 0, 100)";
+    string purple = "rgb(110, 10, 150)";
 
 }
 
@@ -14,12 +14,12 @@
 
     <section id="OptionsScreen" class="OverlayScreen">
         <div class="mx-auto pt-5" style="width: 100%">
-            <h1 class="mt-5 px-auto text-body display-1 text-center" style="width: 100%">Options</h1>
+            <h1 class="mt-5 px-auto text-light display-1 text-center " style="width: 100%">Options</h1>
         </div>
         <div style="margin-top: 23rem;">
 
             <div class="mx-auto purple" style="width: 150px;">
-                <button class="mx-auto btn btn-outline-purple btn-lg" style="width: 150px;" onclick='ToggleScreen("OptionsScreen")'>Resume</button> 
+                <button class="mx-auto btn btn-outline-purple btn-lg fw-bold" style="width: 150px; border: 2px solid var(--purple);" onclick='ToggleScreen("OptionsScreen")'>Resume</button> 
             </div>
             <div class="mx-auto my-2" style="width: 200px;">
                 <button class="mx-auto btn btn-outline-danger btn-lg" style="width: 200px;" onclick='ToggleScreen("OptionsScreen")'>Exit Game</button> 
@@ -47,7 +47,6 @@
 
 <!-- Card Screen -->
     <section id="CardScreen" class="OverlayScreen">
-        <p style="color: black;">HEllo there</p>
     </section>
 
 
@@ -57,107 +56,127 @@
 
 <section class="container row m-0 p-2">
 
-
-    <section class="row m-0 p-2">
-        @{ string borderColor = "gray"; }
-        @for (int i = 0; i < Model.Players.Count; i++)
-        {
-            @if (i == Model.CurrentPlayer)
+    <!-- Player Stats -->
+        <section class="row m-0 p-2">
+            @{ string borderColor = "gray"; }
+            @for (int i = 0; i < Model.Players.Count; i++)
             {
-                borderColor = @purple;
-            }
-            else
-            {
-                borderColor = "gray";
-            }
+                @if (i == Model.CurrentPlayer)
+                {
+                    borderColor = @purple;
+                }
+                else
+                {
+                    borderColor = "gray";
+                }
 
-            <section class="container rounded-3 mt-3 mx-auto pb-1" style="border: 2px solid @borderColor;">
-                <div class="row container">
-                    <h3 class="row">@Model.Players[i].Name</h3>
-                    <table class="mb-1">
-                        <!--Total of Tokens + Cards-->
-                            <tr>
-                                <th></th>
-                                @{
-                                    Dictionary<Token, string> Colors = new Dictionary<Token, string>() { { Token.Emerald, "green" }, { Token.Diamond, "white" }, { Token.Sapphire, "blue" }, { Token.Onyx, "brown" }, { Token.Ruby, "red" } };
-                                }
-                                    @foreach(KeyValuePair<Token, string> kvp in Colors)
-                                    {
+                <section class="container rounded-3 mt-3 mx-auto pb-1" style="border: 2px solid @borderColor;">
+                    <div class="row container">
+                        <h3 class="row">@Model.Players[i].Name</h3>
+                        <table class="mb-1">
+                            <!--Total of Tokens + Cards-->
+                                <tr>
+                                    <th></th>
+                                    @{
+                                        Dictionary<Token, string> Colors = new Dictionary<Token, string>() { { Token.Emerald, "green" }, { Token.Diamond, "white" }, { Token.Sapphire, "blue" }, { Token.Onyx, "brown" }, { Token.Ruby, "red" } };
+                                    }
+                                        @foreach(KeyValuePair<Token, string> kvp in Colors)
+                                        {
+                                            <th>
+                                                <svg width="3rem" height="3rem">
+                                                    <text x="50%" y="50%" text-anchor="middle" fill=@kvp.Value stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@(Model.Players[i].Tokens[kvp.Key] + Model.Players[i].CardTokens[kvp.Key])</text>
+                                                </svg>
+                                            </th>
+                                        }
+
                                         <th>
                                             <svg width="3rem" height="3rem">
-                                                <text x="50%" y="50%" text-anchor="middle" fill=@kvp.Value stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@(Model.Players[i].Tokens[kvp.Key] + Model.Players[i].CardTokens[kvp.Key])</text>
-                                            </svg>
+                                                    <text x="50%" y="50%" text-anchor="middle" fill="yellow" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[Token.Gold]</text>
+                                                </svg>
                                         </th>
+                                </tr>
+
+                            <!--Total Tokens-->
+                                <tr>
+                                    <td>
+                                        <svg width="3rem" height="3rem">
+                                            <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].NumberOfTokens()</text>
+                                        </svg>
+                                    </td>
+                                    @foreach(KeyValuePair<Token, string> kvp in Colors)
+                                    {
+                                        <td>
+                                            <svg width="3rem" height="3rem">
+                                                <circle cx="50%" cy="50%" r="20" fill=@kvp.Value />
+                                                <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[kvp.Key]</text>
+                                            </svg>
+                                        </td>
                                     }
 
-                                    <th>
-                                        <svg width="3rem" height="3rem">
-                                                <text x="50%" y="50%" text-anchor="middle" fill="yellow" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[Token.Gold]</text>
-                                         </svg>
-                                    </th>
-                            </tr>
-
-                        <!--Total Tokens-->
-                            <tr>
-                                <td>
-                                    <svg width="3rem" height="3rem">
-                                        <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].NumberOfTokens()</text>
-                                    </svg>
-                                </td>
-                                @foreach(KeyValuePair<Token, string> kvp in Colors)
-                                {
                                     <td>
                                         <svg width="3rem" height="3rem">
-                                            <circle cx="50%" cy="50%" r="20" fill=@kvp.Value />
-                                            <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[kvp.Key]</text>
+                                            <circle cx="50%" cy="50%" r="20" fill="yellow" />
+                                            <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[Token.Gold]</text>
                                         </svg>
                                     </td>
-                                }
+                                </tr>
 
-                                <td>
-                                    <svg width="3rem" height="3rem">
-                                        <circle cx="50%" cy="50%" r="20" fill="yellow" />
-                                        <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[Token.Gold]</text>
-                                    </svg>
-                                </td>
-                            </tr>
-
-                        <!--Total Cards and Prestige Points-->
-                            <tr>
-                                <td>
-                                    <svg width="3rem" height="3rem">
-                                        <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].PrestigePoints</text>
-                                    </svg>
-                                </td>
-                                @foreach(KeyValuePair<Token, string> kvp in Colors)
-                                {
+                            <!--Total Cards and Prestige Points-->
+                                <tr>
                                     <td>
                                         <svg width="3rem" height="3rem">
-                                            <rect x="10%" rx="10" ry="10" width="2.4rem" height="3rem" fill=@kvp.Value />
-                                            <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].CardTokens[kvp.Key]</text>
+                                            <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].PrestigePoints</text>
                                         </svg>
                                     </td>
-                                }
-                            </tr>
-                    </table>
-                </div>
-                <div class="row container m-0">
-                    @if (Model.Players[i].ReservedCards.Count > 0)
-                    {
-                        foreach (ICard card in Model.Players[i].ReservedCards)
+                                    @foreach(KeyValuePair<Token, string> kvp in Colors)
+                                    {
+                                        <td>
+                                            <svg width="3rem" height="3rem">
+                                                <rect x="10%" rx="10" ry="10" width="2.4rem" height="3rem" fill=@kvp.Value />
+                                                <text x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].CardTokens[kvp.Key]</text>
+                                            </svg>
+                                        </td>
+                                    }
+                                </tr>
+                        </table>
+                    </div>
+                    <div class="row container m-0">
+                        @if (Model.Players[i].ReservedCards.Count > 0)
                         {
-                            <!--TODO - Card is purchasable-->
-                            <div class="col-4">
-                                <img class="col-12 p-0 card"  maxwidth="33%" src="Images/@card.ImageName" alt=@card.ImageName onclick='CardScreen("@card.ImageName", false)'/>
-                            </div>
+                            foreach (ICard card in Model.Players[i].ReservedCards)
+                            {
+                                <!--TODO - Card is purchasable-->
+                                <div class="col-4">
+                                    <img class="col-12 p-0 card"  maxwidth="33%" src="Images/@card.ImageName" alt=@card.ImageName onclick='CardScreen("@card.ImageName", false)'/>
+                                </div>
+                            }
                         }
-                    }
-                </div>
-            </section>
-        }
-    </section> 
+                    </div>
+                </section>
+            }
+        </section> 
     
-    <section class="row">
+    <section class="row m-0 p-2"> 
+        <section class="container mx-auto p-0" width="100%">
+                <table class="mx-auto" width="100%">
+                    <tr>
+                        <td id="EmeraldTakingToken"  class="takingToken" onclick="TokenClick('TakingEmerald')"  ><img class="p-0" width="100%" src="Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldTakingTokenValue">0</h1></td>
+                        <td id="SapphireTakingToken" class="takingToken" onclick="TokenClick('TakingSapphire')" ><img class="p-0" width="100%" src="Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireTakingTokenValue">0</h1></td>
+                        <td id="RubyTakingToken"     class="takingToken" onclick="TokenClick('TakingRuby')"     ><img class="p-0" width="100%" src="Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyTakingTokenValue">0</h1></td>
+                        <td id="DiamondTakingToken"  class="takingToken" onclick="TokenClick('TakingDiamond')"  ><img class="p-0" width="100%" src="Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondTakingTokenValue">0</h1></td>
+                        <td id="OnyxTakingToken"     class="takingToken" onclick="TokenClick('TakingOnyx')"     ><img class="p-0" width="100%" src="Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxTakingTokenValue">0</h1></td>
+                    </tr>
+                    <tr>
+                        <td class="token" onclick="TokenClick('Emerald')"  ><img class="p-0" width="100%" src="Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldTokenValue" >@Model.TokenStacks[Token.Emerald]</h1></td>
+                        <td class="token" onclick="TokenClick('Sapphire')" ><img class="p-0" width="100%" src="Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireTokenValue">@Model.TokenStacks[Token.Sapphire]</h1></td>
+                        <td class="token" onclick="TokenClick('Ruby')"     ><img class="p-0" width="100%" src="Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyTokenValue"    >@Model.TokenStacks[Token.Ruby]</h1></td>
+                        <td class="token" onclick="TokenClick('Diamond')"  ><img class="p-0" width="100%" src="Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondTokenValue" >@Model.TokenStacks[Token.Diamond]</h1></td>
+                        <td class="token" onclick="TokenClick('Onyx')"     ><img class="p-0" width="100%" src="Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxTokenValue"    >@Model.TokenStacks[Token.Onyx]</h1></td>
+                        <td class="token" onclick="TokenClick('Gold')"     ><img class="p-0" width="100%" src="Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldTokenValue"    >@Model.TokenStacks[Token.Gold]</h1></td>
+
+                    </tr>
+                </table>
+        </section>
     </section>
 
 
