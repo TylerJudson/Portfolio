@@ -20,7 +20,7 @@ function ToggleScreen(screenID) {
     }
 }
 
-function CardScreen(ImageName, purchaseable) {
+function CardScreen(ImageName) {
 
     let innerHtml = `
         <img class="mx-auto card mt-8
@@ -44,6 +44,24 @@ function CardScreen(ImageName, purchaseable) {
 
     CardScreen.innerHTML = innerHtml;
     CardScreen.style.display = "block";
+}
+function NobleScreen(ImageName) {
+    let innerHtml = `
+        <img class="mx-auto card mt-8
+                    mt-md-7"
+                    mt-lg-5" src="Images/` + ImageName + `" width="auto" style="max-width: 75%; max-height: 50%"/>
+        <div class="container row mt-5 mx-auto
+                    pl-md-6
+                    pl-lg-8
+                    pl-xl-10" style="width: 100%">
+            <button class="btn btn-outline-light btn-lg" style="width: 10rem;" onclick='ToggleScreen("NobleScreen")'>Back</button>
+        </div>
+    `;
+
+    let NobleScreen = document.getElementById("NobleScreen")
+
+    NobleScreen.innerHTML = innerHtml;
+    NobleScreen.style.display = "block";
 }
 
 function ValidateTokens(token) {
@@ -74,7 +92,6 @@ function CountTakingTokens() {
     return sum;
 }
 
-
 function TokenClick(token) {
     switch (token) {
         case "TakingEmerald":
@@ -84,7 +101,7 @@ function TokenClick(token) {
                 document.getElementById("EmeraldTokenValue").innerHTML++;
                 if (EmeraldTakingToken.innerHTML == 0) {
                     document.getElementById("EmeraldTakingToken").style.opacity = 0;
-
+                    document.getElementById("EmeraldTakingToken").style.cursor = "default";
                 }
                 TakingTokens.Emerald--;
             }
@@ -96,6 +113,7 @@ function TokenClick(token) {
                 document.getElementById("SapphireTokenValue").innerHTML++;
                 if (SapphireTakingToken.innerHTML == 0) {
                     document.getElementById("SapphireTakingToken").style.opacity = 0;
+                    document.getElementById("SapphireTakingToken").style.cursor = "default";
                 }
                 TakingTokens.Sapphire--;
             }
@@ -108,6 +126,7 @@ function TokenClick(token) {
                 document.getElementById("RubyTokenValue").innerHTML++;
                 if (RubyTakingToken.innerHTML == 0) {
                     document.getElementById("RubyTakingToken").style.opacity = 0;
+                    document.getElementById("RubyTakingToken").style.cursor = "default";
                 }
                 TakingTokens.Ruby--;
             }
@@ -119,6 +138,7 @@ function TokenClick(token) {
                 document.getElementById("DiamondTokenValue").innerHTML++;
                 if (DiamondTakingToken.innerHTML == 0) {
                     document.getElementById("DiamondTakingToken").style.opacity = 0;
+                    document.getElementById("DiamondTakingToken").style.cursor = "default";
                 }
                 TakingTokens.Diamond--;
             }
@@ -130,6 +150,7 @@ function TokenClick(token) {
                 document.getElementById("OnyxTokenValue").innerHTML++;
                 if (OnyxTakingToken.innerHTML == 0) {
                     document.getElementById("OnyxTakingToken").style.opacity = 0;
+                    document.getElementById("OnyxTakingToken").style.cursor = "default";
                 }
                 TakingTokens.Onyx--;
             }
@@ -155,6 +176,7 @@ function TokenClick(token) {
                 EmeraldTokenValue.innerHTML--;
                 document.getElementById("EmeraldTakingTokenValue").innerHTML++;
                 document.getElementById("EmeraldTakingToken").style.opacity = 7.5;
+                document.getElementById("EmeraldTakingToken").style.cursor = "pointer";
                 TakingTokens.Emerald++;
             }
             break;
@@ -165,6 +187,7 @@ function TokenClick(token) {
                 SapphireTokenValue.innerHTML--;
                 document.getElementById("SapphireTakingTokenValue").innerHTML++;
                 document.getElementById("SapphireTakingToken").style.opacity = 7.5;
+                document.getElementById("SapphireTakingToken").style.cursor = "pointer";
                 TakingTokens.Sapphire++;
             }
             break;
@@ -175,6 +198,7 @@ function TokenClick(token) {
                 RubyTokenValue.innerHTML--;
                 document.getElementById("RubyTakingTokenValue").innerHTML++;
                 document.getElementById("RubyTakingToken").style.opacity = 7.5;
+                document.getElementById("RubyTakingToken").style.cursor = "pointer";
                 TakingTokens.Ruby++;
             }
             break;
@@ -185,6 +209,7 @@ function TokenClick(token) {
                 DiamondTokenValue.innerHTML--;
                 document.getElementById("DiamondTakingTokenValue").innerHTML++;
                 document.getElementById("DiamondTakingToken").style.opacity = 7.5;
+                document.getElementById("DiamondTakingToken").style.cursor = "pointer";
                 TakingTokens.Diamond++;
             }
             break;
@@ -195,6 +220,7 @@ function TokenClick(token) {
                 OnyxTokenValue.innerHTML--;
                 document.getElementById("OnyxTakingTokenValue").innerHTML++;
                 document.getElementById("OnyxTakingToken").style.opacity = 7.5;
+                document.getElementById("OnyxTakingToken").style.cursor = "pointer";
                 TakingTokens.Onyx++;
             }
             break;

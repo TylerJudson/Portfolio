@@ -8,8 +8,8 @@ namespace Splendor.Controllers
     {
         private static IGameBoard GameBoard { get; set; }
 
-        public GameController() {
-            GameBoard = new GameBoard(new List<IPlayer>() { new Player("Bob"), new Player("Jill") });
+        static GameController() {
+            GameBoard = new GameBoard(new List<IPlayer>() { new Player("Bob"), new Player("Jill"), new Player("Zack"), new Player("Sally") });
 
             GameBoard.Render();
         }
@@ -22,7 +22,12 @@ namespace Splendor.Controllers
         }
 
     
-
+        [HttpGet]
+        [Route("Game/State/{gameID:int}/{playerID:int}")]
+        public JsonResult State(int gameID, int playerId)
+        {
+            return Json(GameBoard);
+        }
         
 
     }

@@ -9,6 +9,10 @@
 
 html {
     font-size: 14px;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
 }
 
 @media (min-width: 768px) {
@@ -23,13 +27,21 @@ html {
 }
 
 
-
+#Bob-TotalEmerald {
+    background-color: blue;
+}
 body {
     background-color: #191919;
     color: white;
     margin-bottom: 60px;
 }
+.cursorHover {
+    cursor: pointer;
+}
 
+.border-purple {
+    border: 2px solid var(--purple);
+}
 
 .btn-outline-purple {
     color: var(--purple);
@@ -73,6 +85,11 @@ body {
     border-radius: 7.5%;
 }
 
+.maxContainer {
+    max-width: 100%;
+}
+
+
 
 .token {
     position: relative;
@@ -99,7 +116,10 @@ body {
     transform: translate(-50%, -50%);
 }
 
-
+.playerStats {
+    width: 3rem;
+    height: 3rem;
+}
 .mt-10 {
     margin-top: 15rem;
 }
@@ -109,7 +129,10 @@ body {
 .mt-8 {
     margin-top: 12rem;
 }
+
+
 @media (min-width: 576px) {
+    
     .mt-sm-9 {
         margin-top: 14rem;
     }
@@ -118,4 +141,52 @@ body {
     .mt-md-7 {
         margin-top: 10rem;
     }
+    .ml-md-7 {
+        margin-left: 10rem;
+    }
+    .pl-md-6 {
+        padding-left: 7rem;
+    }
+    .pl-md-7 {
+        padding-left: 10rem;
+    }
+}
+@media (min-width: 992px) {
+    
+    .mt-lg-10 {
+        margin-top: 15rem !important;
+    }
+    .mt-lg-8 {
+        margin-top: 12rem !important;
+    }
+    .pb-lg-10 {
+        padding-bottom: 15rem;
+    }
+    .pl-lg-7 {
+        padding-left: 10rem;
+    }
+    .pl-lg-8 {
+        padding-left: 12rem;
+    }
+}
+@media (min-width: 1200px) {
+    
+    .pl-xl-10 {
+        padding-left: 15rem;
+    }
+}
+
+@media (min-width: 1400px) {
+    #Shop {
+        width: 30%;
+        margin-left: 10% !important;
+    }
+    .playerStatsContainer {
+        flex: 0 0 auto;
+        width: 50%;
+    }
+    #ReservedCards {
+        padding-left: 3rem!important;
+    }
+    
 }
