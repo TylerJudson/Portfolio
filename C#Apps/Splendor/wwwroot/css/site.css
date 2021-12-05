@@ -2,7 +2,7 @@
 :root {
     --purple: rgb(110, 10, 150);
     --darkPurple: rgba(60, 0, 90);
-    --purpleOpacity: rgba(80, 0, 120, 0.5);
+    --purpleOpacity: rgba(110, 10, 150, 0.5);
 }
 
 
@@ -27,11 +27,29 @@ html {
 }
 
 
+
+#SplendorHeading {
+    font-size: 5rem;
+    font-weight: 400;
+}
+
+#HomeButtons {
+    max-width: 75%;
+}
+
 #Bob-TotalEmerald {
     background-color: blue;
 }
+
+
+
+
+
+
+
+
 body {
-    background-color: #191919;
+    background-color: rgb(23, 23, 23);
     color: white;
     margin-bottom: 60px;
 }
@@ -67,6 +85,29 @@ body {
 .btn-purple:focus {
     box-shadow: 0 0 0 0.25rem var(--purpleOpacity);
 }
+
+
+
+
+.btn-outline-darkPurple {
+    color: rgb(111, 66, 193);
+    border-color: rgb(111, 66, 193);
+}
+
+.btn-outline-darkPurple:hover {
+    color: #fff;
+    background-color: rgb(111, 66, 193);
+    border-color: rgb(111, 66, 193);
+}
+
+.btn-outline-darkPurple:focus {
+    box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.5);
+}
+
+
+
+
+
 
 .OverlayScreen {
     display: none;
@@ -120,6 +161,20 @@ body {
     width: 3rem;
     height: 3rem;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .mt-10 {
     margin-top: 15rem;
 }
@@ -128,6 +183,12 @@ body {
 }
 .mt-8 {
     margin-top: 12rem;
+}
+.mt-7 {
+    margin-top: 10rem;
+}
+.mt-6 {
+    margin-top: 7rem;
 }
 
 
@@ -152,9 +213,14 @@ body {
     }
 }
 @media (min-width: 992px) {
-    
+    #SplendorHeading {
+        font-size: 10rem;
+    }
     .mt-lg-10 {
         margin-top: 15rem !important;
+    }
+    .mt-lg-9 {
+        margin-top: 14rem !important;
     }
     .mt-lg-8 {
         margin-top: 12rem !important;
@@ -170,7 +236,9 @@ body {
     }
 }
 @media (min-width: 1200px) {
-    
+     .mt-xl-10 {
+         margin-top: 15rem;
+     }
     .pl-xl-10 {
         padding-left: 15rem;
     }
