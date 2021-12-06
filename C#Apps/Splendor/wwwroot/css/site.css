@@ -237,6 +237,9 @@ body {
     }
 }
 @media (min-width: 992px) {
+    .welcomeHeading {
+        font-size: 8rem;
+    }
     .splendorHeading {
         font-size: 10rem;
     }

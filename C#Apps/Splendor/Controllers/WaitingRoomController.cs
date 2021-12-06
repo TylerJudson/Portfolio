@@ -14,8 +14,8 @@ namespace Splendor.Controllers
             IPotentialGame game;
             if (pendingGames.TryGetValue(gameId, out game))
             {
-                ViewData["GameID"] = gameId;
-                ViewData["PlayerID"] = playerId;
+                ViewData["GameId"] = gameId;
+                ViewData["PlayerId"] = playerId;
                 ViewData["IsCreator"] = playerId == 0 ? "true" : "false";
                 return View("Index", game);
             }
@@ -62,7 +62,7 @@ namespace Splendor.Controllers
                 int playerId = -1;
                 lock(this)
                 {
-                    playerId = game.PlayerNames.Count + 1; // Need to add a plus one because the creator is not in this list
+                    playerId = game.PlayerNames.Count;
                     // TODO: Might be good to see if there are duplicate names and if so append some identifier (such as ip address to the name to differentiate them)
                     game.PlayerNames.Add(playerName);
                 }
@@ -74,7 +74,7 @@ namespace Splendor.Controllers
 
 
         [HttpGet]
-        [Route("WaitingRoom/State/{gameID:int}/{playerID:int}")]
+        [Route("WaitingRoom/State/{gameId:int}/{playerId:int}")]
         public JsonResult State(int gameID, int playerId)
         {
             IPotentialGame game;

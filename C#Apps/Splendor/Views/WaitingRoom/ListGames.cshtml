@@ -33,9 +33,11 @@
                 <input class="mx-auto" type="text" id="playerName" name="playerName" maxlength="20" autocomplete="off" required autofocus>
             </div>
 
-            <div class="mx-auto mt-5 container row p-0" style="width: 80%;">
-                <div class="col-12" style="width: 80%">
-                    <h5 class="mx-auto" style="width: 80%">Available Games To Join</h5>
+            <div class="mx-auto mt-5 container row p-0">
+                <!-- Available Games -->
+                <div class="col-12 p-0
+                            col-lg-6 mt-lg-3" >
+                    <h5 class="mx-auto fs-3" style="width: 80%">Available Games To Join</h5>
                     <table class="mx-auto" style="width: 80%">
                     @for (int i = 0; i < Model.Count; i++)
                     {
@@ -47,12 +49,14 @@
                     </table>
                 </div>
 
-                <div class="col-12 mt-5 p-0">
+                <!-- Enter Game Id -->
+                <div class="col-12 mt-7 p-0
+                            col-lg-6 mt-lg-3">
                     <div class="mx-auto" style="width: 80%">
                         <label class="fs-3" for="gameId">Enter Game Id: </label>
                     </div>
                     <div class="text-center">
-                        <input class="mx-auto" type="text" id="gameId" name="gameId" maxlength="20" autocomplete="off">
+                        <input class="mx-auto" type="text" id="gameId" name="gameId" maxlength="20" autocomplete="off" required>
                     </div>
                     <div class="text-end mx-auto mt-3" style="width: 80%">
                         <input class="btn-outline-purple btn" style="width: 40%; max-width: 20rem;" type="submit" value="Join Game">

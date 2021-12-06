@@ -11,7 +11,7 @@
     setTimeout(pull, 5000); 
     function pull() {
         $.ajax({
-            url: "/WaitingRoom/State/@ViewData["GameID"]/@ViewData["PlayerID"]",
+            url: "/WaitingRoom/State/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "GET",
             success: function (response) {
                 if (response.hasOwnProperty('playerNames')) {
@@ -27,7 +27,7 @@
                         document.getElementById("startGameButton").disabled = false;
                     }
                 } else {
-                    location.href = '/Game/Index?gameID=@ViewData["GameID"]&playerID=@ViewData["PlayerID"]';
+                    location.href = '/Game/Index?gameID=@ViewData["GameId"]&playerID=@ViewData["PlayerId"]';
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -41,11 +41,12 @@
 </script>
 
 
-<div class="mt-5">  
-    <h1 class="text-center display-1">Waiting For Players...</h1>
+<div class="mt-5">
+    <h1 class="welcomeHeading text-center display-1" style="font-weight: 500;">Welcome @Model.PlayerNames[(int) ViewData["PlayerId"]]</h1>
+    <h1 class="mt-5 text-center display-4">Waiting For Players...</h1>
     <h4 class="text-center text-purple fw-light">Waiting Room Id: @Model.Id</h4>
 
-    <h3 class="mt-8 mx-auto" style="width: 80%">Current Players:</h3>
+    <h3 class="mt-5 mx-auto" style="width: 80%">Current Players:</h3>
     <div id="currentPlayers" class="mt-2 mx-auto" style="width: 80%">
         @for (int i = 0; i < Model.PlayerNames.Count; i++)
         {
@@ -53,11 +54,19 @@
         }
     </div>
 
-    @if( ViewData["IsCreator"] == "true")
+    @if( ViewData["IsCreator"] == "true" )
     {
         <form action="/Game/Start" class="mx-auto mt-5" style="width: 80%">
             <input type="hidden" id="gameId" name="gameId" value='@ViewData["GameId"]'/>
-            <input id="startGameButton" disabled class="btn btn-outline-purple" type="submit" value="Start Game">
+            @if (@Model.PlayerNames.Count >= 2)
+            {
+                <input id="startGameButton" class="btn btn-outline-purple" type="submit" value="Start Game">
+            }
+            else 
+            {
+                <input id="startGameButton" disabled class="btn btn-outline-purple" type="submit" value="Start Game">
+            }
+            
         </form>
     } else
     {
