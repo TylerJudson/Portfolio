@@ -3,31 +3,65 @@
 *@
 @model List<Splendor.Models.IPotentialGame>
 @{
+    ViewData["Title"] = "Join Game";
 }
 <script>
     function enterRoom(gameId) {
-        // TODO: 
-        // set the player-info form gameId property
-        // submit the player-info form
         var form = document.getElementById('player-info');
+        if (!form.elements["playerName"].checkValidity())
+        {
+            form.elements["playerName"].reportValidity();
+            return false;
+        }
         form.elements["gameId"].value = gameId;
-        form.submit();
+        return true;
     }
 </script>
 
-<form id="player-info" action="/WaitingRoom/EnterGame">
-    <input type="hidden" id="gameId" name="gameId" value="-1" />
-    <label for="name">Name:</label>
-    <input type="text" id="playerName" name="playerName"><br><br>
-</form>
 
-<h2>Available Games To Join</h2>
-<table>
-@for (int i = 0; i < Model.Count; i++)
-{
-    <tr>
-        <td>@Model[i].CreatingPlayerName</td>
-        <td><button onclick="enterRoom('@Model[i].Id');" >Join</button></td>
-    </tr>
-}
-</table>
+<div>
+
+    <h1 class="text-center display-1 mt-3">Join Game</h1>
+    <div class="mx-auto mt-7" style="max-width: 75rem;">
+        <form id="player-info" action="/WaitingRoom/EnterGame">
+
+
+            <div style="width: 80%;" class="mx-auto">
+                <label class="fs-3" for="playerName">Please enter your Name: </label>
+            </div>
+            <div class="text-center">
+                <input class="mx-auto" type="text" id="playerName" name="playerName" maxlength="20" autocomplete="off" required autofocus>
+            </div>
+
+            <div class="mx-auto mt-5 container row p-0" style="width: 80%;">
+                <div class="col-12" style="width: 80%">
+                    <h5 class="mx-auto" style="width: 80%">Available Games To Join</h5>
+                    <table class="mx-auto" style="width: 80%">
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr style="width: 80%">
+                            <td class="text-start mt-3">@Model[i].CreatingPlayerName</td>
+                            <td class="text-end mt-3"><input id="@Model[i].Id" type="submit" onclick="return enterRoom('@Model[i].Id');" class="btn-outline-purple btn" value="Join Game"></td>
+                        </tr>
+                    }
+                    </table>
+                </div>
+
+                <div class="col-12 mt-5 p-0">
+                    <div class="mx-auto" style="width: 80%">
+                        <label class="fs-3" for="gameId">Enter Game Id: </label>
+                    </div>
+                    <div class="text-center">
+                        <input class="mx-auto" type="text" id="gameId" name="gameId" maxlength="20" autocomplete="off">
+                    </div>
+                    <div class="text-end mx-auto mt-3" style="width: 80%">
+                        <input class="btn-outline-purple btn" style="width: 40%; max-width: 20rem;" type="submit" value="Join Game">
+                   </div>
+                </div>
+            </div>
+            
+        </form>
+        
+    </div>
+</div>
+
