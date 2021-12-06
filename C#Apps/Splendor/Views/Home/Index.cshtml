@@ -1,28 +1,18 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Splendor";
 
 }
 
-<style>
-    
-    
-    
-    
-</style>
-
 <div class="text-center container mt-6  ">
-    <h1 id="SplendorHeading" class="col-12" >Splendor</h1>
+    <h1 class="col-12 splendorHeading" >Splendor</h1>
 
     <div id="HomeButtons" class="mt-8 mx-auto 
                                     mt-xl-10">
-        <button class="col-12 mt-10 btn btn-outline-purple
+        <a class="col-12 mt-10 btn btn-outline-purple
                         col-lg-4 mt-lg-9 mx-lg-5
-                        mt-xl-10">New Game</button>
-        <button class="col-12 mt-3 btn btn-outline-darkPurple
+                        mt-xl-10" asp-controller="WaitingRoom" asp-action="NewGame">New Game</a>
+        <a class="col-12 mt-3 btn btn-outline-darkPurple
                         col-lg-4 mt-lg-9 mx-lg-5
-                        mt-xl-10">Join Game</button>
+                        mt-xl-10" asp-controller="WaitingRoom" asp-action="ListGames">Join Game</a>
     </div>
-
-        
-    @*<a class="mt-10" id="mock_game" asp-controller="Game" asp-action="Index">Goto Game</a>*@
 </div>

@@ -1,0 +1,33 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model List<Splendor.Models.IPotentialGame>
+@{
+}
+<script>
+    function enterRoom(gameId) {
+        // TODO: 
+        // set the player-info form gameId property
+        // submit the player-info form
+        var form = document.getElementById('player-info');
+        form.elements["gameId"].value = gameId;
+        form.submit();
+    }
+</script>
+
+<form id="player-info" action="/WaitingRoom/EnterGame">
+    <input type="hidden" id="gameId" name="gameId" value="-1" />
+    <label for="name">Name:</label>
+    <input type="text" id="playerName" name="playerName"><br><br>
+</form>
+
+<h2>Available Games To Join</h2>
+<table>
+@for (int i = 0; i < Model.Count; i++)
+{
+    <tr>
+        <td>@Model[i].CreatingPlayerName</td>
+        <td><button onclick="enterRoom('@Model[i].Id');" >Join</button></td>
+    </tr>
+}
+</table>

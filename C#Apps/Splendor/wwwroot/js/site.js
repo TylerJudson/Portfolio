@@ -9,8 +9,6 @@
 
 
 
-
-
 function ToggleScreen(screenID) {
     var x = document.getElementById(screenID);
     if (x.style.display === "none") {
@@ -25,7 +23,7 @@ function CardScreen(ImageName) {
     let innerHtml = `
         <img class="mx-auto card mt-8
                     mt-md-7"
-                    mt-lg-5" src="Images/` + ImageName + `" width="auto" style="max-height: 50%"/>
+                    mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-height: 50%"/>
         <div class="container row mt-5 mx-auto style="width: 100%">
             <div class="col p-0">
             <div class="purple p-0 mx-auto" style="width: 10rem;">
@@ -45,11 +43,12 @@ function CardScreen(ImageName) {
     CardScreen.innerHTML = innerHtml;
     CardScreen.style.display = "block";
 }
+
 function NobleScreen(ImageName) {
     let innerHtml = `
         <img class="mx-auto card mt-8
                     mt-md-7"
-                    mt-lg-5" src="Images/` + ImageName + `" width="auto" style="max-width: 75%; max-height: 50%"/>
+                    mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-width: 75%; max-height: 50%"/>
         <div class="container row mt-5 mx-auto
                     pl-md-6
                     pl-lg-8

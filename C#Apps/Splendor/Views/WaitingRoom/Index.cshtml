@@ -1,0 +1,68 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Splendor.Models.IPotentialGame
+@{
+    ViewData["Title"] = "Waiting Room";
+}
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+    setTimeout(pull, 5000);
+    function pull() {
+        $.ajax({
+            url: "/WaitingRoom/State/@ViewData["GameID"]/@ViewData["PlayerID"]",
+            type: "GET",
+            success: function (response) {
+                if (response.hasOwnProperty('playerNames')) {
+                    let currentPlayers = response.playerNames;
+                    let newList = "";
+                    for (const name of currentPlayers) {
+                        newList += "<p class='ps-3'> - " + name + "</p>";
+                    }
+                    document.getElementById("currentPlayers").innerHTML = newList;
+
+                    if (currentPlayers.length >= 2)
+                    {
+                        document.getElementById("startGameButton").disabled = false;
+                    }
+                } else {
+                    location.href = '/Game/Index?gameID=@ViewData["GameID"]&playerID=@ViewData["PlayerID"]';
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status);
+                alert(thrownError);
+            }
+        });
+        setTimeout(pull, 5000);
+        return false;
+    }
+</script>
+
+
+<div class="mt-5">  
+    <h1 class="text-center display-1">Waiting For Players...</h1>
+    <h4 class="text-center text-purple fw-light">Waiting Room Id: @Model.Id</h4>
+
+    <h3 class="mt-5 mx-auto" style="width: 80%">Current Players:</h3>
+    <div id="currentPlayers" class="mt-2 mx-auto" style="width: 80%">
+        @for (int i = 0; i < Model.PlayerNames.Count; i++)
+        {
+            <p class="pl-1"> - @Model.PlayerNames[i]</p>
+        }
+    </div>
+
+    @if( ViewData["IsCreator"] == "true")
+    {
+        <form action="/Game/Start" class="mx-auto mt-5" style="width: 80%">
+            <input type="hidden" id="gameId" name="gameId" value='@ViewData["GameId"]'/>
+            <input id="startGameButton" disabled class="btn btn-outline-purple" type="submit" value="Start Game">
+        </form>
+    } else
+    {
+        <!-- TODO add java script to pull to find out if games has started and then redirect to the game -->
+    }
+</div>
+
+
