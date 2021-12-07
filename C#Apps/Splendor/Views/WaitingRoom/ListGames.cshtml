@@ -19,6 +19,8 @@
 </script>
 
 
+
+
 <div>
 
     <h1 class="text-center display-1 mt-3">Join Game</h1>
@@ -69,3 +71,23 @@
     </div>
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@if (TempData["message"] != null)
+{
+    <script>
+        alert('@TempData["message"]')
+    </script>
+}

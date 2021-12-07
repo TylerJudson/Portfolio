@@ -59,6 +59,11 @@ namespace Splendor.Controllers
             IPotentialGame game;
             if (pendingGames.TryGetValue(gameId, out game))
             {
+                if (game.PlayerNames.Count >= game.MaxPlayers)
+                {
+                    TempData["message"] = "The Game has too many players.";
+                    return RedirectToAction("ListGames");
+                }
                 int playerId = -1;
                 lock(this)
                 {
@@ -69,7 +74,8 @@ namespace Splendor.Controllers
                 return Redirect("/WaitingRoom/Index?gameId=" + gameId + "&playerId=" + playerId);
             }
             // Input was bad or game no longer exists.
-            return View("Error");
+            TempData["message"] = "The Game has already started.";
+            return RedirectToAction("ListGames");
         }
 
 

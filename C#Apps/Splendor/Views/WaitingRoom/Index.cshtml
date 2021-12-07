@@ -14,6 +14,7 @@
             url: "/WaitingRoom/State/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "GET",
             success: function (response) {
+                alert(response.playerNames);
                 if (response.hasOwnProperty('playerNames')) {
                     let currentPlayers = response.playerNames;
                     let newList = "";
@@ -44,7 +45,7 @@
 <div class="mt-5">
     <h1 class="welcomeHeading text-center display-1" style="font-weight: 500;">Welcome @Model.PlayerNames[(int) ViewData["PlayerId"]]</h1>
     <h1 class="mt-5 text-center display-4">Waiting For Players...</h1>
-    <h4 class="text-center text-purple fw-light">Waiting Room Id: @Model.Id</h4>
+    <h4 class="text-center text-purple fw-light">Game Id: @Model.Id</h4>
 
     <h3 class="mt-5 mx-auto" style="width: 80%">Current Players:</h3>
     <div id="currentPlayers" class="mt-2 mx-auto" style="width: 80%">
@@ -68,9 +69,6 @@
             }
             
         </form>
-    } else
-    {
-        <!-- TODO add java script to pull to find out if games has started and then redirect to the game -->
     }
 </div>
 

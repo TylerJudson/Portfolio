@@ -8,7 +8,7 @@
 
         public List<string> PlayerNames { get; }
 
-        public int MaxPlayers { get; }
+        public int MaxPlayers { get; } = 4;
 
         //TODO - documentation
 
