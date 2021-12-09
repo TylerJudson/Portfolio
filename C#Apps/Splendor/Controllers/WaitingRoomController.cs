@@ -11,8 +11,7 @@ namespace Splendor.Controllers
 
         public IActionResult Index(int gameId, int playerId)
         {
-            IPotentialGame game;
-            if (pendingGames.TryGetValue(gameId, out game))
+            if (pendingGames.TryGetValue(gameId, out IPotentialGame? game))
             {
                 ViewData["GameId"] = gameId;
                 ViewData["PlayerId"] = playerId;
@@ -28,6 +27,11 @@ namespace Splendor.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Creates a new potential game
+        /// </summary>
+        /// <param name="playerName">The name of the creator</param>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult NewGameInfo([FromQuery] string playerName)
         {
@@ -53,11 +57,15 @@ namespace Splendor.Controllers
             return View(availableGamesToJoin);
         }
 
+        public IActionResult ListGamesState()
+        {
+            List<IPotentialGame> availableGamesToJoin = pendingGames.Values.ToList();
+            return Json(availableGamesToJoin);
+        }
         [HttpGet]
         public IActionResult EnterGame([FromQuery] int gameId, [FromQuery] string playerName)
         {
-            IPotentialGame game;
-            if (pendingGames.TryGetValue(gameId, out game))
+            if (pendingGames.TryGetValue(gameId, out IPotentialGame? game))
             {
                 if (game.PlayerNames.Count >= game.MaxPlayers)
                 {
@@ -83,14 +91,13 @@ namespace Splendor.Controllers
         [Route("WaitingRoom/State/{gameId:int}/{playerId:int}")]
         public JsonResult State(int gameID, int playerId)
         {
-            IPotentialGame game;
-            if (pendingGames.TryGetValue(gameID, out game))
+
+            if (pendingGames.TryGetValue(gameID, out IPotentialGame? game))
             {
                 return Json(game);
             }
             // TODO: need to do something here so that the other players in the game know the game started and need to be redirect to the game
-            IGameBoard activeGame;
-            if (GameController.ActiveGames.TryGetValue(gameID, out activeGame))
+            if (GameController.ActiveGames.TryGetValue(gameID, out IGameBoard? activeGame))
             {
                 return Json("started");
             }

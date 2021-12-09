@@ -6,55 +6,48 @@ namespace Splendor.Controllers
 {
     public class GameController : Controller
     {
-        private static IGameBoard GameBoard { get; set; }
         public static Dictionary<int, IGameBoard> ActiveGames { get; set; } = new Dictionary<int, IGameBoard>();
 
-        static GameController() {
-            GameBoard = new GameBoard(new List<IPlayer>() { new Player("Bob"), new Player("Jill"), new Player("Zack"), new Player("Sally") });
-
-            GameBoard.Render();
-
-            ActiveGames.Add(0, GameBoard);
-        }
-
-        public IActionResult Index(int gameID, int playerID)
+            public IActionResult Index(int gameId, int playerId)
         {
-            ViewData["GameID"] = gameID;
-            ViewData["PlayerID"] = playerID;
+            ViewData["GameId"] = gameId;
+            ViewData["PlayerId"] = playerId;
 
             IGameBoard gameBoard;
-            if (ActiveGames.TryGetValue(gameID, out gameBoard))
+            if (ActiveGames.TryGetValue(gameId, out gameBoard))
             {
                 return View(gameBoard);
             }
 
-            return View(GameBoard);
+            return View("Error");
         }
 
     
         [HttpGet]
-        [Route("Game/State/{gameID:int}/{playerID:int}")]
-        public JsonResult State(int gameID, int playerId)
+        [Route("Game/State/{gameId:int}/{playerId:int}")]
+        public JsonResult State(int gameId, int playerId)
         {
-            IGameBoard gameBoard;
-            if (ActiveGames.TryGetValue(gameID, out gameBoard))
+            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
             {
                 return Json(gameBoard);
             }
 
-            return Json(GameBoard);
+            return Json(null);
         }
 
 
+        /// <summary>
+        /// Starts the game
+        /// </summary>
+        /// <param name="gameId">The Id of the game</param>
+        /// <returns></returns>
         [HttpGet]
         [Route("Game/Start")]
         public IActionResult Start([FromQuery]int gameId)
         {
-            IPotentialGame gameInfo;
-            if (WaitingRoomController.pendingGames.TryGetValue(gameId, out gameInfo))
+            if (WaitingRoomController.pendingGames.TryGetValue(gameId, out IPotentialGame? gameInfo))
             {
                 List<IPlayer> players = new List<IPlayer>();
-                players.Add(new Player(gameInfo.CreatingPlayerName));
                 foreach (string playerName in gameInfo.PlayerNames)
                 {
                     players.Add(new Player(playerName));
@@ -64,9 +57,9 @@ namespace Splendor.Controllers
                 WaitingRoomController.pendingGames.Remove(gameId);
 
 
-                ViewData["GameID"] = gameId;
-                ViewData["PlayerID"] = 0;
-                return Redirect("/Game/Index?gameID=" + gameId + "&playerID=0");
+                ViewData["GameId"] = gameId;
+                ViewData["PlayerId"] = 0;
+                return Redirect("/Game/Index?gameId=" + gameId + "&playerId=0");
 
             }
             return View("Error");
