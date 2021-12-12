@@ -6,6 +6,9 @@ namespace Splendor.Controllers
 {
     public class WaitingRoomController : Controller
     {
+        /// <summary>
+        /// The list of potential games waiting to start
+        /// </summary>
         public static Dictionary<int, IPotentialGame> pendingGames { get; } = new Dictionary<int, IPotentialGame>();
 
 
@@ -60,24 +63,30 @@ namespace Splendor.Controllers
         public IActionResult ListGamesState()
         {
             List<IPotentialGame> availableGamesToJoin = pendingGames.Values.ToList();
+            availableGamesToJoin = availableGamesToJoin.FindAll(e => e.Players.Count < e.MaxPlayers);
             return Json(availableGamesToJoin);
         }
+
+
         [HttpGet]
         public IActionResult EnterGame([FromQuery] int gameId, [FromQuery] string playerName)
         {
+            // Try to get the game
             if (pendingGames.TryGetValue(gameId, out IPotentialGame? game))
             {
-                if (game.PlayerNames.Count >= game.MaxPlayers)
+                // If there are too many players display a message
+                if (game.Players.Count >= game.MaxPlayers)
                 {
                     TempData["message"] = "The Game has too many players.";
                     return RedirectToAction("ListGames");
                 }
+
                 int playerId = -1;
                 lock(this)
                 {
-                    playerId = game.PlayerNames.Count;
+                    playerId = game.Players.Keys.Max() + 1;
                     // TODO: Might be good to see if there are duplicate names and if so append some identifier (such as ip address to the name to differentiate them)
-                    game.PlayerNames.Add(playerName);
+                    game.Players.Add(playerId, playerName);
                 }
                 return Redirect("/WaitingRoom/Index?gameId=" + gameId + "&playerId=" + playerId);
             }
@@ -94,13 +103,32 @@ namespace Splendor.Controllers
 
             if (pendingGames.TryGetValue(gameID, out IPotentialGame? game))
             {
+                if (!game.Players.ContainsKey(playerId))
+                {
+                    return Json("removed from game");
+                }
                 return Json(game);
             }
-            // TODO: need to do something here so that the other players in the game know the game started and need to be redirect to the game
             if (GameController.ActiveGames.TryGetValue(gameID, out IGameBoard? activeGame))
             {
                 return Json("started");
             }
+            
+            return Json("");
+        }
+
+        [HttpGet]
+        [Route("WaitingRoom/RemovePlayer/{gameId:int}/{playerId:int}")]
+        public JsonResult RemovePlayer(int gameID, int playerId)
+        {
+
+            if (pendingGames.TryGetValue(gameID, out IPotentialGame? game))
+            {
+                game.Players.Remove(playerId);
+
+                return Json(game);
+            }
+            
             return Json("");
         }
     }

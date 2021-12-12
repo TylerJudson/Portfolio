@@ -6,7 +6,7 @@
 
         public string CreatingPlayerName { get; }
 
-        public List<string> PlayerNames { get; }
+        public Dictionary<int, string> Players { get; }
 
         public int MaxPlayers { get; } = 4;
 
@@ -16,8 +16,8 @@
         {
             Id = id;
             CreatingPlayerName = creator;
-            PlayerNames = new List<string>();
-            PlayerNames.Add(creator);
+            Players = new Dictionary<int, string>();
+            Players.Add(0, creator);
         }
     }
 }

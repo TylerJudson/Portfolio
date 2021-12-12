@@ -8,48 +8,23 @@
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script type="text/javascript">
-    setTimeout(pull, 5000);
+
+
+    setTimeout(pull, 1000);
     
     function pull() {
         $.ajax({
             url: "/WaitingRoom/State/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "GET",
             success: function (response) {
-                if (response.hasOwnProperty("playerNames"))
-                {
-                    // Add the players to the list
-                    let currentPlayers = response.playerNames;
-                    let newList = "";   
-                    let IsCreator = @ViewData["IsCreator"];
-                    for (let i = 0; i < currentPlayers.length; i++) {
-                        if (IsCreator) {
-                            if (response.creatingPlayerName == currentPlayers[i]) {
-                                newList += `<tr>
-                                                <td class="me-5"></td>
-                                                <td><p class="m-0">- ` + currentPlayers[i] + `</p> </td>
-                                            </tr>`;
-                            } else {
-                                newList += `<tr>
-                                                <td><a onclick="remove(`+ i + `);" class="me-5 btn-outline-darkPurple btn">Remove</a></td>
-                                                <td><p class="m-0">- ` + currentPlayers[i] + `</p> </td>
-                                            </tr>`;
-                            }
-                        } else {
-                            newList += `<tr>
-                                            <td><p class="m-0">- ` + currentPlayers[i] + `</p> </td>
-                                       </tr>`;
-                        }
-                    }
-                    document.getElementById("currentPlayers").innerHTML = "<table>" + newList + "</table>";
-
-                    // Check to make sure we have enough, but not too many players
-                    if (currentPlayers.length >= 2 && IsCreator) {
-                        document.getElementById("startGameButton").disabled = false;
-                    } else if (currentPlayers.length > 4 && IsCreator) {
-                        document.getElementById("startGameButton").disabled = true;
-                    } 
-
+                if (response.hasOwnProperty("players")) {   
+                    handleGameState(response);
                 } else {
+                    if (response == "removed from game") {
+                        alert("You have been removed from the game.");
+                        location.href = "/WaitingRoom/ListGames";
+                        return;
+                    }
                     location.href = '/Game/Index?gameId=@ViewData["GameId"]&playerId=@ViewData["PlayerId"]';
                 }
             },
@@ -61,7 +36,40 @@
         return false;
     }
 
+    function handleGameState(response) {
+            let currentPlayers = response.players;
+            let newList = "";   
+            let IsCreator = @ViewData["IsCreator"];
+            for (const key in currentPlayers) {
+                if (IsCreator) {
+                    if (key == 0) {
+                        newList += `<tr>
+                                        <td class="me-5"></td>
+                                        <td><p class="m-0">- ` + currentPlayers[key] + `</p> </td>
+                                    </tr>`;
+                    } else {
+                        newList += `<tr>
+                                        <td><a onclick="remove(`+ key + `);" class="me-5 btn-outline-darkPurple btn">Remove</a></td>
+                                        <td><p class="m-0">- ` + currentPlayers[key] + `</p> </td>
+                                    </tr>`;
+                    }
+                } else {
+                    newList += `<tr>
+                                    <td><p class="m-0">- ` + currentPlayers[key] + `</p> </td>
+                                </tr>`;
+                }
+            }
+            document.getElementById("currentPlayers").innerHTML = "<table>" + newList + "</table>";
 
+            // Check to make sure we have enough, but not too many players
+            if (Object.keys(currentPlayers).length >= 2 && IsCreator) {
+                document.getElementById("startGameButton").disabled = false;
+            } else if (Object.keys(currentPlayers).length > 4 && IsCreator) {
+                document.getElementById("startGameButton").disabled = true;
+            } else if (IsCreator) {
+                document.getElementById("startGameButton").disabled = true;
+            }
+    }
 
 
 
@@ -73,38 +81,43 @@
 
 
     function remove(id) {
-        alert("Remove: " + id);
-
-
-        
+        $.ajax({
+            url: "/WaitingRoom/RemovePlayer/@ViewData["GameId"]/" + id,
+            type: "GET",
+            success: function (response) {
+                handleGameState(response);
+            },
+            error: function () {
+                alert("ERROR - please try again.");
+            }
+        });
     }
-
 </script>
 
 
 <div class="mt-5">
-    <h1 class="welcomeHeading text-center display-1" style="font-weight: 500;">Welcome @Model.PlayerNames[(int) ViewData["PlayerId"]]</h1>
+    <h1 class="welcomeHeading text-center display-1" style="font-weight: 500;">Welcome @Model.Players[(int) ViewData["PlayerId"]]</h1>
     <h1 class="mt-5 text-center display-4">Waiting For Players...</h1>
     <h4 class="text-center text-purple fw-light">Game Id: @Model.Id</h4>
 
     <h3 class="mt-5 mx-auto" style="width: 80%">Current Players:</h3>
     <div id="currentPlayers" class="mt-2 mx-auto" style="width: 80%">
         <table>
-        @for (int i = 0; i < Model.PlayerNames.Count; i++)
+        @foreach (int key in Model.Players.Keys)
         {
             <tr>
                 @if ( ViewData["IsCreator"] == "true")
                 {
-                    @if (i == 0) 
+                    @if (key == 0) 
                     {
                          <td class="me-5"></td>
                     }
                     else 
                     {
-                         <td><a onclick="remove(@i)" class="me-5 btn-outline-darkPurple btn">Remove</a></td>
+                         <td><a onclick="remove(@key)" class="me-5 btn-outline-darkPurple btn">Remove</a></td>
                     }
                 }
-                <td><p class="m-0">- @Model.PlayerNames[i]</p> </td>
+                <td><p class="m-0">- @Model.Players[key] </p> </td>
             </tr>
         }
         </table>
@@ -114,7 +127,7 @@
     {
         <form action="/Game/Start" class="mx-auto mt-5" style="width: 80%">
             <input type="hidden" id="gameId" name="gameId" value='@ViewData["GameId"]'/>
-            @if (@Model.PlayerNames.Count >= 2)
+            @if (@Model.Players.Count >= 2)
             {
                 <input id="startGameButton" class="btn btn-outline-purple" type="submit" value="Start Game">
             }

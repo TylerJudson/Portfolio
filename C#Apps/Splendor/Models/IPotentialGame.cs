@@ -6,7 +6,7 @@
 
         string CreatingPlayerName { get; }
 
-        List<string> PlayerNames { get; }
+        Dictionary<int, string> Players { get; }
 
         public int MaxPlayers { get; }
 

@@ -9,18 +9,18 @@ namespace Splendor.Controllers
         public static Dictionary<int, IGameBoard> ActiveGames { get; set; } = new Dictionary<int, IGameBoard>();
 
             public IActionResult Index(int gameId, int playerId)
-        {
-            ViewData["GameId"] = gameId;
-            ViewData["PlayerId"] = playerId;
-
-            IGameBoard gameBoard;
-            if (ActiveGames.TryGetValue(gameId, out gameBoard))
             {
-                return View(gameBoard);
-            }
+                ViewData["GameId"] = gameId;
+                ViewData["PlayerId"] = playerId;
 
-            return View("Error");
-        }
+                IGameBoard gameBoard;
+                if (ActiveGames.TryGetValue(gameId, out gameBoard))
+                {
+                    return View(gameBoard);
+                }
+
+                return View("Error");
+            }
 
     
         [HttpGet]
@@ -48,7 +48,7 @@ namespace Splendor.Controllers
             if (WaitingRoomController.pendingGames.TryGetValue(gameId, out IPotentialGame? gameInfo))
             {
                 List<IPlayer> players = new List<IPlayer>();
-                foreach (string playerName in gameInfo.PlayerNames)
+                foreach (string playerName in gameInfo.Players.Values)
                 {
                     players.Add(new Player(playerName));
                 }
