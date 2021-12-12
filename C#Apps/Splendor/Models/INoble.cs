@@ -1,6 +1,6 @@
 ﻿namespace Splendor.Models
 {
-    public interface INoble : IGameObject
+    public interface INoble
     {
         /// <summary>
         /// The name of the image for the noble

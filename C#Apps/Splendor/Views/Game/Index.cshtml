@@ -9,7 +9,7 @@
     string purple = "rgb(110, 10, 150)";
 
 }
-
+<body style="margin-bottom: 10rem;">
 <!-- Pull for game state -->
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script type="text/javascript">
@@ -80,6 +80,8 @@
 <!-- Noble Screen -->
     <section id="NobleScreen" class="OverlayScreen">
     </section>
+
+
 
 
 <section class="container row mx-auto p-2 maxContainer">
@@ -187,7 +189,7 @@
                                                     col-sm-3
                                                     col-md-4
                                                     ">
-                                            <img id="@Model.Players[i].Name-Reserved:@card.ImageName" class="col-12 p-0 card cursorHover"  maxwidth="33%" src="Images/@card.ImageName" alt=@card.ImageName onclick='CardScreen("@card.ImageName")'/>
+                                            <img id="@Model.Players[i].Name-Reserved:@card.ImageName" class="col-12 p-0 card cursorHover"  maxwidth="33%" src="/Images/@card.ImageName" alt=@card.ImageName onclick='CardScreen("@card.ImageName")'/>
                                         </div>
                                     }
                                 }
@@ -263,3 +265,7 @@
         </section>
 
 </section>
+
+
+<button id="endTurnButton" class="btn-darkPurple btn px-5 fs-3" >End Turn</button>
+</body>

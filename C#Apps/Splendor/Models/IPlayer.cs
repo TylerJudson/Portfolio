@@ -55,6 +55,5 @@
         /// </summary>
         /// <returns>The cummulative number of tokens the player has</returns>
         public int NumberOfTokens();
-        void Test();
     }
 }

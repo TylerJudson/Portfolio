@@ -1,6 +1,6 @@
 ﻿namespace Splendor.Models
 {
-    public interface ICardStack : IGameObject
+    public interface ICardStack
     {
         /// <summary>
         /// The Level of the card 1, 2, or 3

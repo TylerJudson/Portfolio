@@ -1,6 +1,6 @@
 ﻿namespace Splendor.Models
 {
-    public interface ICard : IGameObject
+    public interface ICard
     {
         /// <summary>
         /// The name of the image of the card

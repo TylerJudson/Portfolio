@@ -208,12 +208,6 @@
             // TODO - Add to the currentPlayer
             return new CompletedTurn();
         }
-        public string Render()
-        {
-
-            Players[CurrentPlayer].Test();
-            return "";
-        }
 
         /// <summary>
         /// Initializes the card stack for the level 1 cards

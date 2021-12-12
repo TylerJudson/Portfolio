@@ -1,6 +1,6 @@
 ﻿namespace Splendor.Models
 {
-    public interface IGameBoard : IGameObject
+    public interface IGameBoard
     {
         /// <summary>
         /// The stack of cards for level 1
