@@ -14,19 +14,24 @@ function ToggleScreen(screenID) {
 function CardScreen(ImageName) {
 
     let innerHtml = `
-        <img class="mx-auto card mt-8
+        <img class="mx-auto card mt-6
                     mt-md-7"
                     mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-height: 50%"/>
-        <div class="container row mt-5 mx-auto style="width: 100%">
-            <div class="col p-0">
-            <div class="purple p-0 mx-auto" style="width: 10rem;">
-                <button class="mx-auto btn btn-outline-light btn-lg" style="width: 10rem;" onclick='ToggleScreen("CardScreen")'>Back</button>
+        <div class="container row mt-5 mx-auto" style="width: 90%; max-width: 40rem; ">
+            <div class="col p-0 pe-3">
+                <div class="purple p-0 mx-auto" style="width: 100%;">
+                    <button class="mx-auto btn btn-outline-light btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Back</button>
+                </div>
             </div>
+            <div class="col p-0 ps-3">
+                <div class="p-0 mx-auto" style="width: 100%;">
+                    <button class="mx-auto btn btn-darkPurple btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Reserve</button>
+                </div>
             </div>
-            <div class="col p-0">
-            <div class="p-0 mx-auto" style="width: 10rem;">
-                <button class="mx-auto btn btn-purple btn-lg" style="width: 10rem;" onclick='ToggleScreen("CardScreen")'>Purchase</button>
-            </div>
+            <div class="col-12 p-0 mt-5">
+                <div class="p-0 mx-auto" style="width: 100%;">
+                    <button class="mx-auto btn btn-purple btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Purchase</button>
+                </div>
             </div>
         </div>
     `;
