@@ -7,6 +7,8 @@
         /// </summary>
         private int MaxTokens { get; } = 10;
 
+        public int Id { get; }
+
         public string Name { get; }
 
         public Dictionary<Token, int> Tokens { get; } = new Dictionary<Token, int>() { { Token.Emerald, 0 }, { Token.Diamond, 0 }, { Token.Sapphire, 0 }, { Token.Onyx, 0 }, {Token.Ruby, 0 }, { Token.Gold, 0 } };    
@@ -25,9 +27,10 @@
         /// Initializes the name of the player
         /// </summary>
         /// <param name="name">The name of the player</param>
-        public Player(string name)
+        public Player(string name, int id)
         {
             Name = name;
+            Id = id;
         }
 
         public ICompletedTurn ExecuteTurn(ITurn turn)

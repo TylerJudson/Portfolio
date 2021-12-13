@@ -6,8 +6,17 @@ namespace Splendor.Controllers
 {
     public class GameController : Controller
     {
+        /// <summary>
+        /// The active games currently being played
+        /// </summary>
         public static Dictionary<int, IGameBoard> ActiveGames { get; set; } = new Dictionary<int, IGameBoard>();
 
+        /// <summary>
+        /// Renders the Game
+        /// </summary>
+        /// <param name="gameId">The id of the game</param>
+        /// <param name="playerId">The id of the player</param>
+        /// <returns>The view of the gameboard</returns>
         public IActionResult Index(int gameId, int playerId)
         {
             ViewData["GameId"] = gameId;
@@ -36,6 +45,7 @@ namespace Splendor.Controllers
             // Check to make sure the game is active
             if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
             {
+                
                 return Json(gameBoard);
             }
 
@@ -43,12 +53,41 @@ namespace Splendor.Controllers
             return Json("The game has ended.");
         }
 
+        [HttpPost]
+        [Route("Game/EndTurn/{gameId:int}/{playerId:int}")]
+        public JsonResult EndTurn([FromBody] Turn turn, int gameId, int playerId)
+        {
+            // Check to make sure the game is active
+            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+            {
+                if (turn.TakenTokens != null)
+                {
+
+                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(turn);
+
+                    if (completedTurn.Error != null)
+                    {
+                        return Json(completedTurn.Error);
+                    }
+                    else if (completedTurn.ContinueAction != null)
+                    {
+                        return Json(completedTurn.ContinueAction);
+                    }
+                }
+
+                return Json(gameBoard);
+            }
+
+
+            return Json("");
+        }
+
 
         /// <summary>
         /// Starts the game
         /// </summary>
         /// <param name="gameId">The Id of the game</param>
-        /// <returns>A View of what to display</returns>
+        /// <returns>Redericts to the index view</returns>
         [HttpGet]
         [Route("Game/Start")]
         public IActionResult Start([FromQuery]int gameId)
@@ -60,9 +99,9 @@ namespace Splendor.Controllers
                 List<IPlayer> players = new List<IPlayer>();
 
                 // Populate the list with the player names
-                foreach (string playerName in gameInfo.Players.Values)
+                foreach (KeyValuePair<int, string> kvp in gameInfo.Players)
                 {
-                    players.Add(new Player(playerName));
+                    players.Add(new Player(kvp.Value, kvp.Key));
                 }
 
                 // Create a new game

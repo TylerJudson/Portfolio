@@ -8,6 +8,11 @@
         string Name { get; }
 
         /// <summary>
+        /// The Id of the player
+        /// </summary>
+        int Id { get; }
+
+        /// <summary>
         /// The amount of each token the player has
         /// </summary>
         Dictionary<Token, int> Tokens { get; }

@@ -2,12 +2,12 @@
 {
     public class Turn : ITurn
     {
-        public Dictionary<Token, int>? TakenTokens { get; }
+        public Dictionary<Token, int>? TakenTokens { get; set; }
 
-        public ICard? Card { get; }
+        public ICard? Card { get; set; }
 
-        public ICard? ReservedCard { get; }
+        public ICard? ReservedCard { get; set; }
 
-        public INoble? Noble { get; }
+        public INoble? Noble { get; set; }
     }
 }

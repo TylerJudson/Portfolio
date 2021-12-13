@@ -3,6 +3,16 @@
     public interface IGameBoard
     {
         /// <summary>
+        /// The version number the game is currently at
+        /// </summary>
+        int Version { get; }
+
+        /// <summary>
+        /// The Last Turn executed by the gameboard
+        /// </summary>
+        ITurn LastTurn { get; }
+
+        /// <summary>
         /// The stack of cards for level 1
         /// </summary>
         ICardStack CardStackLevel1 { get; }

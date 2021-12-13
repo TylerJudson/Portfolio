@@ -18,6 +18,7 @@
     <Content Remove="wwwroot\Images\Level1-D-0P-1S-2E-1R-1O.png" />
     <Content Remove="wwwroot\Images\Level1-D-0P-2R-1O.png" />
     <Content Remove="wwwroot\Images\Level1-D-0P-2S-2E-1O.png" />
+    <Content Remove="wwwroot\Images\Level1-D-0P-2S-2O.jpg" />
     <Content Remove="wwwroot\Images\Level1-D-0P-2S-2O.png" />
     <Content Remove="wwwroot\Images\Level1-D-0P-3D-1S-1O.png" />
     <Content Remove="wwwroot\Images\Level1-D-0P-3S.png" />

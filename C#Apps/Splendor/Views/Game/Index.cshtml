@@ -10,17 +10,24 @@
 
 }
 <body style="margin-bottom: 10rem;">
+<!-- Render the gameBoard -->
+    <script> 
+    function renderGameBoard(gameBoard) {
+
+    }
+    </script>
+
 <!-- Pull for game state -->
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script type="text/javascript">
+
     // This sets up a call every 5 seconds to see if something has change.
     // Need to add logic to not make this call when it is the current players turn
     // Need to add logic so that when the current player has completed their turn that we start the pulling again.
-    setTimeout(pull, 5000);
+    setTimeout(pull, 1000);
     function pull() {
-        //alert("pull was called");
         $.ajax({
-            url: "/Game/State/@ViewData["GameID"]/@ViewData["PlayerID"]",
+            url: "/Game/State/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "GET",
             success: function (response) {
                 // TODO: add code here to update state in the browser.  Need to change the object
@@ -29,13 +36,45 @@
                 //alert("CurrentPlayer: " + response.currentPlayer);
             },
             error: function (xhr, ajaxOptions, thrownError) {
-                alert(xhr.status);
-                alert(thrownError);
+                alert("ERROR - Please try again.")
             }
         });
         setTimeout(pull, 5000);
         return false;
     }
+
+    function endTurn() {
+        //$.post( "/Game/EndTurn/@ViewData["GameId"]/@ViewData["PlayerId"]", JSON.stringify({ takenTokens: TakingTokens,  }), function (data) {
+        //        alert( "Data Loaded: " + data );
+        //    }, "application/json" );
+        $.ajax({
+            url: "/Game/EndTurn/@ViewData["GameId"]/@ViewData["PlayerId"]",
+            type: "POST",
+            data: JSON.stringify({ TakenTokens: TakingTokens,  }),
+            contentType: "application/json",
+            dataType: 'json',
+            success: function (data) {
+                if (data.hasOwnProperty("errorCode")) {
+                    alert("Error");
+                } else if (data.hasOwnProperty("actionCode")) {
+
+                }
+                else {
+                    renderGameBoard();
+                }
+                // TODO: add code here to update state in the browser.  Need to change the object
+                // returned so that there is a timestamp or version value so it is easy to determine
+                // if something changed and the game board needs to be changed. 
+                //alert("CurrentPlayer: " + response.currentPlayer);
+                alert( "Data Loaded: " + data );
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert("ERROR - Please try again.")
+            }
+        });
+    }
+
+
     </script>
 
 <!-- Options Screen -->
@@ -64,7 +103,7 @@
             
         </script>
         <div class="mx-3 btn" onclick='ToggleScreen("OptionsScreen")' > 
-            @for (int i = 0; i < 3; i++)
+            @for (int j = 0; j < 3; j++)
             {
                 <svg width="0.8rem" height="1rem">
                     <circle cx="50%" cy="50%" r="5" fill="gray"/>
@@ -89,10 +128,34 @@
     <!-- Player Stats -->
         <section class="col-12 m-0 mt-5 p-2
                         col-lg-6 mt-lg-5 m-lg-0 p-lg-4">
-            @{ string borderColor = "gray"; }
-            @for (int i = 0; i < Model.Players.Count; i++)
+            @{
+                string borderColor = "gray";
+                int playerOrdinal = 0;
+                int i = playerOrdinal - 1;
+                int count = 0;
+            }
+
+            @for (int j = 0; j < Model.Players.Count; j++)
             {
-                @if (i == Model.CurrentPlayer)
+                @if (Model.Players[j].Id == (int)ViewData["PlayerId"])
+                {
+                    playerOrdinal = j;
+                    i = j - 1;
+                    break;
+                }
+            }
+            @while (count < Model.Players.Count)
+            {
+                count++;
+                i++;
+
+                if (i >= Model.Players.Count)
+                {
+                    i -= Model.Players.Count;
+                }
+
+
+                if (i == Model.CurrentPlayer)
                 {
                     borderColor = @purple;
                 }
@@ -118,15 +181,15 @@
                                         {
                                             <th>
                                                 <svg class="playerStats">
-                                                    <text id='@Model.Players[i].Name-Total:@kvp.Key' x="50%" y="50%" text-anchor="middle" fill=@kvp.Value stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@(Model.Players[i].Tokens[kvp.Key] + Model.Players[i].CardTokens[kvp.Key])</text>
+                                                    <text id='@Model.Players[i].Id-Total:@kvp.Key' x="50%" y="50%" text-anchor="middle" fill=@kvp.Value stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@(Model.Players[i].Tokens[kvp.Key] + Model.Players[i].CardTokens[kvp.Key])</text>
                                                 </svg>
                                             </th>
                                         }
 
                                         <th>
                                             <svg class="playerStats">
-                                                    <text id="@Model.Players[i].Name-Total:Gold" x="50%" y="50%" text-anchor="middle" fill="yellow" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[Token.Gold]</text>
-                                                </svg>
+                                                    <text id="@Model.Players[i].Id-Total:Gold" x="50%" y="50%" text-anchor="middle" fill="yellow" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[Token.Gold]</text>
+                                            </svg>
                                         </th>
                                 </tr>
 
@@ -134,7 +197,7 @@
                                 <tr>
                                     <td>
                                         <svg class="playerStats">
-                                            <text id="@Model.Players[i].Name-TokenTotal" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].NumberOfTokens()</text>
+                                            <text id="@Model.Players[i].Id-TokenTotal" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].NumberOfTokens()</text>
                                         </svg>
                                     </td>
                                     @foreach(KeyValuePair<Token, string> kvp in Colors)
@@ -142,7 +205,7 @@
                                         <td>
                                             <svg class="playerStats">
                                                 <circle cx="50%" cy="50%" r="20" fill=@kvp.Value />
-                                                <text id="@Model.Players[i].Name-Token:@kvp.Key" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[kvp.Key]</text>
+                                                <text id="@Model.Players[i].Id-Token:@kvp.Key" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[kvp.Key]</text>
                                             </svg>
                                         </td>
                                     }
@@ -150,7 +213,7 @@
                                     <td>
                                         <svg class="playerStats">
                                             <circle cx="50%" cy="50%" r="20" fill="yellow" />
-                                            <text id="@Model.Players[i].Name-Token:Gold" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[Token.Gold]</text>
+                                            <text id="@Model.Players[i].Id-Token:Gold" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[Token.Gold]</text>
                                         </svg>
                                     </td>
                                 </tr>
@@ -159,7 +222,7 @@
                                 <tr>
                                     <td>
                                         <svg class="playerStats">
-                                            <text id="@Model.Players[i].Name-PrestigePoints" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].PrestigePoints</text>
+                                            <text id="@Model.Players[i].Id-PrestigePoints" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].PrestigePoints</text>
                                         </svg>
                                     </td>
                                     @foreach(KeyValuePair<Token, string> kvp in Colors)
@@ -167,7 +230,7 @@
                                         <td>
                                             <svg class="playerStats">
                                                 <rect x="10%" rx="10" ry="10" width="2.4rem" height="3rem" fill=@kvp.Value />
-                                                <text id="@Model.Players[i].Name-Card:@kvp.Key" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].CardTokens[kvp.Key]</text>
+                                                <text id="@Model.Players[i].Id-Card:@kvp.Key" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].CardTokens[kvp.Key]</text>
                                             </svg>
                                         </td>
                                     }
@@ -189,7 +252,7 @@
                                                     col-sm-3
                                                     col-md-4
                                                     ">
-                                            <img id="@Model.Players[i].Name-Reserved:@card.ImageName" class="col-12 p-0 card cursorHover"  maxwidth="33%" src="/Images/@card.ImageName" alt=@card.ImageName onclick='CardScreen("@card.ImageName")'/>
+                                            <img id="@Model.Players[i].Id-Reserved:@card.ImageName" class="col-12 p-0 card cursorHover"  maxwidth="33%" src="/Images/@card.ImageName" alt=@card.ImageName onclick='CardScreen("@card.ImageName")'/>
                                         </div>
                                     }
                                 }
@@ -267,5 +330,9 @@
 </section>
 
 
-<button id="endTurnButton" class="btn-darkPurple btn px-5 fs-3" >End Turn</button>
+<button id="endTurnButton" class="btn-darkPurple btn px-5 fs-3" onclick="endTurn();">End Turn</button>
+
+
+
+
 </body>

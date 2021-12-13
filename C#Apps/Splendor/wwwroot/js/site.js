@@ -1,11 +1,4 @@
-﻿let TakingTokens = {
-    Emerald: 0,
-    Sapphire: 0,
-    Ruby: 0,
-    Diamond: 0,
-    Onyx: 0
-};
-
+﻿let TakingTokens = GetEmptyTokens();
 
 
 
@@ -89,6 +82,16 @@ function CountTakingTokens() {
         sum += TakingTokens[token];
     }
     return sum;
+}
+
+function GetEmptyTokens() {
+    return {
+        Emerald: 0,
+        Sapphire: 0,
+        Ruby: 0,
+        Diamond: 0,
+        Onyx: 0
+    }
 }
 
 function TokenClick(token) {

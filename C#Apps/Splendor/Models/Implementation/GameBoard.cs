@@ -2,6 +2,10 @@
 {
     public class GameBoard : IGameBoard
     {
+        public int Version { get; private set; }
+
+        public ITurn LastTurn { get; private set; }
+
         public ICardStack CardStackLevel1 { get; }
 
         public ICardStack CardStackLevel2 { get; }
@@ -48,6 +52,7 @@
 
         public ICompletedTurn ExecuteTurn(ITurn turn)
         {
+            
             // If the player aquired tokens -> subtract them from the stacks
             if (turn.TakenTokens != null)
             {
@@ -206,6 +211,9 @@
             }
 
             // TODO - Add to the currentPlayer
+
+            Version++;
+            LastTurn = turn;
             return new CompletedTurn();
         }
 
@@ -219,46 +227,46 @@
                 1,
                 40,
                 new List<ICard> { 
-                    new Card(1, Token.Diamond, 0, new Dictionary<Token, int>() { { Token.Sapphire, 1 }, { Token.Emerald, 1 }, { Token.Ruby, 1 }, { Token.Onyx, 1 } }, "Level1-D-0P-1S-1E-1R-1O.png"),
-                    new Card(1, Token.Diamond, 0, new Dictionary<Token, int>() { { Token.Sapphire, 1 }, { Token.Emerald, 2 }, { Token.Ruby, 1 }, { Token.Onyx, 1 } }, "Level1-D-0P-1S-2E-1R-1O.png"),
-                    new Card(1, Token.Diamond, 0, new Dictionary<Token, int>() { { Token.Ruby, 2 }, { Token.Onyx, 1 } }, "Level1-D-0P-2R-1O.png"),
-                    new Card(1, Token.Diamond, 0, new Dictionary<Token, int>() { { Token.Sapphire, 2 }, { Token.Emerald, 2 }, { Token.Onyx, 1 } }, "Level1-D-0P-2S-2E-1O.png"),
-                    new Card(1, Token.Diamond, 0, new Dictionary<Token, int>() { { Token.Sapphire, 2 }, { Token.Onyx, 2 } }, "Level1-D-0P-2S-2O.png"),
-                    new Card(1, Token.Diamond, 0, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Sapphire, 1 }, { Token.Onyx, 1 } }, "Level1-D-0P-3D-1S-1O.png"),
-                    new Card(1, Token.Diamond, 0, new Dictionary<Token, int>() { { Token.Sapphire, 3 } }, "Level1-D-0P-3S.png"),
-                    new Card(1, Token.Diamond, 1, new Dictionary<Token, int>() { { Token.Emerald, 4 } }, "Level1-D-1P-4E.png"),
-                    new Card(1, Token.Emerald, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Sapphire, 1 }, { Token.Ruby, 1 }, { Token.Onyx, 1 } }, "Level1-E-0P-1D-1S-1R-1O.png"),
-                    new Card(1, Token.Emerald, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Sapphire, 1 }, { Token.Ruby, 1 }, { Token.Onyx, 2 } }, "Level1-E-0P-1D-1S-1R-2O.png"),
-                    new Card(1, Token.Emerald, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Sapphire, 3 }, { Token.Emerald, 1 } }, "Level1-E-0P-1D-3S-1E.png"),
-                    new Card(1, Token.Emerald, 0, new Dictionary<Token, int>() { { Token.Sapphire, 1 }, { Token.Ruby, 2 }, { Token.Onyx, 2 } }, "Level1-E-0P-1S-2R-2O.png"),
-                    new Card(1, Token.Emerald, 0, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Sapphire, 1 } }, "Level1-E-0P-2D-1S.png"),
-                    new Card(1, Token.Emerald, 0, new Dictionary<Token, int>() { { Token.Sapphire, 2 }, { Token.Ruby, 2 } }, "Level1-E-0P-2S-2R.png"),
-                    new Card(1, Token.Emerald, 0, new Dictionary<Token, int>() { { Token.Ruby, 3 } }, "Level1-E-0P-3R.png"),
-                    new Card(1, Token.Emerald, 1, new Dictionary<Token, int>() { { Token.Onyx, 4 } }, "Level1-E-1P-4O.png"),
-                    new Card(1, Token.Onyx, 0, new Dictionary<Token, int>() { { Token.Diamond, 1}, { Token.Sapphire, 1 }, { Token.Emerald, 1 }, { Token.Ruby, 1 } }, "Level1-O-0P-1D-1S-1E-1R.png"),
-                    new Card(1, Token.Onyx, 0, new Dictionary<Token, int>() { { Token.Diamond, 1}, { Token.Sapphire, 2 }, { Token.Emerald, 1 }, { Token.Ruby, 1 } }, "Level1-O-0P-1D-2S-1E-1R.png"),
-                    new Card(1, Token.Onyx, 0, new Dictionary<Token, int>() { { Token.Emerald, 1}, { Token.Ruby, 3 }, { Token.Onyx, 1 } }, "Level1-O-0P-1E-3R-1O.png"),
-                    new Card(1, Token.Onyx, 0, new Dictionary<Token, int>() { { Token.Diamond, 2}, { Token.Emerald, 2 } }, "Level1-O-0P-2D-2E.png"),
-                    new Card(1, Token.Onyx, 0, new Dictionary<Token, int>() { { Token.Diamond, 2}, { Token.Sapphire, 2 }, { Token.Ruby, 1 } }, "Level1-O-0P-2D-2S-1R.png"),
-                    new Card(1, Token.Onyx, 0, new Dictionary<Token, int>() { { Token.Emerald, 2}, { Token.Ruby, 1 } }, "Level1-O-0P-2E-1R.png"),
-                    new Card(1, Token.Onyx, 0, new Dictionary<Token, int>() { { Token.Emerald, 3} }, "Level1-O-0P-3E.png"),
-                    new Card(1, Token.Onyx, 1, new Dictionary<Token, int>() { { Token.Sapphire, 4} }, "Level1-O-1P-4S.png"),
-                    new Card(1, Token.Ruby, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Ruby, 1 }, { Token.Onyx, 3 } }, "Level1-R-0P-1D-1R-3O.png"),
-                    new Card(1, Token.Ruby, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Sapphire, 1 }, { Token.Emerald, 1 }, { Token.Onyx, 1 } }, "Level1-R-0P-1D-1S-1E-1O.png"),
-                    new Card(1, Token.Ruby, 0, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Emerald, 1 }, { Token.Onyx, 2 } }, "Level1-R-0P-2D-1E-2O.png"),
-                    new Card(1, Token.Ruby, 0, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Sapphire, 1 }, { Token.Emerald, 1 }, { Token.Onyx, 1 } }, "Level1-R-0P-2D-1S-1E-1O.png"),
-                    new Card(1, Token.Ruby, 0, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Ruby, 2 } }, "Level1-R-0P-2D-2R.png"),
-                    new Card(1, Token.Ruby, 0, new Dictionary<Token, int>() { { Token.Sapphire, 2 }, { Token.Emerald, 1 } }, "Level1-R-0P-2S-1E.png"),
-                    new Card(1, Token.Ruby, 0, new Dictionary<Token, int>() { { Token.Diamond, 3 } }, "Level1-R-0P-3D.png"),
-                    new Card(1, Token.Ruby, 1, new Dictionary<Token, int>() { { Token.Diamond, 4 } }, "Level1-R-1P-4D.png"),
-                    new Card(1, Token.Sapphire, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Emerald, 1 }, { Token.Ruby, 1 }, { Token.Onyx, 1 } }, "Level1-S-0P-1D-1E-1R-1O.png"),
-                    new Card(1, Token.Sapphire, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Emerald, 1 }, { Token.Ruby, 2 }, { Token.Onyx, 1 } }, "Level1-S-0P-1D-1E-2R-1O.png"),
-                    new Card(1, Token.Sapphire, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Emerald, 2 }, { Token.Ruby, 2 } }, "Level1-S-0P-1D-2E-2R.png"),
-                    new Card(1, Token.Sapphire, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Onyx, 2 } }, "Level1-S-0P-1D-2O.png"),
-                    new Card(1, Token.Sapphire, 0, new Dictionary<Token, int>() { { Token.Sapphire, 1 }, { Token.Emerald, 3 }, { Token.Ruby, 1 } }, "Level1-S-0P-1S-3E-1R.png"),
-                    new Card(1, Token.Sapphire, 0, new Dictionary<Token, int>() { { Token.Emerald, 2 }, { Token.Onyx, 2 } }, "Level1-S-0P-2E-2O.png"),
-                    new Card(1, Token.Sapphire, 0, new Dictionary<Token, int>() { { Token.Onyx, 3 } }, "Level1-S-0P-3O.png"),
-                    new Card(1, Token.Sapphire, 1, new Dictionary<Token, int>() { { Token.Ruby, 4 } }, "Level1-S-1P-4R.png"),
+                    new Card(1, Token.Diamond, 0, new Dictionary<Token, int>() { { Token.Sapphire, 1 }, { Token.Emerald, 1 }, { Token.Ruby, 1 }, { Token.Onyx, 1 } }, "Level1-D-0P-1S-1E-1R-1O.jpg"),
+                    new Card(1, Token.Diamond, 0, new Dictionary<Token, int>() { { Token.Sapphire, 1 }, { Token.Emerald, 2 }, { Token.Ruby, 1 }, { Token.Onyx, 1 } }, "Level1-D-0P-1S-2E-1R-1O.jpg"),
+                    new Card(1, Token.Diamond, 0, new Dictionary<Token, int>() { { Token.Ruby, 2 }, { Token.Onyx, 1 } }, "Level1-D-0P-2R-1O.jpg"),
+                    new Card(1, Token.Diamond, 0, new Dictionary<Token, int>() { { Token.Sapphire, 2 }, { Token.Emerald, 2 }, { Token.Onyx, 1 } }, "Level1-D-0P-2S-2E-1O.jpg"),
+                    new Card(1, Token.Diamond, 0, new Dictionary<Token, int>() { { Token.Sapphire, 2 }, { Token.Onyx, 2 } }, "Level1-D-0P-2S-2O.jpg"),
+                    new Card(1, Token.Diamond, 0, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Sapphire, 1 }, { Token.Onyx, 1 } }, "Level1-D-0P-3D-1S-1O.jpg"),
+                    new Card(1, Token.Diamond, 0, new Dictionary<Token, int>() { { Token.Sapphire, 3 } }, "Level1-D-0P-3S.jpg"),
+                    new Card(1, Token.Diamond, 1, new Dictionary<Token, int>() { { Token.Emerald, 4 } }, "Level1-D-1P-4E.jpg"),
+                    new Card(1, Token.Emerald, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Sapphire, 1 }, { Token.Ruby, 1 }, { Token.Onyx, 1 } }, "Level1-E-0P-1D-1S-1R-1O.jpg"),
+                    new Card(1, Token.Emerald, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Sapphire, 1 }, { Token.Ruby, 1 }, { Token.Onyx, 2 } }, "Level1-E-0P-1D-1S-1R-2O.jpg"),
+                    new Card(1, Token.Emerald, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Sapphire, 3 }, { Token.Emerald, 1 } }, "Level1-E-0P-1D-3S-1E.jpg"),
+                    new Card(1, Token.Emerald, 0, new Dictionary<Token, int>() { { Token.Sapphire, 1 }, { Token.Ruby, 2 }, { Token.Onyx, 2 } }, "Level1-E-0P-1S-2R-2O.jpg"),
+                    new Card(1, Token.Emerald, 0, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Sapphire, 1 } }, "Level1-E-0P-2D-1S.jpg"),
+                    new Card(1, Token.Emerald, 0, new Dictionary<Token, int>() { { Token.Sapphire, 2 }, { Token.Ruby, 2 } }, "Level1-E-0P-2S-2R.jpg"),
+                    new Card(1, Token.Emerald, 0, new Dictionary<Token, int>() { { Token.Ruby, 3 } }, "Level1-E-0P-3R.jpg"),
+                    new Card(1, Token.Emerald, 1, new Dictionary<Token, int>() { { Token.Onyx, 4 } }, "Level1-E-1P-4O.jpg"),
+                    new Card(1, Token.Onyx, 0, new Dictionary<Token, int>() { { Token.Diamond, 1}, { Token.Sapphire, 1 }, { Token.Emerald, 1 }, { Token.Ruby, 1 } }, "Level1-O-0P-1D-1S-1E-1R.jpg"),
+                    new Card(1, Token.Onyx, 0, new Dictionary<Token, int>() { { Token.Diamond, 1}, { Token.Sapphire, 2 }, { Token.Emerald, 1 }, { Token.Ruby, 1 } }, "Level1-O-0P-1D-2S-1E-1R.jpg"),
+                    new Card(1, Token.Onyx, 0, new Dictionary<Token, int>() { { Token.Emerald, 1}, { Token.Ruby, 3 }, { Token.Onyx, 1 } }, "Level1-O-0P-1E-3R-1O.jpg"),
+                    new Card(1, Token.Onyx, 0, new Dictionary<Token, int>() { { Token.Diamond, 2}, { Token.Emerald, 2 } }, "Level1-O-0P-2D-2E.jpg"),
+                    new Card(1, Token.Onyx, 0, new Dictionary<Token, int>() { { Token.Diamond, 2}, { Token.Sapphire, 2 }, { Token.Ruby, 1 } }, "Level1-O-0P-2D-2S-1R.jpg"),
+                    new Card(1, Token.Onyx, 0, new Dictionary<Token, int>() { { Token.Emerald, 2}, { Token.Ruby, 1 } }, "Level1-O-0P-2E-1R.jpg"),
+                    new Card(1, Token.Onyx, 0, new Dictionary<Token, int>() { { Token.Emerald, 3} }, "Level1-O-0P-3E.jpg"),
+                    new Card(1, Token.Onyx, 1, new Dictionary<Token, int>() { { Token.Sapphire, 4} }, "Level1-O-1P-4S.jpg"),
+                    new Card(1, Token.Ruby, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Ruby, 1 }, { Token.Onyx, 3 } }, "Level1-R-0P-1D-1R-3O.jpg"),
+                    new Card(1, Token.Ruby, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Sapphire, 1 }, { Token.Emerald, 1 }, { Token.Onyx, 1 } }, "Level1-R-0P-1D-1S-1E-1O.jpg"),
+                    new Card(1, Token.Ruby, 0, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Emerald, 1 }, { Token.Onyx, 2 } }, "Level1-R-0P-2D-1E-2O.jpg"),
+                    new Card(1, Token.Ruby, 0, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Sapphire, 1 }, { Token.Emerald, 1 }, { Token.Onyx, 1 } }, "Level1-R-0P-2D-1S-1E-1O.jpg"),
+                    new Card(1, Token.Ruby, 0, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Ruby, 2 } }, "Level1-R-0P-2D-2R.jpg"),
+                    new Card(1, Token.Ruby, 0, new Dictionary<Token, int>() { { Token.Sapphire, 2 }, { Token.Emerald, 1 } }, "Level1-R-0P-2S-1E.jpg"),
+                    new Card(1, Token.Ruby, 0, new Dictionary<Token, int>() { { Token.Diamond, 3 } }, "Level1-R-0P-3D.jpg"),
+                    new Card(1, Token.Ruby, 1, new Dictionary<Token, int>() { { Token.Diamond, 4 } }, "Level1-R-1P-4D.jpg"),
+                    new Card(1, Token.Sapphire, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Emerald, 1 }, { Token.Ruby, 1 }, { Token.Onyx, 1 } }, "Level1-S-0P-1D-1E-1R-1O.jpg"),
+                    new Card(1, Token.Sapphire, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Emerald, 1 }, { Token.Ruby, 2 }, { Token.Onyx, 1 } }, "Level1-S-0P-1D-1E-2R-1O.jpg"),
+                    new Card(1, Token.Sapphire, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Emerald, 2 }, { Token.Ruby, 2 } }, "Level1-S-0P-1D-2E-2R.jpg"),
+                    new Card(1, Token.Sapphire, 0, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Onyx, 2 } }, "Level1-S-0P-1D-2O.jpg"),
+                    new Card(1, Token.Sapphire, 0, new Dictionary<Token, int>() { { Token.Sapphire, 1 }, { Token.Emerald, 3 }, { Token.Ruby, 1 } }, "Level1-S-0P-1S-3E-1R.jpg"),
+                    new Card(1, Token.Sapphire, 0, new Dictionary<Token, int>() { { Token.Emerald, 2 }, { Token.Onyx, 2 } }, "Level1-S-0P-2E-2O.jpg"),
+                    new Card(1, Token.Sapphire, 0, new Dictionary<Token, int>() { { Token.Onyx, 3 } }, "Level1-S-0P-3O.jpg"),
+                    new Card(1, Token.Sapphire, 1, new Dictionary<Token, int>() { { Token.Ruby, 4 } }, "Level1-S-1P-4R.jpg"),
                 }
             );
         }
@@ -273,36 +281,36 @@
                 2,
                 30,
                 new List<ICard> {
-                    new Card(2, Token.Diamond, 1, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Sapphire, 3 }, { Token.Ruby, 3 } }, "Level2-D-1P-2D-3S-3R.png"),
-                    new Card(2, Token.Diamond, 1, new Dictionary<Token, int>() { { Token.Emerald, 3 }, { Token.Ruby, 2 }, { Token.Onyx, 2 } }, "Level2-D-1P-3E-2R-2O.png"),
-                    new Card(2, Token.Diamond, 2, new Dictionary<Token, int>() { { Token.Emerald, 1 }, { Token.Ruby, 4 }, { Token.Onyx, 2 } }, "Level2-D-2P-1E-4R-2O.png"),
-                    new Card(2, Token.Diamond, 2, new Dictionary<Token, int>() { { Token.Ruby, 5 } }, "Level2-D-2P-5R.png"),
-                    new Card(2, Token.Diamond, 2, new Dictionary<Token, int>() { { Token.Ruby, 5 }, { Token.Onyx, 3 } }, "Level2-D-2P-5R-3O.png"),
-                    new Card(2, Token.Diamond, 3, new Dictionary<Token, int>() { { Token.Diamond, 6 } }, "Level2-D-3P-6D.png"),
-                    new Card(2, Token.Emerald, 1, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Sapphire, 3 }, { Token.Onyx, 2 } }, "Level2-E-1P-2D-3S-2O.png"),
-                    new Card(2, Token.Emerald, 1, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Emerald, 2 }, { Token.Ruby, 3 } }, "Level2-E-1P-3D-2E-3R.png"),
-                    new Card(2, Token.Emerald, 2, new Dictionary<Token, int>() { { Token.Diamond, 4 }, { Token.Sapphire, 2 }, { Token.Onyx, 1 } }, "Level2-E-2P-4D-2S-1O.png"),
-                    new Card(2, Token.Emerald, 2, new Dictionary<Token, int>() { { Token.Emerald, 5 } }, "Level2-E-2P-5E.png"),
-                    new Card(2, Token.Emerald, 2, new Dictionary<Token, int>() { { Token.Sapphire, 5 }, { Token.Emerald, 3 } }, "Level2-E-2P-5S-3E.png"),
-                    new Card(2, Token.Emerald, 3, new Dictionary<Token, int>() { { Token.Emerald, 6 } }, "Level2-E-3P-6E.png"),
-                    new Card(2, Token.Onyx, 1, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Sapphire, 2 }, { Token.Emerald, 2 } }, "Level2-O-1P-3D-2S-2E.png"),
-                    new Card(2, Token.Onyx, 1, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Emerald, 3 }, { Token.Onyx, 2 } }, "Level2-O-1P-3D-3E-2O.png"),
-                    new Card(2, Token.Onyx, 2, new Dictionary<Token, int>() { { Token.Sapphire, 1 }, { Token.Emerald, 4 }, { Token.Ruby, 2 } }, "Level2-O-2P-1S-4E-2R.png"),
-                    new Card(2, Token.Onyx, 2, new Dictionary<Token, int>() { { Token.Diamond, 5 } }, "Level2-O-2P-5D.png"),
-                    new Card(2, Token.Onyx, 2, new Dictionary<Token, int>() { { Token.Emerald, 5 }, { Token.Ruby, 3 } }, "Level2-O-2P-5E-3R.png"),
-                    new Card(2, Token.Onyx, 3, new Dictionary<Token, int>() { { Token.Onyx, 6 } }, "Level2-O-3P-6O.png"),
-                    new Card(2, Token.Ruby, 1, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Ruby, 2 }, { Token.Onyx, 3 } }, "Level2-R-1P-2D-2R-3O.png"),
-                    new Card(2, Token.Ruby, 1, new Dictionary<Token, int>() { { Token.Sapphire, 3 }, { Token.Ruby, 2 }, { Token.Onyx, 3 } }, "Level2-R-1P-3S-2R-3O.png"),
-                    new Card(2, Token.Ruby, 2, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Sapphire, 4 }, { Token.Emerald, 2 } }, "Level2-R-2P-1D-4S-2E.png"),
-                    new Card(2, Token.Ruby, 2, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Onyx, 5 } }, "Level2-R-2P-3D-5O.png"),
-                    new Card(2, Token.Ruby, 2, new Dictionary<Token, int>() { { Token.Onyx, 5 } }, "Level2-R-2P-5O.png"),
-                    new Card(2, Token.Ruby, 3, new Dictionary<Token, int>() { { Token.Ruby, 6 } }, "Level2-R-3P-6R.png"),
-                    new Card(2, Token.Sapphire, 1, new Dictionary<Token, int>() { { Token.Sapphire, 2 }, { Token.Emerald, 2 }, { Token.Ruby, 3 } }, "Level2-S-1P-2S-2E-3R.png"),
-                    new Card(2, Token.Sapphire, 1, new Dictionary<Token, int>() { { Token.Sapphire, 2 }, { Token.Emerald, 3 }, { Token.Onyx, 3 } }, "Level2-S-1P-2S-3E-3O.png"),
-                    new Card(2, Token.Sapphire, 2, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Ruby, 1 }, { Token.Onyx, 4 } }, "Level2-S-2P-2D-1R-4O.png"),
-                    new Card(2, Token.Sapphire, 2, new Dictionary<Token, int>() { { Token.Diamond, 5 }, { Token.Sapphire, 3 } }, "Level2-S-2P-5D-3S.png"),
-                    new Card(2, Token.Sapphire, 2, new Dictionary<Token, int>() { { Token.Sapphire, 5 } }, "Level2-S-2P-5S.png"),
-                    new Card(2, Token.Sapphire, 3, new Dictionary<Token, int>() { { Token.Sapphire, 6 } }, "Level2-S-3P-6S.png")
+                    new Card(2, Token.Diamond, 1, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Sapphire, 3 }, { Token.Ruby, 3 } }, "Level2-D-1P-2D-3S-3R.jpg"),
+                    new Card(2, Token.Diamond, 1, new Dictionary<Token, int>() { { Token.Emerald, 3 }, { Token.Ruby, 2 }, { Token.Onyx, 2 } }, "Level2-D-1P-3E-2R-2O.jpg"),
+                    new Card(2, Token.Diamond, 2, new Dictionary<Token, int>() { { Token.Emerald, 1 }, { Token.Ruby, 4 }, { Token.Onyx, 2 } }, "Level2-D-2P-1E-4R-2O.jpg"),
+                    new Card(2, Token.Diamond, 2, new Dictionary<Token, int>() { { Token.Ruby, 5 } }, "Level2-D-2P-5R.jpg"),
+                    new Card(2, Token.Diamond, 2, new Dictionary<Token, int>() { { Token.Ruby, 5 }, { Token.Onyx, 3 } }, "Level2-D-2P-5R-3O.jpg"),
+                    new Card(2, Token.Diamond, 3, new Dictionary<Token, int>() { { Token.Diamond, 6 } }, "Level2-D-3P-6D.jpg"),
+                    new Card(2, Token.Emerald, 1, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Sapphire, 3 }, { Token.Onyx, 2 } }, "Level2-E-1P-2D-3S-2O.jpg"),
+                    new Card(2, Token.Emerald, 1, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Emerald, 2 }, { Token.Ruby, 3 } }, "Level2-E-1P-3D-2E-3R.jpg"),
+                    new Card(2, Token.Emerald, 2, new Dictionary<Token, int>() { { Token.Diamond, 4 }, { Token.Sapphire, 2 }, { Token.Onyx, 1 } }, "Level2-E-2P-4D-2S-1O.jpg"),
+                    new Card(2, Token.Emerald, 2, new Dictionary<Token, int>() { { Token.Emerald, 5 } }, "Level2-E-2P-5E.jpg"),
+                    new Card(2, Token.Emerald, 2, new Dictionary<Token, int>() { { Token.Sapphire, 5 }, { Token.Emerald, 3 } }, "Level2-E-2P-5S-3E.jpg"),
+                    new Card(2, Token.Emerald, 3, new Dictionary<Token, int>() { { Token.Emerald, 6 } }, "Level2-E-3P-6E.jpg"),
+                    new Card(2, Token.Onyx, 1, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Sapphire, 2 }, { Token.Emerald, 2 } }, "Level2-O-1P-3D-2S-2E.jpg"),
+                    new Card(2, Token.Onyx, 1, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Emerald, 3 }, { Token.Onyx, 2 } }, "Level2-O-1P-3D-3E-2O.jpg"),
+                    new Card(2, Token.Onyx, 2, new Dictionary<Token, int>() { { Token.Sapphire, 1 }, { Token.Emerald, 4 }, { Token.Ruby, 2 } }, "Level2-O-2P-1S-4E-2R.jpg"),
+                    new Card(2, Token.Onyx, 2, new Dictionary<Token, int>() { { Token.Diamond, 5 } }, "Level2-O-2P-5D.jpg"),
+                    new Card(2, Token.Onyx, 2, new Dictionary<Token, int>() { { Token.Emerald, 5 }, { Token.Ruby, 3 } }, "Level2-O-2P-5E-3R.jpg"),
+                    new Card(2, Token.Onyx, 3, new Dictionary<Token, int>() { { Token.Onyx, 6 } }, "Level2-O-3P-6O.jpg"),
+                    new Card(2, Token.Ruby, 1, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Ruby, 2 }, { Token.Onyx, 3 } }, "Level2-R-1P-2D-2R-3O.jpg"),
+                    new Card(2, Token.Ruby, 1, new Dictionary<Token, int>() { { Token.Sapphire, 3 }, { Token.Ruby, 2 }, { Token.Onyx, 3 } }, "Level2-R-1P-3S-2R-3O.jpg"),
+                    new Card(2, Token.Ruby, 2, new Dictionary<Token, int>() { { Token.Diamond, 1 }, { Token.Sapphire, 4 }, { Token.Emerald, 2 } }, "Level2-R-2P-1D-4S-2E.jpg"),
+                    new Card(2, Token.Ruby, 2, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Onyx, 5 } }, "Level2-R-2P-3D-5O.jpg"),
+                    new Card(2, Token.Ruby, 2, new Dictionary<Token, int>() { { Token.Onyx, 5 } }, "Level2-R-2P-5O.jpg"),
+                    new Card(2, Token.Ruby, 3, new Dictionary<Token, int>() { { Token.Ruby, 6 } }, "Level2-R-3P-6R.jpg"),
+                    new Card(2, Token.Sapphire, 1, new Dictionary<Token, int>() { { Token.Sapphire, 2 }, { Token.Emerald, 2 }, { Token.Ruby, 3 } }, "Level2-S-1P-2S-2E-3R.jpg"),
+                    new Card(2, Token.Sapphire, 1, new Dictionary<Token, int>() { { Token.Sapphire, 2 }, { Token.Emerald, 3 }, { Token.Onyx, 3 } }, "Level2-S-1P-2S-3E-3O.jpg"),
+                    new Card(2, Token.Sapphire, 2, new Dictionary<Token, int>() { { Token.Diamond, 2 }, { Token.Ruby, 1 }, { Token.Onyx, 4 } }, "Level2-S-2P-2D-1R-4O.jpg"),
+                    new Card(2, Token.Sapphire, 2, new Dictionary<Token, int>() { { Token.Diamond, 5 }, { Token.Sapphire, 3 } }, "Level2-S-2P-5D-3S.jpg"),
+                    new Card(2, Token.Sapphire, 2, new Dictionary<Token, int>() { { Token.Sapphire, 5 } }, "Level2-S-2P-5S.jpg"),
+                    new Card(2, Token.Sapphire, 3, new Dictionary<Token, int>() { { Token.Sapphire, 6 } }, "Level2-S-3P-6S.jpg")
                 }
             );
         }
@@ -317,26 +325,26 @@
                 3,
                 20,
                 new List<ICard> {
-                    new Card(3, Token.Diamond, 3, new Dictionary<Token, int>() { { Token.Sapphire, 3 }, { Token.Emerald, 3 }, { Token.Ruby, 5 }, { Token.Onyx, 3 } }, "Level3-D-3P-3S-3E-5R-3O.png"),
-                    new Card(3, Token.Diamond, 4, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Ruby, 3 }, { Token.Onyx, 6 } }, "Level3-D-4P-3D-3R-6O.png"),
-                    new Card(3, Token.Diamond, 4, new Dictionary<Token, int>() { { Token.Onyx, 7 } }, "Level3-D-4P-7O.png"),
-                    new Card(3, Token.Diamond, 5, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Onyx, 7 } }, "Level3-D-5P-3D-7O.png"),
-                    new Card(3, Token.Emerald, 3, new Dictionary<Token, int>() { { Token.Diamond, 5 }, { Token.Sapphire, 3 }, { Token.Ruby, 3 }, { Token.Onyx, 3 } }, "Level3-E-3P-5D-3S-3R-3O.png"),
-                    new Card(3, Token.Emerald, 4, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Sapphire, 6 }, { Token.Emerald, 3 } }, "Level3-E-4P-3D-6S-3E.png"),
-                    new Card(3, Token.Emerald, 4, new Dictionary<Token, int>() { { Token.Sapphire, 7 } }, "Level3-E-4P-7S.png"),
-                    new Card(3, Token.Emerald, 5, new Dictionary<Token, int>() { { Token.Sapphire, 7 }, { Token.Emerald, 3 } }, "Level3-E-5P-7S-3E.png"),
-                    new Card(3, Token.Onyx, 3, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Sapphire, 3 }, { Token.Emerald, 5 }, { Token.Ruby, 3 } }, "Level3-O-3P-3D-3S-5E-3R.png"),
-                    new Card(3, Token.Onyx, 4, new Dictionary<Token, int>() { { Token.Emerald, 3 }, { Token.Ruby, 6 }, { Token.Onyx, 3 } }, "Level3-O-4P-3E-6R-3O.png"),
-                    new Card(3, Token.Onyx, 4, new Dictionary<Token, int>() { { Token.Ruby, 7 } }, "Level3-O-4P-7R.png"),
-                    new Card(3, Token.Onyx, 5, new Dictionary<Token, int>() { { Token.Ruby, 7 }, { Token.Onyx, 3 } }, "Level3-O-5P-7R-3O.png"),
-                    new Card(3, Token.Ruby, 3, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Sapphire, 5 }, { Token.Emerald, 3 }, { Token.Onyx, 3 } }, "Level3-R-3P-3D-5S-3E-3O.png"),
-                    new Card(3, Token.Ruby, 4, new Dictionary<Token, int>() { { Token.Sapphire, 3 }, { Token.Emerald, 6 }, { Token.Ruby, 3 } }, "Level3-R-4P-3S-6E-3R.png"),
-                    new Card(3, Token.Ruby, 4, new Dictionary<Token, int>() { { Token.Emerald, 7 } }, "Level3-R-4P-7E.png"),
-                    new Card(3, Token.Ruby, 5, new Dictionary<Token, int>() { { Token.Emerald, 7 }, { Token.Ruby, 3 } }, "Level3-R-5P-7E-3R.png"),
-                    new Card(3, Token.Sapphire, 3, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Emerald, 3 }, { Token.Ruby, 3 }, { Token.Onyx, 5 } }, "Level3-S-3P-3D-3E-3R-5O.png"),
-                    new Card(3, Token.Sapphire, 4, new Dictionary<Token, int>() { { Token.Diamond, 6 }, { Token.Sapphire, 3 }, { Token.Onyx, 3 } }, "Level3-S-4P-6D-3S-3O.png"),
-                    new Card(3, Token.Sapphire, 4, new Dictionary<Token, int>() { { Token.Diamond, 7 } }, "Level3-S-4P-7D.png"),
-                    new Card(3, Token.Sapphire, 5, new Dictionary<Token, int>() { { Token.Diamond, 7 }, { Token.Sapphire, 3 } }, "Level3-S-5P-7D-3S.png"),
+                    new Card(3, Token.Diamond, 3, new Dictionary<Token, int>() { { Token.Sapphire, 3 }, { Token.Emerald, 3 }, { Token.Ruby, 5 }, { Token.Onyx, 3 } }, "Level3-D-3P-3S-3E-5R-3O.jpg"),
+                    new Card(3, Token.Diamond, 4, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Ruby, 3 }, { Token.Onyx, 6 } }, "Level3-D-4P-3D-3R-6O.jpg"),
+                    new Card(3, Token.Diamond, 4, new Dictionary<Token, int>() { { Token.Onyx, 7 } }, "Level3-D-4P-7O.jpg"),
+                    new Card(3, Token.Diamond, 5, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Onyx, 7 } }, "Level3-D-5P-3D-7O.jpg"),
+                    new Card(3, Token.Emerald, 3, new Dictionary<Token, int>() { { Token.Diamond, 5 }, { Token.Sapphire, 3 }, { Token.Ruby, 3 }, { Token.Onyx, 3 } }, "Level3-E-3P-5D-3S-3R-3O.jpg"),
+                    new Card(3, Token.Emerald, 4, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Sapphire, 6 }, { Token.Emerald, 3 } }, "Level3-E-4P-3D-6S-3E.jpg"),
+                    new Card(3, Token.Emerald, 4, new Dictionary<Token, int>() { { Token.Sapphire, 7 } }, "Level3-E-4P-7S.jpg"),
+                    new Card(3, Token.Emerald, 5, new Dictionary<Token, int>() { { Token.Sapphire, 7 }, { Token.Emerald, 3 } }, "Level3-E-5P-7S-3E.jpg"),
+                    new Card(3, Token.Onyx, 3, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Sapphire, 3 }, { Token.Emerald, 5 }, { Token.Ruby, 3 } }, "Level3-O-3P-3D-3S-5E-3R.jpg"),
+                    new Card(3, Token.Onyx, 4, new Dictionary<Token, int>() { { Token.Emerald, 3 }, { Token.Ruby, 6 }, { Token.Onyx, 3 } }, "Level3-O-4P-3E-6R-3O.jpg"),
+                    new Card(3, Token.Onyx, 4, new Dictionary<Token, int>() { { Token.Ruby, 7 } }, "Level3-O-4P-7R.jpg"),
+                    new Card(3, Token.Onyx, 5, new Dictionary<Token, int>() { { Token.Ruby, 7 }, { Token.Onyx, 3 } }, "Level3-O-5P-7R-3O.jpg"),
+                    new Card(3, Token.Ruby, 3, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Sapphire, 5 }, { Token.Emerald, 3 }, { Token.Onyx, 3 } }, "Level3-R-3P-3D-5S-3E-3O.jpg"),
+                    new Card(3, Token.Ruby, 4, new Dictionary<Token, int>() { { Token.Sapphire, 3 }, { Token.Emerald, 6 }, { Token.Ruby, 3 } }, "Level3-R-4P-3S-6E-3R.jpg"),
+                    new Card(3, Token.Ruby, 4, new Dictionary<Token, int>() { { Token.Emerald, 7 } }, "Level3-R-4P-7E.jpg"),
+                    new Card(3, Token.Ruby, 5, new Dictionary<Token, int>() { { Token.Emerald, 7 }, { Token.Ruby, 3 } }, "Level3-R-5P-7E-3R.jpg"),
+                    new Card(3, Token.Sapphire, 3, new Dictionary<Token, int>() { { Token.Diamond, 3 }, { Token.Emerald, 3 }, { Token.Ruby, 3 }, { Token.Onyx, 5 } }, "Level3-S-3P-3D-3E-3R-5O.jpg"),
+                    new Card(3, Token.Sapphire, 4, new Dictionary<Token, int>() { { Token.Diamond, 6 }, { Token.Sapphire, 3 }, { Token.Onyx, 3 } }, "Level3-S-4P-6D-3S-3O.jpg"),
+                    new Card(3, Token.Sapphire, 4, new Dictionary<Token, int>() { { Token.Diamond, 7 } }, "Level3-S-4P-7D.jpg"),
+                    new Card(3, Token.Sapphire, 5, new Dictionary<Token, int>() { { Token.Diamond, 7 }, { Token.Sapphire, 3 } }, "Level3-S-5P-7D-3S.jpg"),
                 }
             );
         }
@@ -349,16 +357,16 @@
         private static List<INoble> InitializeNobles(int numberOfPlayers)
         {
             List<INoble> nobles = new List<INoble>() {
-                new Noble(new Dictionary<Token, int>() { { Token.Emerald, 3 }, {Token.Sapphire, 3 }, {Token.Diamond, 3 } }, "Noble-3E-3S-3D.png"),
-                new Noble(new Dictionary<Token, int>() { { Token.Emerald, 3 }, {Token.Sapphire, 3 }, {Token.Ruby, 3 } }, "Noble-3E-3S-3R.png"),
-                new Noble(new Dictionary<Token, int>() { { Token.Onyx, 3 }, {Token.Ruby, 3 }, {Token.Diamond, 3 } }, "Noble-3O-3R-3D.png"),
-                new Noble(new Dictionary<Token, int>() { { Token.Onyx, 3 }, {Token.Ruby, 3 }, {Token.Emerald, 3 } }, "Noble-3O-3R-3E.png"),
-                new Noble(new Dictionary<Token, int>() { { Token.Onyx, 3 }, {Token.Sapphire, 3 }, {Token.Diamond, 3 } }, "Noble-3O-3S-3D.png"),
-                new Noble(new Dictionary<Token, int>() { { Token.Onyx, 4}, {Token.Diamond, 4 } }, "Noble-4O-4D.png"),
-                new Noble(new Dictionary<Token, int>() { { Token.Onyx, 4}, {Token.Ruby, 4 } }, "Noble-4O-4R.png"),
-                new Noble(new Dictionary<Token, int>() { { Token.Ruby, 4}, {Token.Emerald, 4 } }, "Noble-4R-4E.png"),
-                new Noble(new Dictionary<Token, int>() { { Token.Sapphire, 4}, {Token.Diamond, 4 } }, "Noble-4S-4D.png"),
-                new Noble(new Dictionary<Token, int>() { { Token.Sapphire, 4}, {Token.Emerald, 4 } }, "Noble-4S-4E.png")
+                new Noble(new Dictionary<Token, int>() { { Token.Emerald, 3 }, {Token.Sapphire, 3 }, {Token.Diamond, 3 } }, "Noble-3E-3S-3D.jpg"),
+                new Noble(new Dictionary<Token, int>() { { Token.Emerald, 3 }, {Token.Sapphire, 3 }, {Token.Ruby, 3 } }, "Noble-3E-3S-3R.jpg"),
+                new Noble(new Dictionary<Token, int>() { { Token.Onyx, 3 }, {Token.Ruby, 3 }, {Token.Diamond, 3 } }, "Noble-3O-3R-3D.jpg"),
+                new Noble(new Dictionary<Token, int>() { { Token.Onyx, 3 }, {Token.Ruby, 3 }, {Token.Emerald, 3 } }, "Noble-3O-3R-3E.jpg"),
+                new Noble(new Dictionary<Token, int>() { { Token.Onyx, 3 }, {Token.Sapphire, 3 }, {Token.Diamond, 3 } }, "Noble-3O-3S-3D.jpg"),
+                new Noble(new Dictionary<Token, int>() { { Token.Onyx, 4}, {Token.Diamond, 4 } }, "Noble-4O-4D.jpg"),
+                new Noble(new Dictionary<Token, int>() { { Token.Onyx, 4}, {Token.Ruby, 4 } }, "Noble-4O-4R.jpg"),
+                new Noble(new Dictionary<Token, int>() { { Token.Ruby, 4}, {Token.Emerald, 4 } }, "Noble-4R-4E.jpg"),
+                new Noble(new Dictionary<Token, int>() { { Token.Sapphire, 4}, {Token.Diamond, 4 } }, "Noble-4S-4D.jpg"),
+                new Noble(new Dictionary<Token, int>() { { Token.Sapphire, 4}, {Token.Emerald, 4 } }, "Noble-4S-4E.jpg")
             };
 
             Random random = new Random();
