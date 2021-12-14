@@ -2,7 +2,7 @@
 {
     public class GameBoard : IGameBoard
     {
-        public int Version { get; private set; }
+        public int Version { get; private set; } = 0;
 
         public ITurn LastTurn { get; private set; }
 
@@ -210,8 +210,12 @@
                 }
             }
 
-            // TODO - Add to the currentPlayer
 
+            CurrentPlayer++;
+            if (CurrentPlayer >= Players.Count)
+            {
+                CurrentPlayer -= Players.Count;
+            }
             Version++;
             LastTurn = turn;
             return new CompletedTurn();

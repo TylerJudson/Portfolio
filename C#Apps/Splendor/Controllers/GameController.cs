@@ -74,6 +74,19 @@ namespace Splendor.Controllers
                         return Json(completedTurn.ContinueAction);
                     }
                 }
+                else if (turn.Card != null)
+                {
+                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(turn);
+
+                    if (completedTurn.Error != null)
+                    {
+                        return Json(completedTurn.Error);
+                    }
+                    else if (completedTurn.ContinueAction != null)
+                    {
+                        return Json(completedTurn.ContinueAction);
+                    }
+                }
 
                 return Json(gameBoard);
             }
@@ -81,6 +94,8 @@ namespace Splendor.Controllers
 
             return Json("");
         }
+
+        
 
 
         /// <summary>

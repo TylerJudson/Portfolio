@@ -8,65 +8,62 @@
 
     string purple = "rgb(110, 10, 150)";
 
+    bool IsCurrentPlayer = Model.Players[Model.CurrentPlayer].Id == (int)ViewData["PlayerId"];
 }
 <body style="margin-bottom: 10rem;">
-<!-- Render the gameBoard -->
-    <script> 
-    function renderGameBoard(gameBoard) {
 
-    }
-    </script>
+
 
 <!-- Pull for game state -->
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script type="text/javascript">
 
-    // This sets up a call every 5 seconds to see if something has change.
-    // Need to add logic to not make this call when it is the current players turn
-    // Need to add logic so that when the current player has completed their turn that we start the pulling again.
+    var version = @Model.Version;
+
     setTimeout(pull, 1000);
     function pull() {
         $.ajax({
             url: "/Game/State/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "GET",
             success: function (response) {
-                // TODO: add code here to update state in the browser.  Need to change the object
-                // returned so that there is a timestamp or version value so it is easy to determine
-                // if something changed and the game board needs to be changed. 
-                //alert("CurrentPlayer: " + response.currentPlayer);
+                if (response.version != version) {
+                    renderGameBoard(response);
+                }
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert("ERROR - Please try again.")
             }
         });
-        setTimeout(pull, 5000);
+        setTimeout(pull, 3000);
         return false;
     }
 
     function endTurn() {
-        //$.post( "/Game/EndTurn/@ViewData["GameId"]/@ViewData["PlayerId"]", JSON.stringify({ takenTokens: TakingTokens,  }), function (data) {
-        //        alert( "Data Loaded: " + data );
-        //    }, "application/json" );
         $.ajax({
             url: "/Game/EndTurn/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "POST",
-            data: JSON.stringify({ TakenTokens: TakingTokens,  }),
+            data: JSON.stringify({ TakenTokens: TakingTokens }),
             contentType: "application/json",
             dataType: 'json',
             success: function (data) {
                 if (data.hasOwnProperty("errorCode")) {
                     alert("Error");
                 } else if (data.hasOwnProperty("actionCode")) {
-
+                    alert("Continue Action");
                 }
                 else {
+                    TakingTokens = { 
+                        Emerald: 0,
+                        Sapphire: 0,
+                        Ruby: 0,
+                        Diamond: 0,
+                        Onyx: 0,
+                    };
+                    Tokens = data.tokenStacks;
+                    SetTokens();
+                    TakingTokens = {};
                     renderGameBoard();
                 }
-                // TODO: add code here to update state in the browser.  Need to change the object
-                // returned so that there is a timestamp or version value so it is easy to determine
-                // if something changed and the game board needs to be changed. 
-                //alert("CurrentPlayer: " + response.currentPlayer);
-                alert( "Data Loaded: " + data );
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 alert("ERROR - Please try again.")
@@ -74,7 +71,58 @@
         });
     }
 
+    function purchase(imageName) {
+        alert("Purchase: " + imageName);
+        let type = "";
+        switch(imageName[7]) {
+            case "E":
+                type = "Emerald";
+                break;
+            case "S":
+                type = "Sapphire";
+                break;
+            case "R":
+                type = "Ruby";
+                break;
+            case "D":
+                type = "Diamond";
+                break;
+            case "O":
+                type = "Onyx";
+                break;
+        }
+        card = {
+            ImageName: imageName,
+            Level: parseInt(imageName[5]),
+            Type: type,
+            PrestigePoints: parseInt(imageName[9]),
+        }
+        alert(JSON.stringify(card));
+        $.ajax({
+            url: "/Game/EndTurn/@ViewData["GameId"]/@ViewData["PlayerId"]",
+            type: "POST",
+            data: JSON.stringify( { Card: card } ),
+            contentType: "application/json",
+            dataType: 'json',
+            success: function (data) {
+                if (data.hasOwnProperty("errorCode")) {
+                    alert("Error");
+                } else if (data.hasOwnProperty("actionCode")) {
+                    alert("Continue Action");
+                }
+                else {
+                   alert("Success: " + data);
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert("ERROR - Please try again.")
+            }
+        });
+    }
 
+    function reserve(card) {
+        alert("Reserve: " + card);
+    }
     </script>
 
 <!-- Options Screen -->
@@ -115,6 +163,49 @@
 <!-- Card Screen -->
     <section id="CardScreen" class="OverlayScreen">
     </section>
+    <script>
+        var True = true, False = false;
+        function CardScreen(ImageName) {
+            let innerHtml = `
+                <img class="mx-auto card mt-6
+                            mt-md-7"
+                            mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-height: 50%"/>
+                <div class="container row mt-5 mx-auto" style="width: 90%; max-width: 40rem; ">
+                    <div class="col p-0 pe-3">
+                        <div class="purple p-0 mx-auto" style="width: 100%;">
+                            <button class="mx-auto btn btn-outline-light btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Back</button>
+                        </div>
+                    </div>
+                    <div class="col p-0 ps-3">
+                        <div class="p-0 mx-auto" style="width: 100%;">
+                            <button `;
+            if (!@IsCurrentPlayer)
+            {
+                innerHtml += "disabled ";
+            }
+
+            innerHtml +=    `class="mx-auto btn btn-darkPurple btn-lg" style="width: 100%;" onclick='reserve("` + ImageName + `")'>Reserve</button>
+                        </div>
+                    </div>
+                    <div class="col-12 p-0 mt-5">
+                        <div class="p-0 mx-auto" style="width: 100%;">
+                            <button `;
+            if (!@IsCurrentPlayer)
+            {
+                innerHtml += "disabled ";
+            }
+            innerHtml += `class="mx-auto btn btn-purple btn-lg" style="width: 100%;" onclick='purchase("` + ImageName + `")'>Purchase</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            let CardScreen = document.getElementById("CardScreen")
+
+            CardScreen.innerHTML = innerHtml;
+            CardScreen.style.display = "block";
+        }
+    </script>
 
 <!-- Noble Screen -->
     <section id="NobleScreen" class="OverlayScreen">
@@ -175,7 +266,7 @@
                                 <tr>
                                     <th></th>
                                     @{
-                                        Dictionary<Token, string> Colors = new Dictionary<Token, string>() { { Token.Emerald, "green" }, { Token.Diamond, "white" }, { Token.Sapphire, "blue" }, { Token.Onyx, "brown" }, { Token.Ruby, "red" } };
+                                        Dictionary<Token, string> Colors = new Dictionary<Token, string>() { { Token.Emerald, "green" }, { Token.Sapphire, "blue" }, { Token.Ruby, "red" }, { Token.Diamond, "white" }, { Token.Onyx, "brown" } };
                                     }
                                         @foreach(KeyValuePair<Token, string> kvp in Colors)
                                         {
@@ -330,7 +421,11 @@
 </section>
 
 
-<button id="endTurnButton" class="btn-darkPurple btn px-5 fs-3" onclick="endTurn();">End Turn</button>
+
+@if (IsCurrentPlayer)
+{
+    <button id="endTurnButton" class="btn-darkPurple btn px-5 fs-3" onclick="endTurn();">End Turn</button>
+}
 
 
 

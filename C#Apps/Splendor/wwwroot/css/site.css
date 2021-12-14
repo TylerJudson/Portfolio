@@ -113,6 +113,12 @@ body {
 .btn-purple:focus {
     box-shadow: 0 0 0 0.25rem var(--purpleOpacity);
 }
+.btn-purple:disabled {
+    color: var(--purple);
+    border-color: var(--purple);
+    background-color: transparent;
+}
+
 
 .btn-darkPurple {
     color: white;
@@ -126,6 +132,12 @@ body {
 
 .btn-darkPurple:focus {
     box-shadow: 0 0 0 0.25rem rgba(80, 20, 150, 0.5);
+}
+
+.btn-darkPurple:disabled {
+    color: rgb(111, 66, 193);
+    border-color: rgb(111, 66, 193);
+    background-color: transparent;
 }
 
 
