@@ -65,43 +65,18 @@
                     renderGameBoard();
                 }
             },
-            error: function (xhr, ajaxOptions, thrownError) {
+            ecolorunction (xhr, ajaxOptions, thrownError) {
                 alert("ERROR - Please try again.")
             }
         });
     }
 
-    function purchase(imageName) {
-        alert("Purchase: " + imageName);
-        let type = "";
-        switch(imageName[7]) {
-            case "E":
-                type = "Emerald";
-                break;
-            case "S":
-                type = "Sapphire";
-                break;
-            case "R":
-                type = "Ruby";
-                break;
-            case "D":
-                type = "Diamond";
-                break;
-            case "O":
-                type = "Onyx";
-                break;
-        }
-        card = {
-            ImageName: imageName,
-            Level: parseInt(imageName[5]),
-            Type: type,
-            PrestigePoints: parseInt(imageName[9]),
-        }
-        alert(JSON.stringify(card));
+    function purchase(card) {
+        
         $.ajax({
-            url: "/Game/EndTurn/@ViewData["GameId"]/@ViewData["PlayerId"]",
+            url: "/Game/Purchase/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "POST",
-            data: JSON.stringify( { Card: card } ),
+            data: card,
             contentType: "application/json",
             dataType: 'json',
             success: function (data) {
@@ -125,25 +100,7 @@
     }
     </script>
 
-<!-- Options Screen -->
 
-    <section id="OptionsScreen" class="OverlayScreen" style="display: none;">
-        <div class="mx-auto pt-5" style="width: 100%">
-            <h1 class="mt-5 px-auto text-light display-1 text-center " style="width: 100%">Options</h1>
-        </div>
-        <div style="margin-top: 23rem;">
-
-            <div class="mx-auto purple" style="width: 150px;">
-                <button class="mx-auto btn btn-outline-purple btn-lg fw-bold" style="width: 150px; border: 2px solid var(--purple);" onclick='ToggleScreen("OptionsScreen")'>Resume</button> 
-            </div>
-            <div class="mx-auto my-2" style="width: 200px;">
-                <button class="mx-auto btn btn-outline-danger btn-lg" style="width: 200px;" onclick='ToggleScreen("OptionsScreen")'>Exit Game</button> 
-            </div>
-            <div class="mx-auto my-2" style="width: 150px;">
-                <a class="mx-auto btn btn-outline-success btn-lg" style="width: 150px;" href="https://cdn.1j1ju.com/medias/7f/91/ba-splendor-rulebook.pdf" target="_blank" rel="noopener noreferrer" >Rules</a> 
-            </div>
-        </div>
-    </section>
 
 <!-- Options button -->
     <nav class="navbar">   
@@ -157,62 +114,8 @@
                     <circle cx="50%" cy="50%" r="5" fill="gray"/>
                 </svg>
             }
-         </div>
+            </div>
     </nav>
-
-<!-- Card Screen -->
-    <section id="CardScreen" class="OverlayScreen">
-    </section>
-    <script>
-        var True = true, False = false;
-        function CardScreen(ImageName) {
-            let innerHtml = `
-                <img class="mx-auto card mt-6
-                            mt-md-7"
-                            mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-height: 50%"/>
-                <div class="container row mt-5 mx-auto" style="width: 90%; max-width: 40rem; ">
-                    <div class="col p-0 pe-3">
-                        <div class="purple p-0 mx-auto" style="width: 100%;">
-                            <button class="mx-auto btn btn-outline-light btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Back</button>
-                        </div>
-                    </div>
-                    <div class="col p-0 ps-3">
-                        <div class="p-0 mx-auto" style="width: 100%;">
-                            <button `;
-            if (!@IsCurrentPlayer)
-            {
-                innerHtml += "disabled ";
-            }
-
-            innerHtml +=    `class="mx-auto btn btn-darkPurple btn-lg" style="width: 100%;" onclick='reserve("` + ImageName + `")'>Reserve</button>
-                        </div>
-                    </div>
-                    <div class="col-12 p-0 mt-5">
-                        <div class="p-0 mx-auto" style="width: 100%;">
-                            <button `;
-            if (!@IsCurrentPlayer)
-            {
-                innerHtml += "disabled ";
-            }
-            innerHtml += `class="mx-auto btn btn-purple btn-lg" style="width: 100%;" onclick='purchase("` + ImageName + `")'>Purchase</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            let CardScreen = document.getElementById("CardScreen")
-
-            CardScreen.innerHTML = innerHtml;
-            CardScreen.style.display = "block";
-        }
-    </script>
-
-<!-- Noble Screen -->
-    <section id="NobleScreen" class="OverlayScreen">
-    </section>
-
-
-
 
 <section class="container row mx-auto p-2 maxContainer">
 
@@ -386,30 +289,79 @@
                             <tr>
                                 @foreach (INoble noble in Model.Nobles)
                                 {
-                                    <td><img id="@noble.ImageName" class="card cursorHover" width="100%" src="/Images/@noble.ImageName" alt="@noble" onclick='NobleScreen("@noble.ImageName")' /></td>
+                                    <td><img id="@noble.ImageName" class="card cursorHover" style="width: 100%; opacity: 80%" src="/Images/@noble.ImageName" alt="@noble" onclick='NobleScreen("@noble.ImageName")' /></td>
                                 }
                             </tr>
                         </table>
 
                         <table class="mx-auto">
                             <tr>
+                                @{
+                                    string BorderColor = "gray";
+                                    string Opacity = "80%";
+                                    bool Purchaseable = false;
+                                }
                                 @foreach (ICard card in Model.Level3Cards)
                                 {
-                                    <td><img id="@card.ImageName" class="card cursorHover" width="100%" src="/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName")' /></td>
+                                    if(Model.Players[playerOrdinal].CanPurchaseCard(card))
+                                    {
+                                        BorderColor = "green";
+                                        Opacity = "100%";
+                                        Purchaseable = true;
+
+                                    }
+                                    else
+                                    {
+                                        BorderColor = "gray";
+                                        Opacity = "80%";
+                                        Purchaseable = false;
+
+                                    }
+
+                                    <td><img id="@card.ImageName" class="card cursorHover" style="width: 100%; border-color: @BorderColor; opacity: @Opacity;" src="/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName", @Purchaseable)' /></td>
                             
                                 }
                              </tr>
                              <tr>
                                 @foreach (ICard card in Model.Level2Cards)
                                 {
-                                    <td><img id="@card.ImageName" class="card cursorHover" width="100%" src="/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName")' /></td>
+                                    if(Model.Players[playerOrdinal].CanPurchaseCard(card))
+                                    {
+                                        BorderColor = "green";
+                                        Opacity = "100%";
+                                        Purchaseable = true;
+
+                                    }
+                                    else
+                                    {
+                                        BorderColor = "gray";
+                                        Opacity = "80%";
+                                        Purchaseable = false;
+
+                                    }
+
+                                    <td><img id="@card.ImageName" class="card cursorHover" style="width: 100%; border-color: @BorderColor; opacity: @Opacity;" src="/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName", @Purchaseable)' /></td>
                             
                                 }
                              </tr>
                              <tr>
                                 @foreach (ICard card in Model.Level1Cards)
                                 {
-                                    <td><img id="@card.ImageName" class="card cursorHover" width="100%" src="/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName")' /></td>
+                                    if(Model.Players[playerOrdinal].CanPurchaseCard(card))
+                                    {
+                                        BorderColor = "green";
+                                        Opacity = "100%";
+                                        Purchaseable = true;
+
+                                    }
+                                    else
+                                    {
+                                        BorderColor = "gray";
+                                        Opacity = "80%";
+                                        Purchaseable = false;
+
+                                    }
+                                    <td><img id="@card.ImageName" class="card cursorHover"  style="width: 100%; border-color: @BorderColor; opacity: @Opacity;" src="/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName", @Purchaseable)' /></td>
                             
                                 }
                              </tr>
@@ -427,6 +379,77 @@
     <button id="endTurnButton" class="btn-darkPurple btn px-5 fs-3" onclick="endTurn();">End Turn</button>
 }
 
+
+<!-- Options Screen -->
+
+    <section id="OptionsScreen" class="OverlayScreen" style="display: none;">
+        <div class="mx-auto pt-5" style="width: 100%">
+            <h1 class="mt-5 px-auto text-light display-1 text-center " style="width: 100%">Options</h1>
+        </div>
+        <div style="margin-top: 23rem;">
+
+            <div class="mx-auto purple" style="width: 150px;">
+                <button class="mx-auto btn btn-outline-purple btn-lg fw-bold" style="width: 150px; border: 2px solid var(--purple);" onclick='ToggleScreen("OptionsScreen")'>Resume</button> 
+            </div>
+            <div class="mx-auto my-2" style="width: 200px;">
+                <button class="mx-auto btn btn-outline-danger btn-lg" style="width: 200px;" onclick='ToggleScreen("OptionsScreen")'>Exit Game</button> 
+            </div>
+            <div class="mx-auto my-2" style="width: 150px;">
+                <a class="mx-auto btn btn-outline-success btn-lg" style="width: 150px;" href="https://cdn.1j1ju.com/medias/7f/91/ba-splendor-rulebook.pdf" target="_blank" rel="noopener noreferrer" >Rules</a> 
+            </div>
+        </div>
+    </section>
+
+<!-- Card Screen -->
+    <section id="CardScreen" class="OverlayScreen">
+    </section>
+    <script>
+        var True = true, False = false;
+        function CardScreen(ImageName, purchaseable=false) {
+            let innerHtml = `
+                <img class="mx-auto card mt-6
+                            mt-md-7"
+                            mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-height: 50%"/>
+                <div class="container row mt-5 mx-auto" style="width: 90%; max-width: 40rem; ">
+                    <div class="col p-0 pe-3">
+                        <div class="purple p-0 mx-auto" style="width: 100%;">
+                            <button class="mx-auto btn btn-outline-light btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Back</button>
+                        </div>
+                    </div>
+                    <div class="col p-0 ps-3">
+                        <div class="p-0 mx-auto" style="width: 100%;">
+                            <button `;
+            if (!@IsCurrentPlayer || Tokens.Gold <= 0)
+            {
+                innerHtml += "disabled ";
+            }
+
+            innerHtml +=    `class="mx-auto btn btn-darkPurple btn-lg" style="width: 100%;" onclick='reserve("` + ImageName + `")'>Reserve</button>
+                        </div>
+                    </div>
+                    <div class="col-12 p-0 mt-5">
+                        <div class="p-0 mx-auto" style="width: 100%;">
+                            <button `;
+            if (!@IsCurrentPlayer || !purchaseable)
+            {
+                innerHtml += "disabled ";
+            }
+            innerHtml += `class="mx-auto btn btn-purple btn-lg" style="width: 100%;" onclick='purchase("` + ImageName + `")'>Purchase</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            let CardScreen = document.getElementById("CardScreen")
+
+            CardScreen.innerHTML = innerHtml;
+            CardScreen.style.display = "block";
+        }
+    </script>
+
+<!-- Noble Screen -->
+    <section id="NobleScreen" class="OverlayScreen">
+    </section>
 
 
 

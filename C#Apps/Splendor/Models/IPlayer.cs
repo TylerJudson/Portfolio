@@ -52,9 +52,15 @@
         /// Checks to see if the player can acquire a noble
         /// </summary>
         /// <param name="noble">The noble to check if the player can acquire</param>
-        /// <returns>Wether or not the player can acquire a noble</returns>
+        /// <returns>Whether or not the player can acquire a noble</returns>
         public bool CanAcquireNoble(INoble noble);
 
+        /// <summary>
+        /// Checks to see if the player can purchase a card
+        /// </summary>
+        /// <param name="card">The card to check if the player can acquire</param>
+        /// <returns>Whether or not the player can purchase the card</returns>
+        public bool CanPurchaseCard(ICard card);
         /// <summary>
         /// Finds the cummulative number of tokens the player has
         /// </summary>

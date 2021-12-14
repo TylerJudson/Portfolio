@@ -53,13 +53,10 @@
             else if (turn.Card != null) // Check to make sure there is a card to add
             {
                 // Check to make sure we have enough tokens to purchase card
-                foreach (KeyValuePair<Token, int> kvp in turn.Card.Price)
+                if (!CanPurchaseCard(turn.Card))
                 {
                     // If we have too little tokens return an error
-                    if (Tokens[kvp.Key] + CardTokens[kvp.Key] < kvp.Value)
-                    {
-                        return new CompletedTurn(new Error("You don't have enough tokens for this card", 2));
-                    }
+                    return new CompletedTurn(new Error("You don't have enough tokens for this card", 2));
                 }
 
                 // now we can Balance the price
@@ -134,6 +131,27 @@
                     return false;
                 }
             }
+            return true;
+        }
+
+        public bool CanPurchaseCard(ICard card)
+        {
+            // TODO - Implement Gold Tokens and for user to choose what tokens to purchase the card with
+            // Need to make it so that a gold tokens can supplement for a mission card
+
+            // Check to make sure we have enough tokens to purchase card
+            foreach (KeyValuePair<Token, int> kvp in card.Price)
+            {
+                // If we have too little tokens return an error
+                if (Tokens[kvp.Key] + CardTokens[kvp.Key] < kvp.Value)
+                {
+                    return false;
+                }
+            }
+
+
+
+
             return true;
         }
 
