@@ -10,7 +10,6 @@
         public uint Level { get; }
         public Token Type { get; }
         public uint PrestigePoints { get; }
-
         public Dictionary<Token, int> Price { get; }
 
 
@@ -31,6 +30,7 @@
             ImageName = imageName;
             
         }
+        public Card() { }
         public string Render()
         {
             throw new NotImplementedException();

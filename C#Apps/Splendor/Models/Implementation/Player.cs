@@ -83,7 +83,7 @@
             else if (turn.ReservedCard != null)
             {
                 // Check to make sure we don't have more than three reserved cards
-                if (ReservedCards.Count > 3)
+                if (ReservedCards.Count >= 3)
                 {
                     return new CompletedTurn(new Error("You can only have 3 reserved cards at a time", 3));
                 }

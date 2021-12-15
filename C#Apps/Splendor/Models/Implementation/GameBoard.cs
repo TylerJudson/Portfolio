@@ -120,6 +120,7 @@
             // if the player purchased a card -> remove the card and draw a new one
             else if (turn.Card != null)
             {
+
                 // Execute the turn for the player
                 ICompletedTurn PlayersCompletedTurn = Players[CurrentPlayer].ExecuteTurn(turn);
 
@@ -129,18 +130,34 @@
                     return PlayersCompletedTurn;
                 }
                 
-                // Remove the card and draw a new one
-                switch (turn.Card.Level)
+                // If the card is on the reserved cards
+                if (Players[CurrentPlayer].ReservedCards.Contains(turn.Card))
                 {
-                    case 1:
-                        Level1Cards[Array.IndexOf(Level1Cards, turn.Card)] = CardStackLevel1.Draw();
-                        break;
-                    case 2:
-                        Level2Cards[Array.IndexOf(Level2Cards, turn.Card)] = CardStackLevel2.Draw();
-                        break;
-                    case 3:
-                        Level3Cards[Array.IndexOf(Level3Cards, turn.Card)] = CardStackLevel3.Draw();
-                        break;
+                    Players[CurrentPlayer].ReservedCards.Remove(turn.Card);
+                }
+                // IF the card is in the shop
+                else
+                {
+                    // Remove the card and draw a new one
+                    switch (turn.Card.Level)
+                    {
+                        case 1:
+                            Level1Cards[Array.IndexOf(Level1Cards, turn.Card)] = CardStackLevel1.Draw();
+                            break;
+                        case 2:
+                            Level2Cards[Array.IndexOf(Level2Cards, turn.Card)] = CardStackLevel2.Draw();
+                            break;
+                        case 3:
+                            Level3Cards[Array.IndexOf(Level3Cards, turn.Card)] = CardStackLevel3.Draw();
+                            break;
+                    }
+                }
+                
+
+                // Return the tokens to their stacks
+                foreach(KeyValuePair<Token, int> kvp in turn.Card.Price)
+                {
+                    TokenStacks[kvp.Key] += (kvp.Value - Players[CurrentPlayer].CardTokens[kvp.Key]) < 0 ? 0 : kvp.Value - Players[CurrentPlayer].CardTokens[kvp.Key];
                 }
             }
             // if the player reserved a card -> remove 1 gold, remove the card, and draw a new one 

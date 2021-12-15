@@ -74,8 +74,85 @@ namespace Splendor.Controllers
                         return Json(completedTurn.ContinueAction);
                     }
                 }
-                else if (turn.Card != null)
+              
+
+                return Json(gameBoard);
+            }
+
+
+            return Json("");
+        }
+
+
+
+        [HttpPost]
+        [Route("Game/Purchase/{gameId:int}/{playerId:int}")]
+        public JsonResult Purchase([FromBody] string ImageName, int gameId, int playerId)
+        {
+            // Check to make sure the game is active
+            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+            {
+                if (ImageName != null)
                 {
+                    ICard Card = new Card();
+
+                    // Check the reserved cards first
+                    int playerIndex = 0;
+                    for (int i = 0; i < gameBoard.Players.Count; i++)
+                    {
+                        if (gameBoard.Players[i].Id == playerId)
+                        {
+                            playerIndex = i;
+                        }
+                    }
+                    foreach (ICard card in gameBoard.Players[playerIndex].ReservedCards)
+                    {
+                        if (card.ImageName == ImageName)
+                        {
+                            Card = card;
+                            break;
+                        }
+                    }
+
+                    if (ImageName[5] == '1')
+                    {
+                        foreach(ICard card in gameBoard.Level1Cards)
+                        {
+                            if (card.ImageName == ImageName)
+                            {
+                                Card = card;
+                                break;
+                            }
+                        }
+                    }
+                    else if (ImageName[5] == '2')
+                    {
+                        foreach (ICard card in gameBoard.Level2Cards)
+                        {
+                            if (card.ImageName == ImageName)
+                            {
+                                Card = card;
+                                break;
+                            }
+                        }
+                    }
+                    else if (ImageName[5] == '3')
+                    {
+                        foreach (ICard card in gameBoard.Level3Cards)
+                        {
+                            if (card.ImageName == ImageName)
+                            {
+                                Card = card;
+                                break;
+                            }
+                        }
+                    }
+                    
+                        
+
+                    Turn turn = new Turn();
+                    turn.Card = Card;
+
                     ICompletedTurn completedTurn = gameBoard.ExecuteTurn(turn);
 
                     if (completedTurn.Error != null)
@@ -87,7 +164,6 @@ namespace Splendor.Controllers
                         return Json(completedTurn.ContinueAction);
                     }
                 }
-
                 return Json(gameBoard);
             }
 
@@ -95,9 +171,72 @@ namespace Splendor.Controllers
             return Json("");
         }
 
-        
+
+        [HttpPost]
+        [Route("Game/Reserve/{gameId:int}/{playerId:int}")]
+        public JsonResult Reserve([FromBody] string ImageName, int gameId, int playerId)
+        {
+            // Check to make sure the game is active
+            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+            {
+                if (ImageName != null)
+                {
+                    ICard Card = new Card();
+                    if (ImageName[5] == '1')
+                    {
+                        foreach (ICard card in gameBoard.Level1Cards)
+                        {
+                            if (card.ImageName == ImageName)
+                            {
+                                Card = card;
+                                break;
+                            }
+                        }
+                    }
+                    else if (ImageName[5] == '2')
+                    {
+                        foreach (ICard card in gameBoard.Level2Cards)
+                        {
+                            if (card.ImageName == ImageName)
+                            {
+                                Card = card;
+                                break;
+                            }
+                        }
+                    }
+                    else if (ImageName[5] == '3')
+                    {
+                        foreach (ICard card in gameBoard.Level3Cards)
+                        {
+                            if (card.ImageName == ImageName)
+                            {
+                                Card = card;
+                                break;
+                            }
+                        }
+                    }
 
 
+                    Turn turn = new Turn();
+                    turn.ReservedCard = Card;
+
+                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(turn);
+
+                    if (completedTurn.Error != null)
+                    {
+                        return Json(completedTurn.Error);
+                    }
+                    else if (completedTurn.ContinueAction != null)
+                    {
+                        return Json(completedTurn.ContinueAction);
+                    }
+                }
+                return Json(gameBoard);
+            }
+
+
+            return Json("");
+        }
         /// <summary>
         /// Starts the game
         /// </summary>

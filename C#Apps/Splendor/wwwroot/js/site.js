@@ -18,8 +18,6 @@ function ToggleScreen(screenID) {
     }
 }
 
-
-
 function NobleScreen(ImageName) {
     let innerHtml = `
         <img class="mx-auto card mt-8
@@ -80,8 +78,70 @@ function renderGameBoard(gameBoard) {
     location.reload();
 }
 
+function getReserveButton(IsCurrentPlayer, LessThan3, ImageName) {
+    ret = `
+            <div class="col p-0 ps-3">
+                <div class="p-0 mx-auto" style="width: 100%;">
+            <button `;
+
+    if (!IsCurrentPlayer || Tokens.Gold <= 0 || !LessThan3)
+            {
+                ret += "disabled ";
+            }
+
+           
+            ret +=    `class="mx-auto btn btn-darkPurple btn-lg" style="width: 100%;" onclick='reserve("` + ImageName + `")'>Reserve</button>
+                </div>
+             </div >`;
+    return ret;
+}
+
+function getSelectPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName, CardScreen=true) {
+    ret = ``;
+    if (IsCurrentPlayer && HaveGold && purchaseable)
+    {
+        ret += `<div class="col-6 p-0 `;
+        if (CardScreen) {
+            ret += `pe-3`;
+        }
+        else {
+            ret += 'ps-3';
+        }
+        ret +=                        `">
+                    <div class="purple p-0 mx-auto" style="width: 100%;">
+                        <button class="mx-auto btn btn-outline-purple btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Select Purchase</button>
+                    </div>
+                </div>`;
+    }
+    return ret;
+}
+
+function getPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName, CardScreen = true) {
+    ret = `
+            <div class="col p-0 `
+
+    if (HaveGold && purchaseable && CardScreen) {
+        ret += "ps-3";
+    }
+
+    ret +=                       `">
+                <div class="p-0 mx-auto" style="width: 100%;">
+                    <button `;
+
+    if (!IsCurrentPlayer || !purchaseable)
+    {
+        ret += "disabled ";
+    }
+
+    ret +=            `class="mx-auto btn btn-purple btn-lg" style="width: 100%;" onclick='purchase("` + ImageName + `")'>Purchase</button>
+                </div>
+             </div>
+            `;
+    return ret;
+}
+
 function SetTokens() {
-    document.getElementById("EmeraldTakingTokenValue").innerHTML = TakingTokens.Emerald;
+    document.getElementById("EmeraldTakingTokenValue").innerHTML = TakingTokens.Emerald == undefined ? 0 : TakingTokens.Emerald;
     document.getElementById("EmeraldTokenValue").innerHTML = Tokens.Emerald;
     if (TakingTokens.Emerald == 0) {
         document.getElementById("EmeraldTakingToken").style.opacity = 0;
@@ -89,7 +149,7 @@ function SetTokens() {
         delete TakingTokens.Emerald;
     }
 
-    document.getElementById("SapphireTakingTokenValue").innerHTML = TakingTokens.Sapphire;
+    document.getElementById("SapphireTakingTokenValue").innerHTML = TakingTokens.Sapphire == undefined ? 0 : TakingTokens.Sapphire;
     document.getElementById("SapphireTokenValue").innerHTML = Tokens.Sapphire;
     if (TakingTokens.Sapphire == 0) {
         document.getElementById("SapphireTakingToken").style.opacity = 0;
@@ -97,7 +157,7 @@ function SetTokens() {
         delete TakingTokens.Sapphire;
     }
 
-    document.getElementById("RubyTakingTokenValue").innerHTML = TakingTokens.Ruby;
+    document.getElementById("RubyTakingTokenValue").innerHTML = TakingTokens.Ruby == undefined ? 0 : TakingTokens.Ruby;
     document.getElementById("RubyTokenValue").innerHTML = Tokens.Ruby;
     if (TakingTokens.Ruby == 0) {
         document.getElementById("RubyTakingToken").style.opacity = 0;
@@ -105,7 +165,7 @@ function SetTokens() {
         delete TakingTokens.Ruby;
     }
 
-    document.getElementById("DiamondTakingTokenValue").innerHTML = TakingTokens.Diamond;
+    document.getElementById("DiamondTakingTokenValue").innerHTML = TakingTokens.Diamond == undefined ? 0 : TakingTokens.Diamond;
     document.getElementById("DiamondTokenValue").innerHTML = Tokens.Diamond;
     if (TakingTokens.Diamond == 0) {
         document.getElementById("DiamondTakingToken").style.opacity = 0;
@@ -113,7 +173,7 @@ function SetTokens() {
         delete TakingTokens.Diamond;
     }
 
-    document.getElementById("OnyxTakingTokenValue").innerHTML = TakingTokens.Onyx;
+    document.getElementById("OnyxTakingTokenValue").innerHTML = TakingTokens.Onyx == undefined ? 0 : TakingTokens.Onyx;
     document.getElementById("OnyxTokenValue").innerHTML = Tokens.Onyx;
     if (TakingTokens.Onyx == 0) {
         document.getElementById("OnyxTakingToken").style.opacity = 0;

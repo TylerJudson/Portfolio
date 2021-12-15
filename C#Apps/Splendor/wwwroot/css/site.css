@@ -1,6 +1,7 @@
 
 :root {
     --purple: rgb(110, 10, 150);
+    --lightPurple: rgb(150, 30, 180);
     --darkPurple: rgba(60, 0, 90);
     --purpleOpacity: rgba(110, 10, 150, 0.5);
 }
@@ -119,6 +120,26 @@ body {
     background-color: transparent;
 }
 
+
+.btn-lightPurple {
+    color: white;
+    background-color: var(--lightPurple);
+}
+
+.btn-lightPurple:hover {
+    color: white;
+    background-color: var(--purple);
+}
+
+.btn-lightPurple:focus {
+    box-shadow: 0 0 0 0.25rem var(--purpleOpacity);
+}
+
+.btn-lightPurple:disabled {
+    color: var(--lightPurple);
+    border-color: var(--lightPurple);
+    background-color: transparent;
+}
 
 .btn-darkPurple {
     color: white;
@@ -267,6 +288,27 @@ body {
     }
 }
 @media (min-width: 992px) {
+    circle {
+        transform-origin: center center;
+    }
+    
+
+    .playerStats {
+        width: 2rem;
+        height: 2.1rem;
+    }
+    .playerStats circle {
+        stroke-width: 10px;
+        transform: scale(0.75, 0.75);
+    }
+    .playerStats text {
+        font-size: 1.5rem;
+    }
+    .playerStats rect {
+        transform: scale(0.7, 0.7);
+    }
+
+
     .welcomeHeading {
         font-size: 8rem;
     }
@@ -296,25 +338,36 @@ body {
      .mt-xl-10 {
          margin-top: 15rem;
      }
+    .mt-xl-8 {
+        margin-top: 12rem;
+    }
+    .mt-xl-7 {
+        margin-top: 10rem;
+    }
     .pl-xl-10 {
         padding-left: 15rem;
     }
 }
 
-@media (min-width: 1400px) {
+@media (min-width: 1450px) {
     #Shop {
-        width: 30%;
+        width: 35%;
         margin-left: 10% !important;
     }
     .playerStatsContainer {
         flex: 0 0 auto;
         width: 50%;
     }
-    #ReservedCards {
-        padding-left: 3rem!important;
+    #ReservedCards div {
+        padding: 0 5px;
     }
+    
     .maxContainer {
         max-width: 80%;
     }
+    
+}
+
+@media (min-width: 1800px) {
     
 }

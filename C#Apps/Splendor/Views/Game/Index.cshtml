@@ -47,7 +47,7 @@
             dataType: 'json',
             success: function (data) {
                 if (data.hasOwnProperty("errorCode")) {
-                    alert("Error");
+                    alert("ERROR - " + data.message);
                 } else if (data.hasOwnProperty("actionCode")) {
                     alert("Continue Action");
                 }
@@ -71,22 +71,21 @@
         });
     }
 
-    function purchase(card) {
-        
+    function purchase(ImageName) {
         $.ajax({
             url: "/Game/Purchase/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "POST",
-            data: card,
+            data: JSON.stringify(ImageName),
             contentType: "application/json",
             dataType: 'json',
             success: function (data) {
                 if (data.hasOwnProperty("errorCode")) {
-                    alert("Error");
+                    alert("ERROR - " + data.message);
                 } else if (data.hasOwnProperty("actionCode")) {
                     alert("Continue Action");
                 }
                 else {
-                   alert("Success: " + data);
+                   renderGameBoard(data);
                 }
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -95,8 +94,27 @@
         });
     }
 
-    function reserve(card) {
-        alert("Reserve: " + card);
+    function reserve(ImageName) {
+        $.ajax({
+            url: "/Game/Reserve/@ViewData["GameId"]/@ViewData["PlayerId"]",
+            type: "POST",
+            data: JSON.stringify(ImageName),
+            contentType: "application/json",
+            dataType: 'json',
+            success: function (data) {
+                if (data.hasOwnProperty("errorCode")) {
+                    alert("ERROR - " + data.message);
+                } else if (data.hasOwnProperty("actionCode")) {
+                    alert("Continue Action");
+                }
+                else {
+                   renderGameBoard(data);
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert("ERROR - Please try again.")
+            }
+        });
     }
     </script>
 
@@ -121,7 +139,7 @@
 
     <!-- Player Stats -->
         <section class="col-12 m-0 mt-5 p-2
-                        col-lg-6 mt-lg-5 m-lg-0 p-lg-4">
+                        col-lg-6 mt-lg-5 m-lg-0 p-lg-4 mt-xl-0 pt-xl-0">
             @{
                 string borderColor = "gray";
                 int playerOrdinal = 0;
@@ -158,12 +176,12 @@
                     borderColor = "gray";
                 }
 
-                <section class="container row rounded-3 mt-3 mx-auto pb-1" style="border: 2px solid @borderColor;">
+                <section class="container row rounded-3 mt-3 mx-auto pb-1 px-0" style="border: 2px solid @borderColor;">
                     <div class="col-12 container
                                 col-md-6
                                 col-lg-12
                                 playerStatsContainer">
-                        <h3 class="row">@Model.Players[i].Name</h3>
+                        <h3 class="row ms-3">@Model.Players[i].Name</h3>
                         <table class="mb-1">
                             <!--Total of Tokens + Cards-->
                                 <tr>
@@ -246,7 +264,7 @@
                                                     col-sm-3
                                                     col-md-4
                                                     ">
-                                            <img id="@Model.Players[i].Id-Reserved:@card.ImageName" class="col-12 p-0 card cursorHover"  maxwidth="33%" src="/Images/@card.ImageName" alt=@card.ImageName onclick='CardScreen("@card.ImageName")'/>
+                                            <img id="@Model.Players[i].Id-Reserved:@card.ImageName" class="col-12 p-0 card cursorHover"  maxwidth="33%" src="/Images/@card.ImageName" alt=@card.ImageName onclick='ReserveCardScreen("@card.ImageName", true)'/>
                                         </div>
                                     }
                                 }
@@ -264,19 +282,19 @@
                 <section class="container mx-auto p-0 mb-5" width="100%">
                         <table class="mx-auto" width="100%">
                             <tr>
-                                <td id="EmeraldTakingToken"  class="takingToken" onclick="TokenClick('TakingEmerald')"  ><img class="p-0" width="100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldTakingTokenValue">0</h1></td>
-                                <td id="SapphireTakingToken" class="takingToken" onclick="TokenClick('TakingSapphire')" ><img class="p-0" width="100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireTakingTokenValue">0</h1></td>
-                                <td id="RubyTakingToken"     class="takingToken" onclick="TokenClick('TakingRuby')"     ><img class="p-0" width="100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyTakingTokenValue">0</h1></td>
-                                <td id="DiamondTakingToken"  class="takingToken" onclick="TokenClick('TakingDiamond')"  ><img class="p-0" width="100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondTakingTokenValue">0</h1></td>
-                                <td id="OnyxTakingToken"     class="takingToken" onclick="TokenClick('TakingOnyx')"     ><img class="p-0" width="100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxTakingTokenValue">0</h1></td>
+                                <td id="EmeraldTakingToken"  class="takingToken" onclick="TokenClick('TakingEmerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldTakingTokenValue">0</h1></td>
+                                <td id="SapphireTakingToken" class="takingToken" onclick="TokenClick('TakingSapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireTakingTokenValue">0</h1></td>
+                                <td id="RubyTakingToken"     class="takingToken" onclick="TokenClick('TakingRuby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyTakingTokenValue">0</h1></td>
+                                <td id="DiamondTakingToken"  class="takingToken" onclick="TokenClick('TakingDiamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondTakingTokenValue">0</h1></td>
+                                <td id="OnyxTakingToken"     class="takingToken" onclick="TokenClick('TakingOnyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxTakingTokenValue">0</h1></td>
                             </tr>
                             <tr>
-                                <td class="token cursorHover" onclick="TokenClick('Emerald')"  ><img class="p-0" width="100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldTokenValue" >@Model.TokenStacks[Token.Emerald]</h1></td>
-                                <td class="token cursorHover" onclick="TokenClick('Sapphire')" ><img class="p-0" width="100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireTokenValue">@Model.TokenStacks[Token.Sapphire]</h1></td>
-                                <td class="token cursorHover" onclick="TokenClick('Ruby')"     ><img class="p-0" width="100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyTokenValue"    >@Model.TokenStacks[Token.Ruby]</h1></td>
-                                <td class="token cursorHover" onclick="TokenClick('Diamond')"  ><img class="p-0" width="100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondTokenValue" >@Model.TokenStacks[Token.Diamond]</h1></td>
-                                <td class="token cursorHover" onclick="TokenClick('Onyx')"     ><img class="p-0" width="100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxTokenValue"    >@Model.TokenStacks[Token.Onyx]</h1></td>
-                                <td class="token cursorHover" onclick="TokenClick('Gold')"     ><img class="p-0" width="100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldTokenValue"    >@Model.TokenStacks[Token.Gold]</h1></td>
+                                <td class="token cursorHover" onclick="TokenClick('Emerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldTokenValue" >@Model.TokenStacks[Token.Emerald]</h1></td>
+                                <td class="token cursorHover" onclick="TokenClick('Sapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireTokenValue">@Model.TokenStacks[Token.Sapphire]</h1></td>
+                                <td class="token cursorHover" onclick="TokenClick('Ruby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyTokenValue"    >@Model.TokenStacks[Token.Ruby]</h1></td>
+                                <td class="token cursorHover" onclick="TokenClick('Diamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondTokenValue" >@Model.TokenStacks[Token.Diamond]</h1></td>
+                                <td class="token cursorHover" onclick="TokenClick('Onyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxTokenValue"    >@Model.TokenStacks[Token.Onyx]</h1></td>
+                                <td class="token cursorHover" onclick="TokenClick('Gold')"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldTokenValue"    >@Model.TokenStacks[Token.Gold]</h1></td>
 
                             </tr>
                         </table>
@@ -406,39 +424,38 @@
     <script>
         var True = true, False = false;
         function CardScreen(ImageName, purchaseable=false) {
+
+            let backButton = `<div class="col p-0 pe-3">
+                                <div class="purple p-0 mx-auto" style="width: 100%;">
+                                    <button class="mx-auto btn btn-outline-light btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Back</button>
+                                </div>
+                            </div>`;
+
+
+            let reserveButton = getReserveButton(@IsCurrentPlayer, @(Model.Players[playerOrdinal].ReservedCards.Count < 3), ImageName);
+            let selectPurchaseButton = getSelectPurchaseButton(@IsCurrentPlayer, purchaseable, @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0), ImageName);
+            let purchaseButton =             getPurchaseButton(@IsCurrentPlayer, purchaseable, @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0), ImageName);
+
             let innerHtml = `
                 <img class="mx-auto card mt-6
                             mt-md-7"
                             mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-height: 50%"/>
-                <div class="container row mt-5 mx-auto" style="width: 90%; max-width: 40rem; ">
-                    <div class="col p-0 pe-3">
-                        <div class="purple p-0 mx-auto" style="width: 100%;">
-                            <button class="mx-auto btn btn-outline-light btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Back</button>
-                        </div>
+                <div class="container mt-5 mx-auto" style="width: 90%; max-width: 40rem; ">
+                    <div class="row">` +
+                        backButton +
+                        reserveButton +
+                    `</div>
+                    <div class="row mt-3"> ` +
+                        selectPurchaseButton +
+                        purchaseButton + `
                     </div>
-                    <div class="col p-0 ps-3">
-                        <div class="p-0 mx-auto" style="width: 100%;">
-                            <button `;
-            if (!@IsCurrentPlayer || Tokens.Gold <= 0)
-            {
-                innerHtml += "disabled ";
-            }
-
-            innerHtml +=    `class="mx-auto btn btn-darkPurple btn-lg" style="width: 100%;" onclick='reserve("` + ImageName + `")'>Reserve</button>
-                        </div>
-                    </div>
-                    <div class="col-12 p-0 mt-5">
-                        <div class="p-0 mx-auto" style="width: 100%;">
-                            <button `;
-            if (!@IsCurrentPlayer || !purchaseable)
-            {
-                innerHtml += "disabled ";
-            }
-            innerHtml += `class="mx-auto btn btn-purple btn-lg" style="width: 100%;" onclick='purchase("` + ImageName + `")'>Purchase</button>
-                        </div>
-                    </div>
-                </div>
-            `;
+                <div>`;
+                
+                    
+                    
+             
+                    
+            
 
             let CardScreen = document.getElementById("CardScreen")
 
@@ -452,5 +469,51 @@
     </section>
 
 
+<!-- Reserve Card Screen-->
+    <section id="CardScreen" class="OverlayScreen">
+    </section>
+    <script>
+        var True = true, False = false;
+        function ReserveCardScreen(ImageName, purchaseable=false) {
+            let backButton = `<div class="col p-0 `
+            if (!purchaseable && @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0)) {
+                backButton += "pe-3";
+            }
+            
+            backButton +=                             `">
+                                <div class="purple p-0 mx-auto" style="width: 100%;">
+                                    <button class="mx-auto btn btn-outline-light btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Back</button>
+                                </div>
+                            </div>`;
 
+
+            let selectPurchaseButton = getSelectPurchaseButton(@IsCurrentPlayer, purchaseable, @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0), ImageName, false);
+            let purchaseButton =             getPurchaseButton(@IsCurrentPlayer, purchaseable, @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0), ImageName, false);
+
+            let innerHtml = `
+                <img class="mx-auto card mt-6
+                            mt-md-7"
+                            mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-height: 50%"/>
+                <div class="container mt-5 mx-auto" style="width: 90%; max-width: 40rem; ">
+                    <div class="row">` +
+                        backButton +
+                        selectPurchaseButton +
+                    `</div>
+                    <div class="row mt-3"> ` +
+                        purchaseButton + `
+                    </div>
+                <div>`;
+                
+                    
+                    
+             
+                    
+            
+
+            let CardScreen = document.getElementById("CardScreen")
+
+            CardScreen.innerHTML = innerHtml;
+            CardScreen.style.display = "block";
+        }
+    </script>
 </body>

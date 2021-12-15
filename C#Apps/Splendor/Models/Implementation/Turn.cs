@@ -9,5 +9,7 @@
         public ICard? ReservedCard { get; set; }
 
         public INoble? Noble { get; set; }
+
+
     }
 }
