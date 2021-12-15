@@ -94,25 +94,7 @@ namespace Splendor.Controllers
             {
                 if (ImageName != null)
                 {
-                    ICard Card = new Card();
-
-                    // Check the reserved cards first
-                    int playerIndex = 0;
-                    for (int i = 0; i < gameBoard.Players.Count; i++)
-                    {
-                        if (gameBoard.Players[i].Id == playerId)
-                        {
-                            playerIndex = i;
-                        }
-                    }
-                    foreach (ICard card in gameBoard.Players[playerIndex].ReservedCards)
-                    {
-                        if (card.ImageName == ImageName)
-                        {
-                            Card = card;
-                            break;
-                        }
-                    }
+                    ICard Card = null;
 
                     if (ImageName[5] == '1')
                     {
@@ -148,12 +130,28 @@ namespace Splendor.Controllers
                         }
                     }
                     
+                    if (Card == null)
+                    {
+                        // Check the reserved cards first
+                        int playerIndex = 0;
+                        for (int i = 0; i < gameBoard.Players.Count; i++)
+                        {
+                            if (gameBoard.Players[i].Id == playerId)
+                            {
+                                playerIndex = i;
+                            }
+                        }
+                        foreach (ICard card in gameBoard.Players[playerIndex].ReservedCards)
+                        {
+                            if (card.ImageName == ImageName)
+                            {
+                                Card = card;
+                                break;
+                            }
+                        }
+                    }
                         
-
-                    Turn turn = new Turn();
-                    turn.Card = Card;
-
-                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(turn);
+                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(Card));
 
                     if (completedTurn.Error != null)
                     {
@@ -181,7 +179,7 @@ namespace Splendor.Controllers
             {
                 if (ImageName != null)
                 {
-                    ICard Card = new Card();
+                    ICard Card = null;
                     if (ImageName[5] == '1')
                     {
                         foreach (ICard card in gameBoard.Level1Cards)
@@ -216,11 +214,7 @@ namespace Splendor.Controllers
                         }
                     }
 
-
-                    Turn turn = new Turn();
-                    turn.ReservedCard = Card;
-
-                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(turn);
+                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(Card, true));
 
                     if (completedTurn.Error != null)
                     {

@@ -139,14 +139,24 @@
             // TODO - Implement Gold Tokens and for user to choose what tokens to purchase the card with
             // Need to make it so that a gold tokens can supplement for a mission card
 
+            int Gold = Tokens[Token.Gold];
             // Check to make sure we have enough tokens to purchase card
             foreach (KeyValuePair<Token, int> kvp in card.Price)
             {
-                // If we have too little tokens return an error
+                // If we have too little tokens
                 if (Tokens[kvp.Key] + CardTokens[kvp.Key] < kvp.Value)
                 {
-                    return false;
+                    // If we have too little tokens with gold return an error
+                    if (Tokens[kvp.Key] + CardTokens[kvp.Key] + Gold < kvp.Value)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        Gold -= kvp.Value - Tokens[kvp.Key] - CardTokens[kvp.Key];
+                    }
                 }
+                
             }
 
 

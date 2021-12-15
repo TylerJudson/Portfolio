@@ -487,8 +487,8 @@
                             </div>`;
 
 
-            let selectPurchaseButton = getSelectPurchaseButton(@IsCurrentPlayer, purchaseable, @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0), ImageName, false);
-            let purchaseButton =             getPurchaseButton(@IsCurrentPlayer, purchaseable, @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0), ImageName, false);
+            let selectPurchaseButton = getSelectPurchaseReserveButton(@IsCurrentPlayer, purchaseable, @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0), ImageName);
+            let purchaseButton =             getPurchaseReserveButton(@IsCurrentPlayer, purchaseable, @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0), ImageName);
 
             let innerHtml = `
                 <img class="mx-auto card mt-6

@@ -96,31 +96,25 @@ function getReserveButton(IsCurrentPlayer, LessThan3, ImageName) {
     return ret;
 }
 
-function getSelectPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName, CardScreen=true) {
+function getSelectPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
     ret = ``;
     if (IsCurrentPlayer && HaveGold && purchaseable)
     {
-        ret += `<div class="col-6 p-0 `;
-        if (CardScreen) {
-            ret += `pe-3`;
-        }
-        else {
-            ret += 'ps-3';
-        }
-        ret +=                        `">
+        ret += `<div class="col-6 p-0 pe-3">
                     <div class="purple p-0 mx-auto" style="width: 100%;">
                         <button class="mx-auto btn btn-outline-purple btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Select Purchase</button>
                     </div>
                 </div>`;
-    }
+    } 
     return ret;
 }
 
-function getPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName, CardScreen = true) {
+
+function getPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
     ret = `
             <div class="col p-0 `
 
-    if (HaveGold && purchaseable && CardScreen) {
+    if (HaveGold && purchaseable && IsCurrentPlayer) {
         ret += "ps-3";
     }
 
@@ -134,6 +128,36 @@ function getPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName, C
     }
 
     ret +=            `class="mx-auto btn btn-purple btn-lg" style="width: 100%;" onclick='purchase("` + ImageName + `")'>Purchase</button>
+                </div>
+             </div>
+            `;
+    return ret;
+}
+function getSelectPurchaseReserveButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
+    ret = ``;
+    if (IsCurrentPlayer && HaveGold && purchaseable) {
+        ret += `<div class="col-6 p-0 pe-3">
+                    <div class="purple p-0 mx-auto" style="width: 100%;">
+                        <button class="mx-auto btn btn-outline-purple btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Select Purchase</button>
+                    </div>
+                </div>`;
+    }
+    return ret;
+}
+function getPurchaseReserveButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
+    ret = `
+            <div class="col p-0 `
+
+
+    ret += `">
+                <div class="p-0 mx-auto" style="width: 100%;">
+                    <button `;
+
+    if (!IsCurrentPlayer || !purchaseable) {
+        ret += "disabled ";
+    }
+
+    ret += `class="mx-auto btn btn-purple btn-lg" style="width: 100%;" onclick='purchase("` + ImageName + `")'>Purchase</button>
                 </div>
              </div>
             `;
