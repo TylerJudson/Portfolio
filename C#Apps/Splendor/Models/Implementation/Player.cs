@@ -35,6 +35,8 @@
 
         public ICompletedTurn ExecuteTurn(ITurn turn)
         {
+            Dictionary<Token, int> ConsumedTokens = new Dictionary<Token, int>();
+
             // If we acquired tokens -> add them to our Tokens
             if (turn.TakenTokens != null) // Check to make sure there are tokens to add
             {
@@ -46,7 +48,7 @@
                 // If we have too many tokens return a continue action
                 if (NumberOfTokens() > MaxTokens)
                 {
-                    return new CompletedTurn( new ContinueAction("Please choose tokens to get rid of", 0));
+                    return new CompletedTurn( new ContinueAction("Please choose tokens to get rid of", 0), ConsumedTokens);
                 }
             }
             // If we purchase a card -> add the card to our Cards and balance the price
@@ -67,8 +69,35 @@
                     // If we have enough cards don't do anything
                     if (kvp.Value - CardTokens[kvp.Key] > 0)
                     {
-                        // Subtract from the tokens after subtraction from the cards
-                        Tokens[kvp.Key] -= (kvp.Value - CardTokens[kvp.Key]);
+                        // Set cost to the amount of tokens needed after applying cards
+                        int cost = kvp.Value - CardTokens[kvp.Key];
+
+                        // If we consumed more tokens than we have take from the gold tokens
+                        if (cost > Tokens[kvp.Key])
+                        {
+                            // Subtract the difference of the amount consumed and what we actually have from gold
+                            Tokens[Token.Gold] -= cost - Tokens[kvp.Key];
+
+                            // Add gold to the dictionary of consumed tokens
+                            if (!ConsumedTokens.ContainsKey(Token.Gold))
+                            {
+                                ConsumedTokens.Add(Token.Gold, cost - Tokens[kvp.Key]); 
+                            }
+                            else
+                            {
+                                ConsumedTokens[Token.Gold] += cost - Tokens[kvp.Key];
+                            }
+
+                            // modify the cost based on how many gold tokens used
+                            cost = Tokens[kvp.Key];
+                        }
+                        
+                        // Subtract what was consumed from what we have
+                        Tokens[kvp.Key] -= cost;
+
+                        // Add the amount to consumed tokens
+                        ConsumedTokens.Add(kvp.Key, cost);
+
                     }
                 }
 
@@ -96,7 +125,7 @@
                 // Check to make sure we don't have more than the max tokens
                 if (NumberOfTokens() > MaxTokens)
                 {
-                    return new CompletedTurn(new ContinueAction("Please choose tokens to get rid of", 0));
+                    return new CompletedTurn(new ContinueAction("Please choose tokens to get rid of", 0), ConsumedTokens);
                 }
             }
 
@@ -119,7 +148,7 @@
             }
 
 
-            return new CompletedTurn();
+            return new CompletedTurn(ConsumedTokens);
         }
         
         public bool CanAcquireNoble(INoble noble)

@@ -55,15 +55,15 @@ namespace Splendor.Controllers
 
         [HttpPost]
         [Route("Game/EndTurn/{gameId:int}/{playerId:int}")]
-        public JsonResult EndTurn([FromBody] Turn turn, int gameId, int playerId)
+        public JsonResult EndTurn([FromBody] Dictionary<Token, int> TakenTokens, int gameId, int playerId)
         {
             // Check to make sure the game is active
             if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
             {
-                if (turn.TakenTokens != null)
+                if (TakenTokens != null)
                 {
 
-                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(turn);
+                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn( new Turn(TakenTokens));
 
                     if (completedTurn.Error != null)
                     {
@@ -74,7 +74,7 @@ namespace Splendor.Controllers
                         return Json(completedTurn.ContinueAction);
                     }
                 }
-              
+
 
                 return Json(gameBoard);
             }
@@ -231,6 +231,52 @@ namespace Splendor.Controllers
 
             return Json("");
         }
+
+
+
+        [HttpPost]
+        [Route("Game/Noble/{gameId:int}/{playerId:int}")]
+        public JsonResult Noble([FromBody] string ImageName, int gameId, int playerId)
+        {
+            // Check to make sure the game is active
+            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+            {
+                // Check to make sure the image isn't null
+                if (ImageName != null)
+                {
+                    INoble? Noble = null;
+
+                    // Find the noble on the gameboard
+                    foreach(INoble noble in gameBoard.Nobles)
+                    {
+                        if (noble.ImageName == ImageName)
+                        {
+                            Noble = noble;
+                            break;
+                        }
+                    }
+
+                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(Noble));
+
+                    if (completedTurn.Error != null)
+                    {
+                        return Json(completedTurn.Error);
+                    }
+                    else if (completedTurn.ContinueAction != null)
+                    {
+                        return Json(completedTurn.ContinueAction);
+                    }
+                }
+                return Json(gameBoard);
+            }
+
+
+            return Json("");
+        }
+
+
+
+
         /// <summary>
         /// Starts the game
         /// </summary>

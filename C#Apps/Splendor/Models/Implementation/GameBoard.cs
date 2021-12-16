@@ -135,7 +135,7 @@
                 {
                     Players[CurrentPlayer].ReservedCards.Remove(turn.Card);
                 }
-                // IF the card is in the shop
+                // If the card is in the shop
                 else
                 {
                     // Remove the card and draw a new one
@@ -153,11 +153,13 @@
                     }
                 }
                 
-
-                // Return the tokens to their stacks
-                foreach(KeyValuePair<Token, int> kvp in turn.Card.Price)
+                if (PlayersCompletedTurn.ConsumedTokens != null)
                 {
-                    TokenStacks[kvp.Key] += (kvp.Value - Players[CurrentPlayer].CardTokens[kvp.Key]) < 0 ? 0 : kvp.Value - Players[CurrentPlayer].CardTokens[kvp.Key];
+                    // Return the tokens to their stacks
+                    foreach(KeyValuePair<Token, int> kvp in PlayersCompletedTurn.ConsumedTokens)
+                    {
+                        TokenStacks[kvp.Key] += kvp.Value;
+                    }
                 }
             }
             // if the player reserved a card -> remove 1 gold, remove the card, and draw a new one 
@@ -223,7 +225,7 @@
             {
                 if (Players[CurrentPlayer].CanAcquireNoble(noble))
                 {
-                    return new CompletedTurn(new ContinueAction("You can acquire a noble", 1));
+                    return new CompletedTurn(new ContinueAction("You can acquire a noble", 1), null);
                 }
             }
 

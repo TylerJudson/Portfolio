@@ -11,5 +11,10 @@
         /// The action needed to continue
         /// </summary>
         IContinueAction? ContinueAction { get; }
+
+        /// <summary>
+        /// The tokens consumed during a given turn
+        /// </summary>
+        Dictionary<Token, int>? ConsumedTokens { get; }
     }
 }

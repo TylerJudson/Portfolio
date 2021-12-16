@@ -42,7 +42,7 @@
         $.ajax({
             url: "/Game/EndTurn/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "POST",
-            data: JSON.stringify({ TakenTokens: TakingTokens }),
+            data: JSON.stringify(TakingTokens),
             contentType: "application/json",
             dataType: 'json',
             success: function (data) {
@@ -50,6 +50,10 @@
                     alert("ERROR - " + data.message);
                 } else if (data.hasOwnProperty("actionCode")) {
                     alert("Continue Action");
+                    if (data.actionCode == 1)
+                    {
+                        getNoble("Noble-3E-3S-3R.jpg");
+                    }
                 }
                 else {
                     TakingTokens = { 
@@ -82,7 +86,10 @@
                 if (data.hasOwnProperty("errorCode")) {
                     alert("ERROR - " + data.message);
                 } else if (data.hasOwnProperty("actionCode")) {
-                    alert("Continue Action");
+                    if (data.actionCode == 1)
+                    {
+                        getNoble("Noble-3E-3S-3R.jpg");
+                    }
                 }
                 else {
                    renderGameBoard(data);
@@ -106,6 +113,29 @@
                     alert("ERROR - " + data.message);
                 } else if (data.hasOwnProperty("actionCode")) {
                     alert("Continue Action");
+                }
+                else {
+                   renderGameBoard(data);
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert("ERROR - Please try again.")
+            }
+        });
+    }
+
+    function noble(ImageName) {
+        $.ajax({
+            url: "/Game/Noble/@ViewData["GameId"]/@ViewData["PlayerId"]",
+            type: "POST",
+            data: JSON.stringify(ImageName),
+            contentType: "application/json",
+            dataType: 'json',
+            success: function (data) {
+                if (data.hasOwnProperty("errorCode")) {
+                    alert("ERROR - " + data.message);
+                } else if (data.hasOwnProperty("actionCode")) {
+                    alert("ContinueAction")
                 }
                 else {
                    renderGameBoard(data);
@@ -258,13 +288,30 @@
                             <div class="row m-0" style="position: relative; top: 50%; transform: translateY(-50%);">
                                 @if (Model.Players[i].ReservedCards.Count > 0)
                                 {
+                                    string BorderColor_r = "gray";
+                                    string Opacity_r = "80%";
+                                    bool Purchaseable_r = false;
                                     foreach (ICard card in Model.Players[i].ReservedCards)
                                     {
+                                        if(playerOrdinal == i && Model.Players[playerOrdinal].CanPurchaseCard(card))
+                                        {
+                                            BorderColor_r = "green";
+                                            Opacity_r = "100%";
+                                            Purchaseable_r = true;
+
+                                        }
+                                        else
+                                        {
+                                            BorderColor_r = "gray";
+                                            Opacity_r = "80%";
+                                            Purchaseable_r = false;
+
+                                        }
                                         <div class="col-4
                                                     col-sm-3
                                                     col-md-4
                                                     ">
-                                            <img id="@Model.Players[i].Id-Reserved:@card.ImageName" class="col-12 p-0 card cursorHover"  maxwidth="33%" src="/Images/@card.ImageName" alt=@card.ImageName onclick='ReserveCardScreen("@card.ImageName", true)'/>
+                                            <img id="@Model.Players[i].Id-Reserved:@card.ImageName" class="col-12 p-0 card cursorHover" style="border-color: @BorderColor_r; opacity: @Opacity_r;" maxwidth="33%" src="/Images/@card.ImageName" alt=@card.ImageName onclick='ReserveCardScreen("@card.ImageName", @Purchaseable_r)'/>
                                         </div>
                                     }
                                 }
@@ -467,7 +514,53 @@
 <!-- Noble Screen -->
     <section id="NobleScreen" class="OverlayScreen">
     </section>
+    <script>
+        function NobleScreen(ImageName) {
+            let innerHtml = `
+                <img class="mx-auto card mt-8
+                            mt-md-7"
+                            mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-width: 75%; max-height: 50%"/>
+                <div class="container row mt-5 mx-auto
+                            pl-md-6
+                            pl-lg-8
+                            pl-xl-10" style="width: 100%">
+                    <button class="btn btn-outline-light btn-lg" style="width: 10rem;" onclick='ToggleScreen("NobleScreen")'>Back</button>
+                </div>
+            `;
 
+            let NobleScreen = document.getElementById("NobleScreen")
+
+            NobleScreen.innerHTML = innerHtml;
+            NobleScreen.style.display = "block";
+        }
+    </script>
+
+<!-- Get Noble Screen -->
+    <section id="GetNobleScreen" class="OverlayScreen">
+    </section>
+    <script>
+
+        function GetNobleScreen(ImageName) {
+            let innerHtml = `
+                <h1>Would you like to get this noble?</h1>
+                <img class="mx-auto card mt-8
+                            mt-md-7"
+                            mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-width: 75%; max-height: 50%"/>
+                <div class="container row mt-5 mx-auto
+                            pl-md-6
+                            pl-lg-8
+                            pl-xl-10" style="width: 100%">
+                    <button class="btn btn-outline-purple btn-lg" style="width: 10rem;" onclick='ToggleScreen("GetNobleScreen")'>No</button>
+                    <button class="btn btn-outline-purple btn-lg" style="width: 10rem;" onclick='noble("` + ImageName + `")'>Yes</button>
+                </div>
+            `;
+
+            let NobleScreen = document.getElementById("NobleScreen")
+
+            NobleScreen.innerHTML = innerHtml;
+            NobleScreen.style.display = "block";
+        }
+    </script>
 
 <!-- Reserve Card Screen-->
     <section id="CardScreen" class="OverlayScreen">
@@ -476,7 +569,7 @@
         var True = true, False = false;
         function ReserveCardScreen(ImageName, purchaseable=false) {
             let backButton = `<div class="col p-0 `
-            if (!purchaseable && @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0)) {
+            if (purchaseable && @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0) && @IsCurrentPlayer) {
                 backButton += "pe-3";
             }
             

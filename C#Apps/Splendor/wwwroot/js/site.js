@@ -6,7 +6,8 @@ let Tokens = {
     Diamond: document.getElementById("DiamondTokenValue").innerHTML,
     Onyx: document.getElementById("OnyxTokenValue").innerHTML,
     Gold: document.getElementById("GoldTokenValue").innerHTML
-}
+};
+
 
 
 function ToggleScreen(screenID) {
@@ -16,25 +17,6 @@ function ToggleScreen(screenID) {
     } else {
         x.style.display = "none";
     }
-}
-
-function NobleScreen(ImageName) {
-    let innerHtml = `
-        <img class="mx-auto card mt-8
-                    mt-md-7"
-                    mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-width: 75%; max-height: 50%"/>
-        <div class="container row mt-5 mx-auto
-                    pl-md-6
-                    pl-lg-8
-                    pl-xl-10" style="width: 100%">
-            <button class="btn btn-outline-light btn-lg" style="width: 10rem;" onclick='ToggleScreen("NobleScreen")'>Back</button>
-        </div>
-    `;
-
-    let NobleScreen = document.getElementById("NobleScreen")
-
-    NobleScreen.innerHTML = innerHtml;
-    NobleScreen.style.display = "block";
 }
 
 function ValidateTokens(token) {
@@ -109,7 +91,6 @@ function getSelectPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageN
     return ret;
 }
 
-
 function getPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
     ret = `
             <div class="col p-0 `
@@ -133,10 +114,11 @@ function getPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
             `;
     return ret;
 }
+
 function getSelectPurchaseReserveButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
     ret = ``;
     if (IsCurrentPlayer && HaveGold && purchaseable) {
-        ret += `<div class="col-6 p-0 pe-3">
+        ret += `<div class="col-6 p-0 ps-3">
                     <div class="purple p-0 mx-auto" style="width: 100%;">
                         <button class="mx-auto btn btn-outline-purple btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Select Purchase</button>
                     </div>
@@ -144,6 +126,7 @@ function getSelectPurchaseReserveButton(IsCurrentPlayer, purchaseable, HaveGold,
     }
     return ret;
 }
+
 function getPurchaseReserveButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
     ret = `
             <div class="col p-0 `
@@ -252,7 +235,7 @@ function TokenClick(token) {
 
     // Validate before we take
     if (!ValidateTokens(token)) {
-        return;
+       return;
     }
 
 
@@ -339,4 +322,10 @@ function TokenClick(token) {
 
     SetTokens();
 
+}
+
+
+function getNoble(ImageName) {
+    alert("GETTING NOBLE");
+    GetNobleScreen(ImageName);
 }

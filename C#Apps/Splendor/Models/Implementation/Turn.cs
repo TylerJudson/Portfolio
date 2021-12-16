@@ -25,6 +25,10 @@
                 Card = card;
             }
         }
+        public Turn(INoble noble)
+        {
+            Noble = noble;
+        }
         
     }
 }

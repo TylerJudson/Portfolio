@@ -4,6 +4,7 @@
     {
         public IError? Error { get; }
         public IContinueAction? ContinueAction { get; }
+        public Dictionary<Token, int>? ConsumedTokens { get; } 
 
         /// <summary>
         /// Initializes CompletedTurn
@@ -21,18 +22,23 @@
         /// </summary>
         /// <param name="continueAction">The action need to continue</param>
         /// <param name="error">The error during a turn</param>
-        public CompletedTurn(IContinueAction continueAction, IError? error = null)
+        public CompletedTurn(IContinueAction continueAction, Dictionary<Token, int>? consumedTokens, IError? error = null)
         {
             ContinueAction = continueAction;
             Error = error;
         }
+
         /// <summary>
         /// Initializes CompletedTurn
         /// </summary>
-        public CompletedTurn()
+        /// <param name="consumedTokens">The tokens consumed during a given turn</param>
+        public CompletedTurn(Dictionary<Token, int> consumedTokens)
         {
-            Error = null;
-            ContinueAction = null;
+            ConsumedTokens = consumedTokens;
         }
+        /// <summary>
+        /// Initializes CompletedTurn
+        /// </summary>
+        public CompletedTurn() { }
     }
 }
