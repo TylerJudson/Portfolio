@@ -324,6 +324,9 @@ body {
     .mt-lg-8 {
         margin-top: 12rem !important;
     }
+    .mt-lg-6 {
+        margin-top: 7rem !important;
+    }
     .pb-lg-10 {
         padding-bottom: 15rem;
     }
@@ -333,6 +336,7 @@ body {
     .pl-lg-8 {
         padding-left: 12rem;
     }
+
 }
 @media (min-width: 1200px) {
      .mt-xl-10 {

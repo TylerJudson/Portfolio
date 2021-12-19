@@ -52,13 +52,13 @@
 
         public ICompletedTurn ExecuteTurn(ITurn turn)
         {
-            
+
             // If the player aquired tokens -> subtract them from the stacks
             if (turn.TakenTokens != null)
             {
                 // Validate that the player hasn't taken more tokens than allowed
 
-                // Check to make sure the player has not taken more than 3 types of token
+                // Check to make sure the player has not taken more than 3 types of token 
                 if (turn.TakenTokens.Count > 3)
                 {
                     return new CompletedTurn(new Error("You can't take more than 3 types of token", 4));

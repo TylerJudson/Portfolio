@@ -49,11 +49,14 @@
                 if (data.hasOwnProperty("errorCode")) {
                     alert("ERROR - " + data.message);
                 } else if (data.hasOwnProperty("actionCode")) {
-                    alert("Continue Action");
-                    if (data.actionCode == 1)
-                    {
-                        getNoble("Noble-3E-3S-3R.jpg");
+                    if (data.actionCode == 0) {
+                        ReturnTokens();
+
+
+                    } else if (data.actionCode == 1) {
+                        getNoble("Noble-3E-3S-3D.jpg");
                     }
+                    
                 }
                 else {
                     TakingTokens = { 
@@ -88,7 +91,7 @@
                 } else if (data.hasOwnProperty("actionCode")) {
                     if (data.actionCode == 1)
                     {
-                        getNoble("Noble-3E-3S-3R.jpg");
+                        getNoble("Noble-4S-4E.jpg");
                     }
                 }
                 else {
@@ -122,6 +125,35 @@
                 alert("ERROR - Please try again.")
             }
         });
+    }
+
+    function returnTokens() {
+        alert("Return tokens");
+        //$.ajax({
+        //    url: "/Game/Return/@ViewData["GameId"]/@ViewData["PlayerId"]",
+        //    type: "POST",
+        //    data: JSON.stringify(ReturningTokens),
+        //    contentType: "application/json",
+        //    dataType: 'json',
+        //    success: function (data) {
+        //        if (data.hasOwnProperty("errorCode")) {
+        //            alert("ERROR - " + data.message);
+        //        } else if (data.hasOwnProperty("actionCode")) {
+        //            if (data.actionCode == 0) {
+        //                returnTokens();
+        //            } else if (data.actionCode == 1) {
+        //                getNoble("Noble-3E-3S-3D.jpg");
+        //            }
+        //        }
+        //        else {
+        //            ReturningTokens = {};
+        //            renderGameBoard();
+        //        }
+        //    },
+        //    ecolorunction (xhr, ajaxOptions, thrownError) {
+        //        alert("ERROR - Please try again.")
+        //    }
+        //});
     }
 
     function noble(ImageName) {
@@ -354,7 +386,7 @@
                             <tr>
                                 @foreach (INoble noble in Model.Nobles)
                                 {
-                                    <td><img id="@noble.ImageName" class="card cursorHover" style="width: 100%; opacity: 80%" src="/Images/@noble.ImageName" alt="@noble" onclick='NobleScreen("@noble.ImageName")' /></td>
+                                    <td><img id="@noble.ImageName" class="card cursorHover" style="width: 100%; opacity: 80%; max-width: 8rem;" src="/Images/@noble.ImageName" alt="@noble" onclick='NobleScreen("@noble.ImageName")' /></td>
                                 }
                             </tr>
                         </table>
@@ -447,20 +479,20 @@
 
 <!-- Options Screen -->
 
-    <section id="OptionsScreen" class="OverlayScreen" style="display: none;">
-        <div class="mx-auto pt-5" style="width: 100%">
-            <h1 class="mt-5 px-auto text-light display-1 text-center " style="width: 100%">Options</h1>
+    <section id="OptionsScreen" class="OverlayScreen">
+        <div class="mx-auto pt-5 pt-lg-3" style="width: 100%">
+            <h1 class="mt-5 px-auto text-light display-1 text-center" style="width: 100%">Options</h1>
         </div>
-        <div style="margin-top: 23rem;">
+        <div style="margin-top: 23rem; width: 20rem;" class="mx-auto text-center">
 
-            <div class="mx-auto purple" style="width: 150px;">
-                <button class="mx-auto btn btn-outline-purple btn-lg fw-bold" style="width: 150px; border: 2px solid var(--purple);" onclick='ToggleScreen("OptionsScreen")'>Resume</button> 
+            <div class="mx-auto purple">
+                <button class="mx-auto btn btn-outline-purple btn-lg" style="border: 2px solid var(--purple); width: 100%;" onclick='ToggleScreen("OptionsScreen")'>Resume</button> 
             </div>
-            <div class="mx-auto my-2" style="width: 200px;">
-                <button class="mx-auto btn btn-outline-danger btn-lg" style="width: 200px;" onclick='ToggleScreen("OptionsScreen")'>Exit Game</button> 
+            <div class="mx-auto my-3">
+                <button class="mx-auto btn btn-outline-danger btn-lg" style="width: 100%;" onclick='ToggleScreen("OptionsScreen")'>Exit Game</button> 
             </div>
-            <div class="mx-auto my-2" style="width: 150px;">
-                <a class="mx-auto btn btn-outline-success btn-lg" style="width: 150px;" href="https://cdn.1j1ju.com/medias/7f/91/ba-splendor-rulebook.pdf" target="_blank" rel="noopener noreferrer" >Rules</a> 
+            <div class="mx-auto my-3">
+                <a class="mx-auto btn btn-outline-success btn-lg" style="width: 100%;" href="https://cdn.1j1ju.com/medias/7f/91/ba-splendor-rulebook.pdf" target="_blank" rel="noopener noreferrer" >Rules</a> 
             </div>
         </div>
     </section>
@@ -535,11 +567,93 @@
         }
     </script>
 
+<!-- Return Token Screen -->
+    <section id="ReturnTokenScreen" class="OverlayScreen">
+        <table>
+            <tr>
+                <td id="EmeraldReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningEmerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldReturningTokenValue">0</h1></td>
+                <td id="SapphireReturningToken" class="takingToken" onclick="ReturnTokenClick('ReturningSapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireReturningTokenValue">0</h1></td>
+                <td id="RubyReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningRuby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyReturningTokenValue">0</h1></td>
+                <td id="DiamondReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningDiamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondReturningTokenValue">0</h1></td>
+                <td id="OnyxReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningOnyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxReturningTokenValue">0</h1></td>
+                <td id="GoldReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningGold')"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldReturningTokenValue">0</h1></td>
+            </tr>
+            <tr>
+                <td class="token cursorHover" onclick="ReturnTokenClick('Emerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="PlayerEmeraldTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Emerald] </h1></td>
+                <td class="token cursorHover" onclick="ReturnTokenClick('Sapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="PlayerSapphireTokenValue">@Model.Players[Model.CurrentPlayer].Tokens[Token.Sapphire]</h1></td>
+                <td class="token cursorHover" onclick="ReturnTokenClick('Ruby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="PlayerRubyTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Ruby]    </h1></td>
+                <td class="token cursorHover" onclick="ReturnTokenClick('Diamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="PlayerDiamondTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Diamond] </h1></td>
+                <td class="token cursorHover" onclick="ReturnTokenClick('Onyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="PlayerOnyxTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Onyx]    </h1></td>
+                <td class="token cursorHover" onclick="ReturnTokenClick('Gold')"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="PlayerGoldTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Gold]    </h1></td>
+            </tr>
+        </table>
+    </section>
+        <script>
+            function ReturnTokens() {
+                ReturnTokensScreen();
+            }   
+            function ReturnTokensScreen() {
+                let innerHtml = `
+                    <h1 class="mt-6 display-3 display-sm-1 text-center
+                                mt-lg-4
+                                mt-xl-5">You have over 10 tokens</h1>
+                    <h1 class="text-center">You must return @(Model.Players[Model.CurrentPlayer].NumberOfTokens() - 10)</h1>
+                    <table class="mx-auto mt-10 mt-sm-6 mt-lg-6" style="max-width: 50rem;">
+                        <tr>
+                            <td id="EmeraldReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningEmerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldReturningTokenValue">0</h1></td>
+                            <td id="SapphireReturningToken" class="takingToken" onclick="ReturnTokenClick('ReturningSapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireReturningTokenValue">0</h1></td>
+                            <td id="RubyReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningRuby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyReturningTokenValue">0</h1></td>
+                            <td id="DiamondReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningDiamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondReturningTokenValue">0</h1></td>
+                            <td id="OnyxReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningOnyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxReturningTokenValue">0</h1></td>
+                            <td id="GoldReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningGold')"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldReturningTokenValue">0</h1></td>
+                        </tr>
+                        <tr>
+                            <td class="token cursorHover" onclick="ReturnTokenClick('Emerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="PlayerEmeraldTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Emerald] </h1></td>
+                            <td class="token cursorHover" onclick="ReturnTokenClick('Sapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="PlayerSapphireTokenValue">@Model.Players[Model.CurrentPlayer].Tokens[Token.Sapphire]</h1></td>
+                            <td class="token cursorHover" onclick="ReturnTokenClick('Ruby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="PlayerRubyTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Ruby]    </h1></td>
+                            <td class="token cursorHover" onclick="ReturnTokenClick('Diamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="PlayerDiamondTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Diamond] </h1></td>
+                            <td class="token cursorHover" onclick="ReturnTokenClick('Onyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="PlayerOnyxTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Onyx]    </h1></td>
+                            <td class="token cursorHover" onclick="ReturnTokenClick('Gold')"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="PlayerGoldTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Gold]    </h1></td>
+                        </tr>
+                    </table>
+
+
+                    <div class="container row mt-5 mx-auto p-0" style="width: 100%; max-width: 50rem;">
+                        <button class="btn btn-outline-darkPurple btn-lg col mx-3" style="width: 10rem;" onclick='ToggleScreen("ReturnTokenScreen")'>View Shop</button>
+                        <button id="ReturnButton" disabled class="btn btn-purple btn-lg col mx-3" style="width: 10rem;" onclick='returnTokens()'>Return</button>
+                    </div>
+                `;
+
+                let ReturnTokenScreen = document.getElementById("ReturnTokenScreen")
+
+                ReturnTokenScreen.innerHTML = innerHtml;
+                ReturnTokenScreen.style.display = "block";
+            }
+        </script>
+
 <!-- Get Noble Screen -->
+
+    
     <section id="GetNobleScreen" class="OverlayScreen">
     </section>
     <script>
+        function getNoble(ImageName) {
+            alert("GETTING NOBLE");
 
+
+            // loop through the nobles and see if the player can purchase it
+            // If the player can purchase it add it to a list
+            // Check to see if the list is greater than 1
+                // If it isn't 
+                    // Pass in the image name to the get noble screen
+                // If it is
+                    // Pass in a array of the images to to a screen (not yet implemented screen)
+
+
+
+
+            GetNobleScreen(ImageName);
+        }   
         function GetNobleScreen(ImageName) {
             let innerHtml = `
                 <h1>Would you like to get this noble?</h1>
