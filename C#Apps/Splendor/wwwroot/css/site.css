@@ -240,6 +240,17 @@ body {
 
 
 
+/* The sticky class is added to the header with JS when it reaches its scroll position */
+.sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: rgb(23, 23, 23);
+    margin-top: 0 !important;
+    z-index: 99;
+    margin-left: -1rem !important;
+    max-width: 100%;
+}
 
 
 
@@ -247,7 +258,9 @@ body {
 
 
 
-
+#OptionsHeader {
+    font-size: 6rem;
+}
 
 
 .mt-10 {
@@ -268,7 +281,6 @@ body {
 
 
 @media (min-width: 576px) {
-    
     .mt-sm-9 {
         margin-top: 14rem;
     }
@@ -291,7 +303,6 @@ body {
     circle {
         transform-origin: center center;
     }
-    
 
     .playerStats {
         width: 2rem;
@@ -339,14 +350,23 @@ body {
 
 }
 @media (min-width: 1200px) {
+    #OptionsHeader {
+        font-size: 10rem;
+    }
      .mt-xl-10 {
-         margin-top: 15rem;
+         margin-top: 15rem !important;
+     }
+     .mt-xl-9 {
+         margin-top: 14rem !important;
      }
     .mt-xl-8 {
-        margin-top: 12rem;
+        margin-top: 12rem !important;
     }
     .mt-xl-7 {
-        margin-top: 10rem;
+        margin-top: 10rem !important;
+    }
+    .mt-xl-6 {
+        margin-top: 7rem !important;
     }
     .pl-xl-10 {
         padding-left: 15rem;
@@ -375,3 +395,27 @@ body {
 @media (min-width: 1800px) {
     
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

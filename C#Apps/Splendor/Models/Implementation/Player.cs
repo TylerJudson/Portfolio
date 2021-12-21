@@ -40,15 +40,25 @@
             // If we acquired tokens -> add them to our Tokens
             if (turn.TakenTokens != null) // Check to make sure there are tokens to add
             {
+
+
+                // Get the sum of the tokens we are about to get
+                int sum = 0;
+                foreach (int token in turn.TakenTokens.Values)
+                {
+                    sum += token;
+                }
+
+                // If we have too many tokens return a continue action
+                if (NumberOfTokens() + sum > MaxTokens)
+                {
+                    return new CompletedTurn( new ContinueAction("Please choose tokens to get rid of", 0), ConsumedTokens);
+                }
+
                 // Add the acquired tokens to the players tokens
                 foreach (KeyValuePair<Token, int> kvp in turn.TakenTokens) 
                 {
                     Tokens[kvp.Key] += kvp.Value;
-                }
-                // If we have too many tokens return a continue action
-                if (NumberOfTokens() > MaxTokens)
-                {
-                    return new CompletedTurn( new ContinueAction("Please choose tokens to get rid of", 0), ConsumedTokens);
                 }
             }
             // If we purchase a card -> add the card to our Cards and balance the price
@@ -165,8 +175,7 @@
 
         public bool CanPurchaseCard(ICard card)
         {
-            // TODO - Implement Gold Tokens and for user to choose what tokens to purchase the card with
-            // Need to make it so that a gold tokens can supplement for a mission card
+            // TODO - Implement Gold Tokens and for user to choose what tokens and cards to purchase the card with
 
             int Gold = Tokens[Token.Gold];
             // Check to make sure we have enough tokens to purchase card

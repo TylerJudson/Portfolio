@@ -11,5 +11,10 @@
         /// The code of the action
         /// </summary>
         int ActionCode { get; }
+
+        /// <summary>
+        /// The Nobles the player can obtain
+        /// </summary>
+        List<INoble> Nobles { get; }
     }
 }

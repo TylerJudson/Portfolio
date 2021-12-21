@@ -4,6 +4,7 @@
     {
         public string Message { get; }
         public int ActionCode { get; }
+        public List<INoble>? Nobles { get; }
 
         /// <summary>
         /// Initalizes ContinueAction
@@ -18,6 +19,12 @@
         {
             Message = message;
             ActionCode = actionCode;
+        }
+        public ContinueAction(string message, int actionCode, List<INoble> nobles)
+        {
+            Message = message;
+            ActionCode = actionCode;
+            Nobles = nobles;
         }
     }
 }

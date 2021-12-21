@@ -53,6 +53,13 @@
         public ICompletedTurn ExecuteTurn(ITurn turn)
         {
 
+            //Players[CurrentPlayer].CardTokens[Token.Sapphire] = 3;
+            //Players[CurrentPlayer].CardTokens[Token.Emerald] = 4;
+
+            // TODO - Need to make it so when you return tokens it only looks at the positive numbers
+            // Right now it is saying tha we are taking to many different types of tokens but we are returning some.
+            // Make sure this is ok with DAD
+
             // If the player aquired tokens -> subtract them from the stacks
             if (turn.TakenTokens != null)
             {
@@ -99,13 +106,6 @@
                     }
                 }
 
-                // Now we can subtract the tokens from the stacks
-
-                // Loop through and subtract the tokens taken from each stack
-                foreach (KeyValuePair<Token, int> kvp in turn.TakenTokens)
-                {
-                    TokenStacks[kvp.Key] -= kvp.Value;
-                }
 
                 // Execute the turn for the player
                 ICompletedTurn PlayersCompletedTurn = Players[CurrentPlayer].ExecuteTurn(turn);
@@ -114,6 +114,14 @@
                 if (PlayersCompletedTurn.Error != null || PlayersCompletedTurn.ContinueAction != null)
                 {
                     return PlayersCompletedTurn;
+                }
+
+                // Now we can subtract the tokens from the stacks
+
+                // Loop through and subtract the tokens taken from each stack
+                foreach (KeyValuePair<Token, int> kvp in turn.TakenTokens)
+                {
+                    TokenStacks[kvp.Key] -= kvp.Value;
                 }
 
             }
@@ -221,24 +229,41 @@
             }
 
 
+            // Check to see if the player can acquire a noble
+
+            // Loop through and add all the nobles the player can purchase to nobles
+            List<INoble> nobles = new List<INoble>();
             foreach (INoble noble in Nobles)
             {
+                // If the player can acquire a noble add it to the list of nobles
                 if (Players[CurrentPlayer].CanAcquireNoble(noble))
                 {
-                    return new CompletedTurn(new ContinueAction("You can acquire a noble", 1), null);
+                    nobles.Add(noble);
                 }
             }
 
+            // If the player can purchase a noble
+            if (nobles.Count > 0)
+            {
+                return new CompletedTurn(new ContinueAction("You can acquire nobles", 1, nobles), null);
+            }
 
+            // Increment the current player
             CurrentPlayer++;
+
+            // Loop the current player when it gets to big
             if (CurrentPlayer >= Players.Count)
             {
                 CurrentPlayer -= Players.Count;
             }
+
             Version++;
             LastTurn = turn;
+
             return new CompletedTurn();
         }
+
+
 
         /// <summary>
         /// Initializes the card stack for the level 1 cards

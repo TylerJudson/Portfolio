@@ -10,8 +10,11 @@
 
         public int MaxPlayers { get; } = 4;
 
-        //TODO - documentation
-
+        /// <summary>
+        /// Initializes the potential game
+        /// </summary>
+        /// <param name="id">The Id of the potential game</param>
+        /// <param name="creator">The name of the creator</param>
         public PotentialGame(int id, string creator)
         {
             Id = id;

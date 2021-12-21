@@ -17,18 +17,64 @@ let PlayerTokens = {
     Onyx:     document.getElementById("PlayerOnyxTokenValue").innerHTML,
     Gold:     document.getElementById("PlayerGoldTokenValue").innerHTML
 }
+let IsContinueAction = false;
+let OtherScreen = false;
+// When the user scrolls the page, execute myFunction
+window.onscroll = function () { OnScroll() };
 
 
+// Get the header
+var card = document.getElementById("0-card");
 
-function ToggleScreen(screenID) {
-    var x = document.getElementById(screenID);
-    if (x.style.display === "none") {
-        x.style.display = "block";
+// Get the offset position of the navbar
+var sticky = card.offsetTop;
+
+// Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
+function OnScroll() {
+    if (window.pageYOffset > sticky && window.width < 992 && !OtherScreen) {
+        card.classList.add("sticky");
+        document.body.style.paddingTop = (card.offsetHeight + 16).toString() + "px";
     } else {
-        x.style.display = "none";
+        card.classList.remove("sticky");
+        document.body.style.paddingTop = "0rem";
+
     }
 }
 
+function ToggleScreen(screenID) {
+    var x = document.getElementById(screenID);
+    if (x.style.display == "none") {
+        x.style.display = "block";
+        OtherScreen = true;
+    } else {
+        x.style.display = "none";
+        OtherScreen = false;
+    }
+    OnScroll();
+    
+}
+
+function merge(obj1, obj2) {
+    ret = {};
+
+    // Loop through all the properties in the first object and add them to ret
+    for (prop in obj1) {
+        ret[prop] = obj1[prop];
+    }
+
+
+    // Loop through all the properties in the second object and add them to ret
+    for (prop in obj2) {
+        // if the property already exists in ret sum the two
+        if (ret.hasOwnProperty(prop)) {
+            ret[prop] += obj2[prop];
+        } else {
+            ret[prop] = obj2[prop];
+        }
+    }
+
+    return ret;
+}
 function ValidateTokens(token) {
 
     // Check to make sure we didn't take more than 3 tokens
@@ -68,8 +114,9 @@ function CountTokens(obj) {
     return sum;
 }
 
-function renderGameBoard(gameBoard) {
+function renderGameBoard() {
     location.reload();
+
 }
 
 function getReserveButton(IsCurrentPlayer, LessThan3, ImageName) {
@@ -78,7 +125,7 @@ function getReserveButton(IsCurrentPlayer, LessThan3, ImageName) {
                 <div class="p-0 mx-auto" style="width: 100%;">
             <button `;
 
-    if (!IsCurrentPlayer || Tokens.Gold <= 0 || !LessThan3)
+    if (!IsCurrentPlayer || Tokens.Gold <= 0 || !LessThan3 || IsContinueAction)
             {
                 ret += "disabled ";
             }
@@ -92,7 +139,7 @@ function getReserveButton(IsCurrentPlayer, LessThan3, ImageName) {
 
 function getSelectPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
     ret = ``;
-    if (IsCurrentPlayer && HaveGold && purchaseable)
+    if (IsCurrentPlayer && HaveGold && purchaseable && !IsContinueAction)
     {
         ret += `<div class="col-6 p-0 pe-3">
                     <div class="purple p-0 mx-auto" style="width: 100%;">
@@ -115,7 +162,7 @@ function getPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
                 <div class="p-0 mx-auto" style="width: 100%;">
                     <button `;
 
-    if (!IsCurrentPlayer || !purchaseable)
+    if (!IsCurrentPlayer || !purchaseable || IsContinueAction)
     {
         ret += "disabled ";
     }
@@ -129,7 +176,7 @@ function getPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
 
 function getSelectPurchaseReserveButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
     ret = ``;
-    if (IsCurrentPlayer && HaveGold && purchaseable) {
+    if (IsCurrentPlayer && HaveGold && purchaseable && !IsContinueAction) {
         ret += `<div class="col-6 p-0 ps-3">
                     <div class="purple p-0 mx-auto" style="width: 100%;">
                         <button class="mx-auto btn btn-outline-purple btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Select Purchase</button>
@@ -148,7 +195,7 @@ function getPurchaseReserveButton(IsCurrentPlayer, purchaseable, HaveGold, Image
                 <div class="p-0 mx-auto" style="width: 100%;">
                     <button `;
 
-    if (!IsCurrentPlayer || !purchaseable) {
+    if (!IsCurrentPlayer || !purchaseable || IsContinueAction) {
         ret += "disabled ";
     }
 
@@ -204,6 +251,10 @@ function SetTokens() {
 }
 
 function TokenClick(token) {
+
+    if (IsContinueAction) {
+        return;
+    }
 
     // If we click on the taken tokens
     switch (token) {
@@ -428,7 +479,7 @@ function ReturnTokenClick(token) {
             break;
     }
 
-    if (CountTokens(PlayerTokens) <= 10) {
+    if (CountTokens(PlayerTokens) + CountTokens(TakingTokens) <= 10) {
         return;
     }
 
@@ -531,7 +582,7 @@ function ReturnTokenClick(token) {
     SetReturningTokens();
 
 
-    if (CountTokens(PlayerTokens) <= 10) {
+    if (CountTokens(PlayerTokens) + CountTokens(TakingTokens) <= 10) {
         document.getElementById("ReturnButton").disabled = false;
     } else {
         document.getElementById("ReturnButton").disabled = true;

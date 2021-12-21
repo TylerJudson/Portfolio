@@ -14,30 +14,54 @@
 
 
 
-<!-- Pull for game state -->
+<!-- Communicating with the server -->
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script type="text/javascript">
 
     var version = @Model.Version;
 
+    // Pull once after 1 second
     setTimeout(pull, 1000);
+
+    // pulls to the server to see if anything is new
     function pull() {
         $.ajax({
             url: "/Game/State/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "GET",
             success: function (response) {
+
+                // if the gameboard's version is different than the current version render the game board and notify!
                 if (response.version != version) {
                     renderGameBoard(response);
                 }
             },
-            error: function (xhr, ajaxOptions, thrownError) {
-                alert("ERROR - Please try again.")
+            error: function () {
+                alert("ERROR - Please try again.");
             }
         });
+
+        // Call again every 3 seconds
         setTimeout(pull, 3000);
         return false;
     }
 
+    // when the turn requires further action
+    function continueAction(data) {
+        alert("CONTINUE ACTION");
+
+        // If the code is 0 then return tokens
+        if (data.actionCode == 0) {
+            alert("RETURNING TOKENS");
+            ReturnTokens();
+
+        // If the code is 1 then get a noble
+        } else if (data.actionCode == 1) {
+            alert("GETTING NOBLES");
+            getNobles(data.nobles);
+        }
+    }
+
+    // When the end turn button is pressed
     function endTurn() {
         $.ajax({
             url: "/Game/EndTurn/@ViewData["GameId"]/@ViewData["PlayerId"]",
@@ -46,38 +70,27 @@
             contentType: "application/json",
             dataType: 'json',
             success: function (data) {
+                // If there was an error/if the data is a error object -> alert what the error was
                 if (data.hasOwnProperty("errorCode")) {
                     alert("ERROR - " + data.message);
+                // If there is a continue action/if the data is a continue action object -> continue action
                 } else if (data.hasOwnProperty("actionCode")) {
-                    if (data.actionCode == 0) {
-                        ReturnTokens();
-
-
-                    } else if (data.actionCode == 1) {
-                        getNoble("Noble-3E-3S-3D.jpg");
-                    }
-                    
+                    continueAction(data);
                 }
+                // Else if it was successful
                 else {
-                    TakingTokens = { 
-                        Emerald: 0,
-                        Sapphire: 0,
-                        Ruby: 0,
-                        Diamond: 0,
-                        Onyx: 0,
-                    };
-                    Tokens = data.tokenStacks;
-                    SetTokens();
-                    TakingTokens = {};
+                   
+                    // Render the gameboard
                     renderGameBoard();
                 }
             },
-            ecolorunction (xhr, ajaxOptions, thrownError) {
+            error: function () {
                 alert("ERROR - Please try again.")
             }
         });
     }
 
+    // When the player purchases a card
     function purchase(ImageName) {
         $.ajax({
             url: "/Game/Purchase/@ViewData["GameId"]/@ViewData["PlayerId"]",
@@ -86,24 +99,25 @@
             contentType: "application/json",
             dataType: 'json',
             success: function (data) {
+                // If the data has an error display that error
                 if (data.hasOwnProperty("errorCode")) {
                     alert("ERROR - " + data.message);
+                // If the data has a continue action -> continue
                 } else if (data.hasOwnProperty("actionCode")) {
-                    if (data.actionCode == 1)
-                    {
-                        getNoble("Noble-4S-4E.jpg");
-                    }
+                    continueAction(data);
                 }
                 else {
+                    // Render the gameboard
                    renderGameBoard(data);
                 }
             },
-            error: function (xhr, ajaxOptions, thrownError) {
+            error: function () {
                 alert("ERROR - Please try again.")
             }
         });
     }
 
+    // When the player reserves a card
     function reserve(ImageName) {
         $.ajax({
             url: "/Game/Reserve/@ViewData["GameId"]/@ViewData["PlayerId"]",
@@ -112,51 +126,61 @@
             contentType: "application/json",
             dataType: 'json',
             success: function (data) {
+                // If the data has an error display that error
                 if (data.hasOwnProperty("errorCode")) {
                     alert("ERROR - " + data.message);
+                // If the data has a continue action -> continue
                 } else if (data.hasOwnProperty("actionCode")) {
-                    alert("Continue Action");
+                    continueAction(data);
                 }
                 else {
+                    // Render the gameboard
                    renderGameBoard(data);
                 }
             },
-            error: function (xhr, ajaxOptions, thrownError) {
+            error: function () {
                 alert("ERROR - Please try again.")
             }
         });
     }
 
+    // When the player returns tokens
     function returnTokens() {
-        alert("Return tokens");
-        //$.ajax({
-        //    url: "/Game/Return/@ViewData["GameId"]/@ViewData["PlayerId"]",
-        //    type: "POST",
-        //    data: JSON.stringify(ReturningTokens),
-        //    contentType: "application/json",
-        //    dataType: 'json',
-        //    success: function (data) {
-        //        if (data.hasOwnProperty("errorCode")) {
-        //            alert("ERROR - " + data.message);
-        //        } else if (data.hasOwnProperty("actionCode")) {
-        //            if (data.actionCode == 0) {
-        //                returnTokens();
-        //            } else if (data.actionCode == 1) {
-        //                getNoble("Noble-3E-3S-3D.jpg");
-        //            }
-        //        }
-        //        else {
-        //            ReturningTokens = {};
-        //            renderGameBoard();
-        //        }
-        //    },
-        //    ecolorunction (xhr, ajaxOptions, thrownError) {
-        //        alert("ERROR - Please try again.")
-        //    }
-        //});
+        // Set all the return tokens to the inverse of itself
+        for (token in ReturningTokens) {
+            ReturningTokens[token] *= -1;
+        }
+
+        $.ajax({
+            url: "/Game/Return/@ViewData["GameId"]/@ViewData["PlayerId"]",
+            type: "POST",
+            data: JSON.stringify(merge(ReturningTokens, TakingTokens)), // merge the two objects
+            contentType: "application/json",
+            dataType: 'json',
+            success: function (data) {
+                // If the data has an error display that error
+                if (data.hasOwnProperty("errorCode")) {
+                    alert("ERROR - " + data.message);
+                // If the data had a continue action -> continue
+                } else if (data.hasOwnProperty("actionCode")) {
+                    continueAction(data);
+                }
+                else {
+                    //Render the gameboard
+                    renderGameBoard();
+                }
+            },
+            error: function () {
+                alert("ERROR - Please try again.")
+            }
+        });
     }
 
+    // When the player gets a noble
     function noble(ImageName) {
+
+        alert(JSON.stringify(ImageName));
+
         $.ajax({
             url: "/Game/Noble/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "POST",
@@ -164,21 +188,26 @@
             contentType: "application/json",
             dataType: 'json',
             success: function (data) {
+                // If the data has an error display that error
                 if (data.hasOwnProperty("errorCode")) {
                     alert("ERROR - " + data.message);
+                // If the data has a continue action -> continue
                 } else if (data.hasOwnProperty("actionCode")) {
-                    alert("ContinueAction")
-                }
-                else {
-                   renderGameBoard(data);
+                    continueAction(data);
+                } else {
+                    alert("SUCCESS");
+                    // Render the gameboard
+                    renderGameBoard(data);
                 }
             },
-            error: function (xhr, ajaxOptions, thrownError) {
+            error: function () {
                 alert("ERROR - Please try again.")
             }
         });
     }
     </script>
+
+
 
 
 
@@ -207,6 +236,7 @@
                 int playerOrdinal = 0;
                 int i = playerOrdinal - 1;
                 int count = 0;
+                string playerCardId = count.ToString() + "-card";
             }
 
             @for (int j = 0; j < Model.Players.Count; j++)
@@ -220,6 +250,7 @@
             }
             @while (count < Model.Players.Count)
             {
+                playerCardId = count.ToString() + "-card";
                 count++;
                 i++;
 
@@ -238,7 +269,9 @@
                     borderColor = "gray";
                 }
 
-                <section class="container row rounded-3 mt-3 mx-auto pb-1 px-0" style="border: 2px solid @borderColor;">
+               
+
+                <section id="@playerCardId" class="container row rounded-3 mt-3 mx-auto pb-1 px-0" style="border: 2px solid @borderColor;">
                     <div class="col-12 container
                                 col-md-6
                                 col-lg-12
@@ -476,29 +509,53 @@
     <button id="endTurnButton" class="btn-darkPurple btn px-5 fs-3" onclick="endTurn();">End Turn</button>
 }
 
+<!--Notify Alert-->
+    <section class="notify" id="Notify"></section>
+     <style>
+         .notify {  
+              position: fixed;
+              top:0px;
+              width:100%;
+              height: 0;  
+              color:white;  
+              text-align:center;
+              background:rgba(0,0,0,.6);
+              overflow:hidden;
+              box-sizing:border-box;
+              transition:height .2s;
+            }
+     </style>
+     <script>
+        window.onload = function () {
+            //document.getElementById("Notify").style.height = "5rem";
+        }
+    </script>
 
 <!-- Options Screen -->
 
-    <section id="OptionsScreen" class="OverlayScreen">
-        <div class="mx-auto pt-5 pt-lg-3" style="width: 100%">
-            <h1 class="mt-5 px-auto text-light display-1 text-center" style="width: 100%">Options</h1>
+    <section id="OptionsScreen" class="OverlayScreen" style="display: none">
+        <div class="mx-auto pt-4 pt-lg-2" style="width: 100%">
+            <h1 id="OptionsHeader" class="mt-3 px-auto text-light display-1 text-center mt-xl-1" style="width: 100%">Options</h1>
         </div>
-        <div style="margin-top: 23rem; width: 20rem;" class="mx-auto text-center">
+        <div style="margin-top: 23rem; width: 20rem;" class="mt-xl-10 mx-auto text-center">
 
             <div class="mx-auto purple">
                 <button class="mx-auto btn btn-outline-purple btn-lg" style="border: 2px solid var(--purple); width: 100%;" onclick='ToggleScreen("OptionsScreen")'>Resume</button> 
             </div>
             <div class="mx-auto my-3">
-                <button class="mx-auto btn btn-outline-danger btn-lg" style="width: 100%;" onclick='ToggleScreen("OptionsScreen")'>Exit Game</button> 
+                <button class="mx-auto btn btn-outline-darkPurple btn-lg" style="width: 100%;" onclick='ToggleScreen("OptionsScreen")'>Game Log</button> 
             </div>
             <div class="mx-auto my-3">
-                <a class="mx-auto btn btn-outline-success btn-lg" style="width: 100%;" href="https://cdn.1j1ju.com/medias/7f/91/ba-splendor-rulebook.pdf" target="_blank" rel="noopener noreferrer" >Rules</a> 
+                <a class="mx-auto btn btn-outline-success btn-lg"  style="width: 100%;" href="https://cdn.1j1ju.com/medias/7f/91/ba-splendor-rulebook.pdf" target="_blank" rel="noopener noreferrer" >Rules</a> 
+            </div>
+            <div class="mx-auto my-3">
+                <button class="mx-auto btn btn-outline-danger btn-lg" style="width: 100%;" onclick='ToggleScreen("OptionsScreen")'>Exit Game</button> 
             </div>
         </div>
     </section>
 
 <!-- Card Screen -->
-    <section id="CardScreen" class="OverlayScreen">
+    <section id="CardScreen" class="OverlayScreen" style="display: none">
     </section>
     <script>
         var True = true, False = false;
@@ -539,12 +596,12 @@
             let CardScreen = document.getElementById("CardScreen")
 
             CardScreen.innerHTML = innerHtml;
-            CardScreen.style.display = "block";
+            ToggleScreen("CardScreen");
         }
     </script>
 
 <!-- Noble Screen -->
-    <section id="NobleScreen" class="OverlayScreen">
+    <section id="NobleScreen" class="OverlayScreen" style="display: none">
     </section>
     <script>
         function NobleScreen(ImageName) {
@@ -563,12 +620,12 @@
             let NobleScreen = document.getElementById("NobleScreen")
 
             NobleScreen.innerHTML = innerHtml;
-            NobleScreen.style.display = "block";
+            ToggleScreen("NobleScreen");
         }
     </script>
 
 <!-- Return Token Screen -->
-    <section id="ReturnTokenScreen" class="OverlayScreen">
+    <section id="ReturnTokenScreen" class="OverlayScreen" style="display: none">
         <table>
             <tr>
                 <td id="EmeraldReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningEmerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldReturningTokenValue">0</h1></td>
@@ -588,96 +645,65 @@
             </tr>
         </table>
     </section>
-        <script>
-            function ReturnTokens() {
-                ReturnTokensScreen();
-            }   
-            function ReturnTokensScreen() {
-                let innerHtml = `
-                    <h1 class="mt-6 display-3 display-sm-1 text-center
-                                mt-lg-4
-                                mt-xl-5">You have over 10 tokens</h1>
-                    <h1 class="text-center">You must return @(Model.Players[Model.CurrentPlayer].NumberOfTokens() - 10)</h1>
-                    <table class="mx-auto mt-10 mt-sm-6 mt-lg-6" style="max-width: 50rem;">
-                        <tr>
-                            <td id="EmeraldReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningEmerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldReturningTokenValue">0</h1></td>
-                            <td id="SapphireReturningToken" class="takingToken" onclick="ReturnTokenClick('ReturningSapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireReturningTokenValue">0</h1></td>
-                            <td id="RubyReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningRuby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyReturningTokenValue">0</h1></td>
-                            <td id="DiamondReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningDiamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondReturningTokenValue">0</h1></td>
-                            <td id="OnyxReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningOnyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxReturningTokenValue">0</h1></td>
-                            <td id="GoldReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningGold')"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldReturningTokenValue">0</h1></td>
-                        </tr>
-                        <tr>
-                            <td class="token cursorHover" onclick="ReturnTokenClick('Emerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="PlayerEmeraldTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Emerald] </h1></td>
-                            <td class="token cursorHover" onclick="ReturnTokenClick('Sapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="PlayerSapphireTokenValue">@Model.Players[Model.CurrentPlayer].Tokens[Token.Sapphire]</h1></td>
-                            <td class="token cursorHover" onclick="ReturnTokenClick('Ruby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="PlayerRubyTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Ruby]    </h1></td>
-                            <td class="token cursorHover" onclick="ReturnTokenClick('Diamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="PlayerDiamondTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Diamond] </h1></td>
-                            <td class="token cursorHover" onclick="ReturnTokenClick('Onyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="PlayerOnyxTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Onyx]    </h1></td>
-                            <td class="token cursorHover" onclick="ReturnTokenClick('Gold')"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="PlayerGoldTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Gold]    </h1></td>
-                        </tr>
-                    </table>
-
-
-                    <div class="container row mt-5 mx-auto p-0" style="width: 100%; max-width: 50rem;">
-                        <button class="btn btn-outline-darkPurple btn-lg col mx-3" style="width: 10rem;" onclick='ToggleScreen("ReturnTokenScreen")'>View Shop</button>
-                        <button id="ReturnButton" disabled class="btn btn-purple btn-lg col mx-3" style="width: 10rem;" onclick='returnTokens()'>Return</button>
-                    </div>
-                `;
-
-                let ReturnTokenScreen = document.getElementById("ReturnTokenScreen")
-
-                ReturnTokenScreen.innerHTML = innerHtml;
-                ReturnTokenScreen.style.display = "block";
-            }
-        </script>
-
-<!-- Get Noble Screen -->
-
-    
-    <section id="GetNobleScreen" class="OverlayScreen">
-    </section>
     <script>
-        function getNoble(ImageName) {
-            alert("GETTING NOBLE");
-
-
-            // loop through the nobles and see if the player can purchase it
-            // If the player can purchase it add it to a list
-            // Check to see if the list is greater than 1
-                // If it isn't 
-                    // Pass in the image name to the get noble screen
-                // If it is
-                    // Pass in a array of the images to to a screen (not yet implemented screen)
-
-
-
-
-            GetNobleScreen(ImageName);
-        }   
-        function GetNobleScreen(ImageName) {
+        
+        function ReturnTokens() {
             let innerHtml = `
-                <h1>Would you like to get this noble?</h1>
-                <img class="mx-auto card mt-8
-                            mt-md-7"
-                            mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-width: 75%; max-height: 50%"/>
-                <div class="container row mt-5 mx-auto
-                            pl-md-6
-                            pl-lg-8
-                            pl-xl-10" style="width: 100%">
-                    <button class="btn btn-outline-purple btn-lg" style="width: 10rem;" onclick='ToggleScreen("GetNobleScreen")'>No</button>
-                    <button class="btn btn-outline-purple btn-lg" style="width: 10rem;" onclick='noble("` + ImageName + `")'>Yes</button>
+                <h1 class="mt-6 display-3 display-sm-1 text-center
+                            mt-lg-4
+                            mt-xl-5">You have over 10 tokens</h1>
+                <h1 class="text-center">You must return ` + (@(Model.Players[Model.CurrentPlayer].NumberOfTokens()) + CountTokens(TakingTokens) - 10) + ` </h1>
+                <table class="mx-auto mt-10 mt-sm-6 mt-lg-6" style="max-width: 50rem;">
+                    <tr>
+                        <td id="EmeraldReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningEmerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldReturningTokenValue">0</h1></td>
+                        <td id="SapphireReturningToken" class="takingToken" onclick="ReturnTokenClick('ReturningSapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireReturningTokenValue">0</h1></td>
+                        <td id="RubyReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningRuby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyReturningTokenValue">0</h1></td>
+                        <td id="DiamondReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningDiamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondReturningTokenValue">0</h1></td>
+                        <td id="OnyxReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningOnyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxReturningTokenValue">0</h1></td>
+                        <td id="GoldReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningGold')"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldReturningTokenValue">0</h1></td>
+                    </tr>
+                    <tr>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Emerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="PlayerEmeraldTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Emerald] </h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Sapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="PlayerSapphireTokenValue">@Model.Players[Model.CurrentPlayer].Tokens[Token.Sapphire]</h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Ruby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="PlayerRubyTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Ruby]    </h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Diamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="PlayerDiamondTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Diamond] </h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Onyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="PlayerOnyxTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Onyx]    </h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Gold')"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="PlayerGoldTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Gold]    </h1></td>
+                    </tr>
+                </table>
+
+
+                <div class="container row mt-5 mx-auto p-0" style="width: 100%; max-width: 50rem;">
+                    <button class="btn btn-outline-darkPurple btn-lg col mx-3" style="width: 10rem;" onclick='ToggleScreen("ReturnTokenScreen")'>View Shop</button>
+                    <button id="ReturnButton" disabled class="btn btn-purple btn-lg col mx-3" style="width: 10rem;" onclick='returnTokens()'>Return</button>
                 </div>
             `;
 
-            let NobleScreen = document.getElementById("NobleScreen")
+            let ReturnTokenScreen = document.getElementById("ReturnTokenScreen")
 
-            NobleScreen.innerHTML = innerHtml;
-            NobleScreen.style.display = "block";
+            ReturnTokenScreen.innerHTML = innerHtml;
+            ToggleScreen("ReturnTokenScreen");
+        }
+        
+    </script>
+
+<!-- Get Noble Screen -->
+    <script>
+        function getNobles(nobles) {
+            alert(JSON.stringify(nobles));
+
+            if (nobles.length > 1) {
+                alert("GETTING MORE THAN 1 NOBLE IS NOT IMPLEMMENTED");
+            } else {
+                alert(nobles[0].imageName);
+                noble(nobles[0].imageName);
+            }
+
         }
     </script>
 
 <!-- Reserve Card Screen-->
-    <section id="CardScreen" class="OverlayScreen">
+    <section id="CardScreen" class="OverlayScreen" style="display: none">
     </section>
     <script>
         var True = true, False = false;
@@ -720,7 +746,8 @@
             let CardScreen = document.getElementById("CardScreen")
 
             CardScreen.innerHTML = innerHtml;
-            CardScreen.style.display = "block";
+
+            ToggleScreen("CardScreen");
         }
     </script>
 </body>

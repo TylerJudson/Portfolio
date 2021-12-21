@@ -237,7 +237,7 @@ namespace Splendor.Controllers
         [HttpPost]
         [Route("Game/Noble/{gameId:int}/{playerId:int}")]
         public JsonResult Noble([FromBody] string ImageName, int gameId, int playerId)
-        {
+        {   
             // Check to make sure the game is active
             if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
             {
@@ -274,6 +274,35 @@ namespace Splendor.Controllers
             return Json("");
         }
 
+        [HttpPost]
+        [Route("Game/Return/{gameId:int}/{playerId:int}")]
+        public JsonResult Return([FromBody] Dictionary<Token, int> ReturningTokens, int gameId, int playerId)
+        {
+            // Check to make sure the game is active
+            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+            {
+                if (ReturningTokens != null)
+                {
+
+                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(ReturningTokens));
+
+                    if (completedTurn.Error != null)
+                    {
+                        return Json(completedTurn.Error);
+                    }
+                    else if (completedTurn.ContinueAction != null)
+                    {
+                        return Json(completedTurn.ContinueAction);
+                    }
+                }
+
+
+                return Json(gameBoard);
+            }
+
+
+            return Json("");
+        }
 
 
 
