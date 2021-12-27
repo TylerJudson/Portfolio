@@ -412,14 +412,14 @@ namespace Splendor.Controllers
                 {
                     if (kvp.Value != null && kvp.Value.LastTurn != null)
                     {
-                        if (kvp.Value.LastTurn.TimeStamp < DateTime.UtcNow.Subtract(new TimeSpan(0, 1, 0)))
+                        if (kvp.Value.LastTurn.TimeStamp < DateTime.UtcNow.Subtract(new TimeSpan(0, 30, 0)))
                         {
                             gamesToRemove.Add(kvp.Key);
                         }
                     } 
                     else if (kvp.Value != null)
                     {
-                        if (kvp.Value.GameStartTimeStamp < DateTime.UtcNow.Subtract(new TimeSpan(0, 1, 0)))
+                        if (kvp.Value.GameStartTimeStamp < DateTime.UtcNow.Subtract(new TimeSpan(0, 30, 0)))
                         {
                             gamesToRemove.Add(kvp.Key);
                         }
