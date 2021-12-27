@@ -475,6 +475,10 @@
                                 }
                                 @foreach (ICard card in Model.Level3Cards)
                                 {
+                                    if (card == null)
+                                    {
+                                        continue;
+                                    }
                                     if(Model.Players[playerOrdinal].CanPurchaseCard(card))
                                     {
                                         BorderColor = "green";
@@ -497,6 +501,10 @@
                              <tr>
                                 @foreach (ICard card in Model.Level2Cards)
                                 {
+                                    if (card == null)
+                                    {
+                                        continue;
+                                    }
                                     if(Model.Players[playerOrdinal].CanPurchaseCard(card))
                                     {
                                         BorderColor = "green";
@@ -519,6 +527,10 @@
                              <tr>
                                 @foreach (ICard card in Model.Level1Cards)
                                 {
+                                    if (card == null)
+                                    {
+                                        continue;
+                                    }
                                     if(Model.Players[playerOrdinal].CanPurchaseCard(card))
                                     {
                                         BorderColor = "green";

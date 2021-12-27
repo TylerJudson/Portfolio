@@ -4,7 +4,6 @@
     {
         
         public uint Level { get; }
-        public uint Count { get; private set; }
         public List<ICard> Cards { get; }
 
 
@@ -17,18 +16,24 @@
         public CardStack(uint level, uint count, List<ICard> cards)
         {
             Level = level;
-            Count = count;
             Cards = cards;
         }
 
-        public ICard Draw()
+        public ICard? Draw()
         {
+            ICard ret = null;
+
+            if (Cards.Count == 0)
+            {
+                return ret;
+            }
+
             Random random = new Random();
             int randomNum = random.Next(Cards.Count);
 
-            ICard ret = Cards[randomNum];
+            ret = Cards[randomNum];
             Cards.RemoveAt(randomNum);
-            Count--;
+
 
             return ret;
         }

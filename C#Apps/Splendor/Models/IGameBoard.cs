@@ -39,17 +39,17 @@
         /// <summary>
         /// The current level 1 cards that are on the board
         /// </summary>
-        ICard[] Level1Cards { get; }
+        ICard?[] Level1Cards { get; }
 
         /// <summary>
         /// The current level 2 cards that are on the board
         /// </summary>
-        ICard[] Level2Cards { get; }
+        ICard?[] Level2Cards { get; }
 
         /// <summary>
         /// The current level 3 cards that are on the board
         /// </summary>
-        ICard[] Level3Cards { get; }
+        ICard?[] Level3Cards { get; }
 
         /// <summary>
         /// The players that are playing the game

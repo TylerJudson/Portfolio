@@ -16,11 +16,11 @@
 
         public ICardStack CardStackLevel3 { get; }
 
-        public ICard[] Level1Cards { get; }
+        public ICard?[] Level1Cards { get; }
 
-        public ICard[] Level2Cards { get; }
+        public ICard?[] Level2Cards { get; }
 
-        public ICard[] Level3Cards { get; }
+        public ICard?[] Level3Cards { get; }
 
         public List<IPlayer> Players { get; }
 
@@ -45,9 +45,9 @@
             CardStackLevel3 = InitializeCardStackLevel3();
 
 
-            Level1Cards = new ICard[4] { CardStackLevel1.Draw(), CardStackLevel1.Draw(), CardStackLevel1.Draw(), CardStackLevel1.Draw() };
-            Level2Cards = new ICard[4] { CardStackLevel2.Draw(), CardStackLevel2.Draw(), CardStackLevel2.Draw(), CardStackLevel2.Draw() };
-            Level3Cards = new ICard[4] { CardStackLevel3.Draw(), CardStackLevel3.Draw(), CardStackLevel3.Draw(), CardStackLevel3.Draw() };
+            Level1Cards = new ICard?[4] { CardStackLevel1.Draw(), CardStackLevel1.Draw(), CardStackLevel1.Draw(), CardStackLevel1.Draw() };
+            Level2Cards = new ICard?[4] { CardStackLevel2.Draw(), CardStackLevel2.Draw(), CardStackLevel2.Draw(), CardStackLevel2.Draw() };
+            Level3Cards = new ICard?[4] { CardStackLevel3.Draw(), CardStackLevel3.Draw(), CardStackLevel3.Draw(), CardStackLevel3.Draw() };
 
             Players = players;
 

@@ -7,10 +7,6 @@
         /// </summary>
         uint Level { get; }
 
-        /// <summary>
-        /// The number of cards in the stack
-        /// </summary>
-        uint Count { get; }
 
         /// <summary>
         /// The list of cards in the stack
@@ -21,6 +17,6 @@
         /// Randomly returns a card in the stack
         /// </summary>
         /// <returns>a randomly selected card</returns>
-        ICard Draw();
+        ICard? Draw();
     }
 }

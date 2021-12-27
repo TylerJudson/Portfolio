@@ -117,8 +117,12 @@ namespace Splendor.Controllers
 
                     if (ImageName[5] == '1')
                     {
-                        foreach(ICard card in gameBoard.Level1Cards)
+                        foreach(ICard? card in gameBoard.Level1Cards)
                         {
+                            if (card == null)
+                            {
+                                continue;
+                            }
                             if (card.ImageName == ImageName)
                             {
                                 Card = card;
@@ -128,8 +132,12 @@ namespace Splendor.Controllers
                     }
                     else if (ImageName[5] == '2')
                     {
-                        foreach (ICard card in gameBoard.Level2Cards)
+                        foreach (ICard? card in gameBoard.Level2Cards)
                         {
+                            if (card == null)
+                            {
+                                continue;
+                            }
                             if (card.ImageName == ImageName)
                             {
                                 Card = card;
@@ -139,8 +147,12 @@ namespace Splendor.Controllers
                     }
                     else if (ImageName[5] == '3')
                     {
-                        foreach (ICard card in gameBoard.Level3Cards)
+                        foreach (ICard? card in gameBoard.Level3Cards)
                         {
+                            if (card == null)
+                            {
+                                continue;
+                            }
                             if (card.ImageName == ImageName)
                             {
                                 Card = card;
@@ -201,8 +213,12 @@ namespace Splendor.Controllers
                     ICard Card = null;
                     if (ImageName[5] == '1')
                     {
-                        foreach (ICard card in gameBoard.Level1Cards)
+                        foreach (ICard? card in gameBoard.Level1Cards)
                         {
+                            if (card == null)
+                            {
+                                continue;
+                            }
                             if (card.ImageName == ImageName)
                             {
                                 Card = card;
@@ -212,8 +228,12 @@ namespace Splendor.Controllers
                     }
                     else if (ImageName[5] == '2')
                     {
-                        foreach (ICard card in gameBoard.Level2Cards)
+                        foreach (ICard? card in gameBoard.Level2Cards)
                         {
+                            if (card == null)
+                            {
+                                continue;
+                            }
                             if (card.ImageName == ImageName)
                             {
                                 Card = card;
@@ -223,8 +243,12 @@ namespace Splendor.Controllers
                     }
                     else if (ImageName[5] == '3')
                     {
-                        foreach (ICard card in gameBoard.Level3Cards)
+                        foreach (ICard? card in gameBoard.Level3Cards)
                         {
+                            if (card == null)
+                            {
+                                continue;
+                            }
                             if (card.ImageName == ImageName)
                             {
                                 Card = card;

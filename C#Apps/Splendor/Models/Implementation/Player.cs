@@ -195,6 +195,10 @@
 
         public bool CanPurchaseCard(ICard card)
         {
+            if (card == null)
+            {
+                return false;
+            }
             // TODO - Implement Gold Tokens and for user to choose what tokens and cards to purchase the card with
 
             int Gold = Tokens[Token.Gold];
