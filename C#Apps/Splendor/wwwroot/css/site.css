@@ -45,6 +45,10 @@ input[type=text]:focus {
     font-weight: 400;
 }
 
+::-webkit-scrollbar {
+    display: none;
+}
+
 #HomeButtons {
     max-width: 75%;
 }
@@ -53,11 +57,33 @@ input[type=text]:focus {
     background-color: blue;
 }
 
-
+#turnContainer {
+    transition: transform 0.5s;
+    width: 400px;
+    left: -400px;
+}
+#lastTurnContainer {
+    padding: 3rem;
+    transition: transform 0.5s;
+    left: 50%;
+    width: 400px;
+    height: 200px;
+    top: 0%;
+    transform: translate(-50%, -100%);
+}
+#lastTurnNotification {
+    border-radius: 2rem; 
+}
 #endTurnButton {
     position: fixed;
     bottom: 5%;
     right: 4%;
+}
+.v-align {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute
 }
 
 
@@ -194,6 +220,7 @@ body {
     top: 0;
     left: 0;
     position: fixed;
+    overflow-y: auto;
 }
 
 .card {
@@ -286,6 +313,10 @@ body {
     }
 }
 @media (min-width: 768px) {
+    #lastTurnContainer {
+        width: 800px;
+    }
+
     .mt-md-7 {
         margin-top: 10rem;
     }
@@ -300,6 +331,9 @@ body {
     }
 }
 @media (min-width: 992px) {
+
+
+    
     circle {
         transform-origin: center center;
     }

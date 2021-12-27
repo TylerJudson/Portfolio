@@ -4,7 +4,8 @@
     {
         public IError? Error { get; }
         public IContinueAction? ContinueAction { get; }
-        public Dictionary<Token, int>? ConsumedTokens { get; } 
+        public Dictionary<Token, int>? ConsumedTokens { get; }
+        public bool GameOver { get; } = false;
 
         /// <summary>
         /// Initializes CompletedTurn
@@ -36,6 +37,16 @@
         {
             ConsumedTokens = consumedTokens;
         }
+
+        /// <summary>
+        /// Initializes CompletedTurn
+        /// </summary>
+        /// <param name="gameOver">Whether the game is over or not</param>
+        public CompletedTurn(bool gameOver)
+        {
+            GameOver = gameOver;
+        }
+
         /// <summary>
         /// Initializes CompletedTurn
         /// </summary>

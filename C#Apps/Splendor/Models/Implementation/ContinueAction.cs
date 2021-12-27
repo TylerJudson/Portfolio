@@ -14,6 +14,7 @@
         /// The code of the action
         /// <br>0 - Get rid of some tokens</br>
         /// <br>1 - Choose a noble</br>
+        /// <br>2 - Get rid of tokens for a return card</br>
         /// </param>
         public ContinueAction(string message, int actionCode)
         {

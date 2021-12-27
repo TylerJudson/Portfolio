@@ -4,6 +4,7 @@ using Splendor.Models.Implementation;
 
 namespace Splendor.Controllers
 {
+    // TODO - Documentation
     public class GameController : Controller
     {
         /// <summary>
@@ -27,7 +28,7 @@ namespace Splendor.Controllers
                 return View(gameBoard);
             }
 
-            return View("Error");
+            return Redirect("~/ ");
         }
 
 
@@ -274,17 +275,56 @@ namespace Splendor.Controllers
             return Json("");
         }
 
+
         [HttpPost]
         [Route("Game/Return/{gameId:int}/{playerId:int}")]
-        public JsonResult Return([FromBody] Dictionary<Token, int> ReturningTokens, int gameId, int playerId)
+        public JsonResult Return([FromBody] ReturnRequest returnRequest, int gameId, int playerId)
         {
             // Check to make sure the game is active
             if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
             {
-                if (ReturningTokens != null)
+                if (returnRequest != null)
                 {
+                    ICard? Card = null;
+                    if (returnRequest.ReservingCardImageName != null)
+                    {
+                        if (returnRequest.ReservingCardImageName[5] == '1')
+                        {
+                            foreach (ICard card in gameBoard.Level1Cards)
+                            {
+                                if (card.ImageName == returnRequest.ReservingCardImageName)
+                                {
+                                    Card = card;
+                                    break;
+                                }
+                            }
+                        }
+                        else if (returnRequest.ReservingCardImageName[5] == '2')
+                        {
+                            foreach (ICard card in gameBoard.Level2Cards)
+                            {
+                                if (card.ImageName == returnRequest.ReservingCardImageName)
+                                {
+                                    Card = card;
+                                    break;
+                                }
+                            }
+                        }
+                        else if (returnRequest.ReservingCardImageName[5] == '3')
+                        {
+                            foreach (ICard card in gameBoard.Level3Cards)
+                            {
+                                if (card.ImageName == returnRequest.ReservingCardImageName)
+                                {
+                                    Card = card;
+                                    break;
+                                }
+                            }
+                        }
 
-                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(ReturningTokens));
+                    }
+
+                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(returnRequest.Tokens, Card));
 
                     if (completedTurn.Error != null)
                     {

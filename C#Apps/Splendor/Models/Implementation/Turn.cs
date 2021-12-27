@@ -10,9 +10,14 @@
 
         public INoble? Noble { get; set; }
 
-        public Turn(Dictionary<Token, int>? takenTokens)
+        public IContinueAction? ContinueAction { get; set; }
+
+        public string? PlayerName { get; set; }
+
+        public Turn(Dictionary<Token, int>? takenTokens, ICard? reservedCard=null)
         {
             TakenTokens = takenTokens;
+            ReservedCard = reservedCard;
         }
         public Turn(ICard card, bool isReserve=false)
         {

@@ -1,4 +1,9 @@
-﻿let TakingTokens = {};
+﻿// TODO - Documentation
+
+// The tokens the player is trying to take on a given turn
+let TakingTokens = {};
+
+// The tokens available for a player to take on a give turn
 let Tokens = {
     Emerald:  document.getElementById("EmeraldTokenValue").innerHTML,
     Sapphire: document.getElementById("SapphireTokenValue").innerHTML,
@@ -8,7 +13,11 @@ let Tokens = {
     Gold:     document.getElementById("GoldTokenValue").innerHTML
 };
 
+
+// The tokens the player is trying to return on a given turn
 let ReturningTokens = {};
+
+// THe tokens available for a player to return
 let PlayerTokens = {
     Emerald:  document.getElementById("PlayerEmeraldTokenValue").innerHTML,
     Sapphire: document.getElementById("PlayerSapphireTokenValue").innerHTML,
@@ -17,30 +26,37 @@ let PlayerTokens = {
     Onyx:     document.getElementById("PlayerOnyxTokenValue").innerHTML,
     Gold:     document.getElementById("PlayerGoldTokenValue").innerHTML
 }
-let IsContinueAction = false;
+
+
+// Wether or not another screen is visible
 let OtherScreen = false;
-// When the user scrolls the page, execute myFunction
+
+let ReservedCard = "";
+
+// When the user scrolls the page
 window.onscroll = function () { OnScroll() };
 
 
-// Get the header
+// Get the user's card
 var card = document.getElementById("0-card");
 
-// Get the offset position of the navbar
+// Get the offset position of the card
 var sticky = card.offsetTop;
 
-// Add the sticky class to the header when you reach its scroll position. Remove "sticky" when you leave the scroll position
+// Add the sticky class to the player's card when you reach its scroll position. Remove "sticky" when you leave the scroll position
 function OnScroll() {
-    if (window.pageYOffset > sticky && window.width < 992 && !OtherScreen) {
+    // When you reach the position of the card
+    if (window.pageYOffset > sticky && window.innerWidth < 992 && !OtherScreen) {
         card.classList.add("sticky");
-        document.body.style.paddingTop = (card.offsetHeight + 16).toString() + "px";
+        document.body.style.paddingTop = (card.offsetHeight + 16).toString() + "px"; // add the neccessary padding to the screen to make scrolling smooth
     } else {
         card.classList.remove("sticky");
-        document.body.style.paddingTop = "0rem";
+        document.body.style.paddingTop = "0rem"; // remove that padding
 
     }
 }
 
+// Toggles a screen
 function ToggleScreen(screenID) {
     var x = document.getElementById(screenID);
     if (x.style.display == "none") {
@@ -125,7 +141,7 @@ function getReserveButton(IsCurrentPlayer, LessThan3, ImageName) {
                 <div class="p-0 mx-auto" style="width: 100%;">
             <button `;
 
-    if (!IsCurrentPlayer || Tokens.Gold <= 0 || !LessThan3 || IsContinueAction)
+    if (!IsCurrentPlayer || !LessThan3 || IsChoosingNobles)
             {
                 ret += "disabled ";
             }
@@ -139,7 +155,7 @@ function getReserveButton(IsCurrentPlayer, LessThan3, ImageName) {
 
 function getSelectPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
     ret = ``;
-    if (IsCurrentPlayer && HaveGold && purchaseable && !IsContinueAction)
+    if (IsCurrentPlayer && HaveGold && purchaseable && !IsChoosingNobles)
     {
         ret += `<div class="col-6 p-0 pe-3">
                     <div class="purple p-0 mx-auto" style="width: 100%;">
@@ -162,7 +178,7 @@ function getPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
                 <div class="p-0 mx-auto" style="width: 100%;">
                     <button `;
 
-    if (!IsCurrentPlayer || !purchaseable || IsContinueAction)
+    if (!IsCurrentPlayer || !purchaseable || IsChoosingNobles)
     {
         ret += "disabled ";
     }
@@ -176,7 +192,7 @@ function getPurchaseButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
 
 function getSelectPurchaseReserveButton(IsCurrentPlayer, purchaseable, HaveGold, ImageName) {
     ret = ``;
-    if (IsCurrentPlayer && HaveGold && purchaseable && !IsContinueAction) {
+    if (IsCurrentPlayer && HaveGold && purchaseable && !IsChoosingNobles) {
         ret += `<div class="col-6 p-0 ps-3">
                     <div class="purple p-0 mx-auto" style="width: 100%;">
                         <button class="mx-auto btn btn-outline-purple btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Select Purchase</button>
@@ -195,7 +211,7 @@ function getPurchaseReserveButton(IsCurrentPlayer, purchaseable, HaveGold, Image
                 <div class="p-0 mx-auto" style="width: 100%;">
                     <button `;
 
-    if (!IsCurrentPlayer || !purchaseable || IsContinueAction) {
+    if (!IsCurrentPlayer || !purchaseable || IsChoosingNobles) {
         ret += "disabled ";
     }
 
@@ -252,7 +268,7 @@ function SetTokens() {
 
 function TokenClick(token) {
 
-    if (IsContinueAction) {
+    if (IsChoosingNobles) {
         return;
     }
 
@@ -437,7 +453,7 @@ function SetReturningTokens() {
     }
 }
 
-function ReturnTokenClick(token) {
+function ReturnTokenClick(token, tokensToReturn) {
 
     // If we click on the returning tokens
     switch (token) {
@@ -479,7 +495,7 @@ function ReturnTokenClick(token) {
             break;
     }
 
-    if (CountTokens(PlayerTokens) + CountTokens(TakingTokens) <= 10) {
+    if (tokensToReturn <= CountTokens(ReturningTokens)) {
         return;
     }
 

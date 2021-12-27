@@ -33,15 +33,13 @@
             Id = id;
         }
 
-        public ICompletedTurn ExecuteTurn(ITurn turn)
+        public ICompletedTurn ExecuteTurn(ITurn turn, bool canGetGold)
         {
             Dictionary<Token, int> ConsumedTokens = new Dictionary<Token, int>();
 
             // If we acquired tokens -> add them to our Tokens
             if (turn.TakenTokens != null) // Check to make sure there are tokens to add
             {
-
-
                 // Get the sum of the tokens we are about to get
                 int sum = 0;
                 foreach (int token in turn.TakenTokens.Values)
@@ -52,7 +50,19 @@
                 // If we have too many tokens return a continue action
                 if (NumberOfTokens() + sum > MaxTokens)
                 {
-                    return new CompletedTurn( new ContinueAction("Please choose tokens to get rid of", 0), ConsumedTokens);
+                    return new CompletedTurn(new ContinueAction("Please choose tokens to get rid of", 0), ConsumedTokens);
+                }
+
+                // Check to make sure that if the player is returning tokens that the player has enough
+                foreach (KeyValuePair<Token, int> kvp in turn.TakenTokens)
+                {
+                    if (kvp.Value < 0)
+                    {
+                        if (Tokens[kvp.Key] < -kvp.Value)
+                        {
+                            return new CompletedTurn(new Error("You don't have enough tokens to return", 7));
+                        }
+                    }
                 }
 
                 // Add the acquired tokens to the players tokens
@@ -62,7 +72,7 @@
                 }
             }
             // If we purchase a card -> add the card to our Cards and balance the price
-            else if (turn.Card != null) // Check to make sure there is a card to add
+            if (turn.Card != null) // Check to make sure there is a card to add
             {
                 // Check to make sure we have enough tokens to purchase card
                 if (!CanPurchaseCard(turn.Card))
@@ -119,18 +129,28 @@
                 PrestigePoints += turn.Card.PrestigePoints;
             }
             // If we reserved a card -> add the card to our reserved cards and add a golden token to our tokens
-            else if (turn.ReservedCard != null)
+            if (turn.ReservedCard != null)
             {
                 // Check to make sure we don't have more than three reserved cards
                 if (ReservedCards.Count >= 3)
                 {
                     return new CompletedTurn(new Error("You can only have 3 reserved cards at a time", 3));
                 }
+
+                // If we have too many tokens return a continue action -- add 1 for the gold token
+                if (NumberOfTokens() + 1 > MaxTokens)
+                {
+                    return new CompletedTurn(new ContinueAction("Please choose tokens to get rid of", 2), ConsumedTokens);
+                }
+
                 // Add the ReservedCard to our reserved Cards
                 ReservedCards.Add(turn.ReservedCard);
                 
-                // Add a golden token
-                Tokens[Token.Gold] += 1;
+                if (canGetGold)
+                {
+                    // Add a golden token
+                    Tokens[Token.Gold] += 1;
+                }
 
                 // Check to make sure we don't have more than the max tokens
                 if (NumberOfTokens() > MaxTokens)

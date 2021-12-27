@@ -21,5 +21,15 @@
         /// The noble achevied during a given turn
         /// </summary>
         INoble? Noble { get; }
+
+        /// <summary>
+        /// The action needed to continue
+        /// </summary>
+        IContinueAction? ContinueAction { get; set; }
+
+        /// <summary>
+        /// The name of the player who is doing the turn
+        /// </summary>
+        string? PlayerName { get; set; }
     }
 }

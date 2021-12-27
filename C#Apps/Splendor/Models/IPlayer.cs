@@ -46,7 +46,8 @@
         /// Executes the turn for the player
         /// </summary>
         /// <param name="turn">The turn to execute</param>
-        public ICompletedTurn ExecuteTurn(ITurn turn);
+        /// <param name="canGetGold">Wether or not the player can get gold</param>
+        public ICompletedTurn ExecuteTurn(ITurn turn, bool canGetGold);
 
         /// <summary>
         /// Checks to see if the player can acquire a noble

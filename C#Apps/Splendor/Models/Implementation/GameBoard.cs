@@ -4,7 +4,9 @@
     {
         public int Version { get; private set; } = 0;
 
-        public ITurn LastTurn { get; private set; }
+        public ITurn? LastTurn { get; private set; }
+
+        public List<ITurn> Turns { get; private set; } = new List<ITurn>();
 
         public ICardStack CardStackLevel1 { get; }
 
@@ -25,6 +27,10 @@
         public List<INoble> Nobles { get; }
 
         public int CurrentPlayer { get; private set; } = 0;
+
+        public bool LastRound { get; private set; } = false;
+
+        public bool GameOver { get; private set; } = false;
 
         /// <summary>
         /// Initializes the Gameboard
@@ -53,22 +59,47 @@
         public ICompletedTurn ExecuteTurn(ITurn turn)
         {
 
-            //Players[CurrentPlayer].CardTokens[Token.Sapphire] = 3;
-            //Players[CurrentPlayer].CardTokens[Token.Emerald] = 4;
+            //Players[CurrentPlayer].CardTokens[Token.Emerald] = 2;
+            //Players[CurrentPlayer].CardTokens[Token.Ruby] = 2;
+            //Players[CurrentPlayer].CardTokens[Token.Sapphire] = 2;
+            //Players[CurrentPlayer].CardTokens[Token.Diamond] = 2;
+            //Players[CurrentPlayer].CardTokens[Token.Onyx] = 2;
 
-            // TODO - Need to make it so when you return tokens it only looks at the positive numbers
-            // Right now it is saying tha we are taking to many different types of tokens but we are returning some.
-            // Make sure this is ok with DAD
+            // If the game is over prevent the player from playing
+            if (GameOver)
+            {
+                return new CompletedTurn(new Error("The game has ended", 8));
+            }
 
             // If the player aquired tokens -> subtract them from the stacks
             if (turn.TakenTokens != null)
             {
                 // Validate that the player hasn't taken more tokens than allowed
+                // 1) Check to make sure the player didn't take more than three different types of token
+                // 2) Check to make sure the player hasn't taken any gold
+                // 3) Check to make sure there is enough tokens for the player to take
+                // 4) Check to make sure the player didn't take 1 token from each stack if they took from 2 or more
+                // 5) Check to make sure the player didn't take more than 2 tokens from one stack and that they left 2
+                // 6) Check to make sure the player doesn't have more than 10 tokens
+                // 7) If the player is returning tokens make sure the player has the tokens to return TODO - check
 
                 // Check to make sure the player has not taken more than 3 types of token 
-                if (turn.TakenTokens.Count > 3)
+                Dictionary<Token, int> positiveTakenTokens = new Dictionary<Token, int>();
+                foreach (KeyValuePair<Token, int> kvp in turn.TakenTokens)
+                {
+                    if (kvp.Value > 0)
+                    {
+                        positiveTakenTokens.Add(kvp.Key, kvp.Value);
+                    }
+                }
+                if (positiveTakenTokens.Count > 3)
                 {
                     return new CompletedTurn(new Error("You can't take more than 3 types of token", 4));
+                }
+                // Check to make usre the player has not taken any gold
+                if (turn.TakenTokens.ContainsKey(Token.Gold))
+                {
+                    return new CompletedTurn(new Error("You can't take gold tokens", 6));
                 }
                 // If the player has taken more than one token type -> Check to make sure the player hasn't taken too many tokens
                 else if (turn.TakenTokens.Count > 1)
@@ -108,7 +139,7 @@
 
 
                 // Execute the turn for the player
-                ICompletedTurn PlayersCompletedTurn = Players[CurrentPlayer].ExecuteTurn(turn);
+                ICompletedTurn PlayersCompletedTurn = Players[CurrentPlayer].ExecuteTurn(turn, TokenStacks[Token.Gold] > 0);
 
                 // If the player's turn threw an error return
                 if (PlayersCompletedTurn.Error != null || PlayersCompletedTurn.ContinueAction != null)
@@ -126,11 +157,11 @@
 
             }
             // if the player purchased a card -> remove the card and draw a new one
-            else if (turn.Card != null)
+            if (turn.Card != null)
             {
 
                 // Execute the turn for the player
-                ICompletedTurn PlayersCompletedTurn = Players[CurrentPlayer].ExecuteTurn(turn);
+                ICompletedTurn PlayersCompletedTurn = Players[CurrentPlayer].ExecuteTurn(turn, TokenStacks[Token.Gold] > 0);
 
                 // If the player's turn threw an error return
                 if (PlayersCompletedTurn.Error != null)
@@ -171,26 +202,28 @@
                 }
             }
             // if the player reserved a card -> remove 1 gold, remove the card, and draw a new one 
-            else if (turn.ReservedCard != null)
+            if (turn.ReservedCard != null)
             {
-                // Check to make sure there is enough gold
-                if (TokenStacks[Token.Gold] == 0)
+                // IF turn.takenTokens is not null then we have already done this
+                if (turn.TakenTokens == null)
                 {
-                    return new CompletedTurn(new Error("Not enough tokens to take", 0));
+                    // Execute the turn for the player
+                    ICompletedTurn PlayersCompletedTurn = Players[CurrentPlayer].ExecuteTurn(turn, TokenStacks[Token.Gold] > 0);
+
+                    // If the player's turn threw an error return
+                    if (PlayersCompletedTurn.Error != null || PlayersCompletedTurn.ContinueAction != null)
+                    {
+                        return PlayersCompletedTurn;
+                    }
+
                 }
 
-
-                // Execute the turn for the player
-                ICompletedTurn PlayersCompletedTurn = Players[CurrentPlayer].ExecuteTurn(turn);
-
-                // If the player's turn threw an error return that error
-                if (PlayersCompletedTurn.Error != null)
+                // If there is enough gold to take
+                if (TokenStacks[Token.Gold] > 0)
                 {
-                    return PlayersCompletedTurn;
+                    // Remove one gold
+                    TokenStacks[Token.Gold]--;
                 }
-
-                // Remove one gold
-                TokenStacks[Token.Gold]--;
 
                 // Remove the card from the gameboard and draw a new one
                 switch (turn.ReservedCard.Level)
@@ -205,18 +238,13 @@
                         Level3Cards[Array.IndexOf(Level3Cards, turn.ReservedCard)] = CardStackLevel3.Draw();
                         break;
                 }
-
-                if (PlayersCompletedTurn.ContinueAction != null)
-                {
-                    return PlayersCompletedTurn;
-                }
             }
 
             // If the player acquired a noble -> remove the noble
             if (turn.Noble != null)
             {  
                 // Execute the turn for the player
-                ICompletedTurn PlayersCompletedTurn = Players[CurrentPlayer].ExecuteTurn(turn);
+                ICompletedTurn PlayersCompletedTurn = Players[CurrentPlayer].ExecuteTurn(turn, TokenStacks[Token.Gold] > 0);
 
                 // If the player's turn threw an error return that error
                 if (PlayersCompletedTurn.Error != null)
@@ -227,25 +255,54 @@
                 // remove the noble from the nobles
                 Nobles.Remove(turn.Noble);
             }
-
-
-            // Check to see if the player can acquire a noble
-
-            // Loop through and add all the nobles the player can purchase to nobles
-            List<INoble> nobles = new List<INoble>();
-            foreach (INoble noble in Nobles)
+            else
             {
-                // If the player can acquire a noble add it to the list of nobles
-                if (Players[CurrentPlayer].CanAcquireNoble(noble))
+                // Check to see if the player can acquire a noble
+
+                // Loop through and add all the nobles the player can purchase to nobles
+                List<INoble> nobles = new List<INoble>();
+                foreach (INoble noble in Nobles)
                 {
-                    nobles.Add(noble);
+                    // If the player can acquire a noble add it to the list of nobles
+                    if (Players[CurrentPlayer].CanAcquireNoble(noble))
+                    {
+                        nobles.Add(noble);
+                    }
                 }
+
+                // If the player can purchase a noble
+                if (nobles.Count > 0)
+                {
+                    turn.PlayerName = Players[CurrentPlayer].Name;
+                    Turns.Insert(0, turn);
+                    LastTurn = turn;
+                    LastTurn.ContinueAction = new ContinueAction("You can acquire nobles", 1, nobles);
+                    return new CompletedTurn(new ContinueAction("You can acquire nobles", 1, nobles), null);
+                }
+
             }
 
-            // If the player can purchase a noble
-            if (nobles.Count > 0)
+
+
+
+            // Check to see if a player has more than 15 points
+            if (Players[CurrentPlayer].PrestigePoints >= 15)
             {
-                return new CompletedTurn(new ContinueAction("You can acquire nobles", 1, nobles), null);
+                LastRound = true;
+            }
+
+
+
+            Version++;
+            turn.PlayerName = Players[CurrentPlayer].Name;
+            Turns.Insert(0, turn);
+            LastTurn = turn;
+
+            // End the game when the last player has went and someone has more than 15
+            if (CurrentPlayer == Players.Count - 1 && LastRound)
+            {
+                GameOver = true;
+                return new CompletedTurn(true);
             }
 
             // Increment the current player
@@ -256,10 +313,6 @@
             {
                 CurrentPlayer -= Players.Count;
             }
-
-            Version++;
-            LastTurn = turn;
-
             return new CompletedTurn();
         }
 

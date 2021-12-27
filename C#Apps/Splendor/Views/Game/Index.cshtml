@@ -1,4 +1,5 @@
-﻿@*
+﻿@using Splendor.Models.Implementation
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @model Splendor.Models.IGameBoard
@@ -34,6 +35,11 @@
                 if (response.version != version) {
                     renderGameBoard(response);
                 }
+
+                if (response.gameOver) {
+                    OtherScreen = true;
+                    document.getElementById("GameOverScreen").style.display = "block";
+                }
             },
             error: function () {
                 alert("ERROR - Please try again.");
@@ -47,17 +53,16 @@
 
     // when the turn requires further action
     function continueAction(data) {
-        alert("CONTINUE ACTION");
-
         // If the code is 0 then return tokens
         if (data.actionCode == 0) {
-            alert("RETURNING TOKENS");
-            ReturnTokens();
+            ReturnTokens(CountTokens(TakingTokens));
 
         // If the code is 1 then get a noble
         } else if (data.actionCode == 1) {
-            alert("GETTING NOBLES");
+            IsChoosingNobles = true;
             getNobles(data.nobles);
+        } else if (data.actionCode == 2) {
+            ReturnTokens(1, true);
         }
     }
 
@@ -119,6 +124,7 @@
 
     // When the player reserves a card
     function reserve(ImageName) {
+        ReservedCard = ImageName;
         $.ajax({
             url: "/Game/Reserve/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "POST",
@@ -145,42 +151,74 @@
     }
 
     // When the player returns tokens
-    function returnTokens() {
+    function returnTokens(reservedCard) {
         // Set all the return tokens to the inverse of itself
         for (token in ReturningTokens) {
             ReturningTokens[token] *= -1;
         }
 
-        $.ajax({
+        if (!reservedCard) {
+            let data = {
+                "Tokens": merge(ReturningTokens, TakingTokens)
+            };
+
+            $.ajax({
+                url: "/Game/Return/@ViewData["GameId"]/@ViewData["PlayerId"]",
+                type: "POST",
+                data: JSON.stringify(data), 
+                contentType: "application/json",
+                dataType: 'json',
+                success: function (data) {
+                    // If the data has an error display that error
+                    if (data.hasOwnProperty("errorCode")) {
+                        alert("ERROR - " + data.message);
+                    // If the data had a continue action -> continue
+                    } else if (data.hasOwnProperty("actionCode")) {
+                        continueAction(data);
+                    }
+                    else {
+                        //Render the gameboard
+                        renderGameBoard();
+                    }
+                },
+                error: function () {
+                    alert("ERROR - Please try again.")
+                }
+            });
+        } else {
+            let data = {
+               "Tokens": ReturningTokens,
+               "ReservingCardImageName": ReservedCard
+            };
+
+            $.ajax({
             url: "/Game/Return/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "POST",
-            data: JSON.stringify(merge(ReturningTokens, TakingTokens)), // merge the two objects
+            data: JSON.stringify(data),
             contentType: "application/json",
             dataType: 'json',
             success: function (data) {
                 // If the data has an error display that error
                 if (data.hasOwnProperty("errorCode")) {
                     alert("ERROR - " + data.message);
-                // If the data had a continue action -> continue
+                // If the data has a continue action -> continue
                 } else if (data.hasOwnProperty("actionCode")) {
                     continueAction(data);
                 }
                 else {
-                    //Render the gameboard
-                    renderGameBoard();
+                    // Render the gameboard
+                   renderGameBoard(data);
                 }
             },
             error: function () {
                 alert("ERROR - Please try again.")
             }
         });
+        }
     }
 
     // When the player gets a noble
     function noble(ImageName) {
-
-        alert(JSON.stringify(ImageName));
-
         $.ajax({
             url: "/Game/Noble/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "POST",
@@ -195,7 +233,6 @@
                 } else if (data.hasOwnProperty("actionCode")) {
                     continueAction(data);
                 } else {
-                    alert("SUCCESS");
                     // Render the gameboard
                     renderGameBoard(data);
                 }
@@ -206,7 +243,6 @@
         });
     }
     </script>
-
 
 
 
@@ -237,6 +273,8 @@
                 int i = playerOrdinal - 1;
                 int count = 0;
                 string playerCardId = count.ToString() + "-card";
+
+                uint mostPoints = Model.Players.Max(p => p.PrestigePoints);
             }
 
             @for (int j = 0; j < Model.Players.Count; j++)
@@ -260,12 +298,17 @@
                 }
 
 
-                if (i == Model.CurrentPlayer)
+                if (i == Model.CurrentPlayer && !Model.GameOver)
                 {
                     borderColor = @purple;
                 }
+                else if (Model.Players[i].PrestigePoints >= 15 && Model.Players[i].PrestigePoints == mostPoints)
+                {
+                    borderColor = "green";
+                }
                 else
                 {
+                    
                     borderColor = "gray";
                 }
 
@@ -282,7 +325,7 @@
                                 <tr>
                                     <th></th>
                                     @{
-                                        Dictionary<Token, string> Colors = new Dictionary<Token, string>() { { Token.Emerald, "green" }, { Token.Sapphire, "blue" }, { Token.Ruby, "red" }, { Token.Diamond, "white" }, { Token.Onyx, "brown" } };
+                                        Dictionary<Token, string> Colors = new Dictionary<Token, string>() { { Token.Emerald, "green" }, { Token.Sapphire, "rgb(0,0,200)" }, { Token.Ruby, "rgb(200,0,0)" }, { Token.Diamond, "lightgray" }, { Token.Onyx, "rgb(100,60,20)" } };
                                     }
                                         @foreach(KeyValuePair<Token, string> kvp in Colors)
                                         {
@@ -295,7 +338,7 @@
 
                                         <th>
                                             <svg class="playerStats">
-                                                    <text id="@Model.Players[i].Id-Total:Gold" x="50%" y="50%" text-anchor="middle" fill="yellow" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[Token.Gold]</text>
+                                                    <text id="@Model.Players[i].Id-Total:Gold" x="50%" y="50%" text-anchor="middle" fill="rgb(225,193,37)" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[Token.Gold]</text>
                                             </svg>
                                         </th>
                                 </tr>
@@ -319,7 +362,7 @@
 
                                     <td>
                                         <svg class="playerStats">
-                                            <circle cx="50%" cy="50%" r="20" fill="yellow" />
+                                            <circle cx="50%" cy="50%" r="20" fill="rgb(225,193,37)" />
                                             <text id="@Model.Players[i].Id-Token:Gold" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[Token.Gold]</text>
                                         </svg>
                                     </td>
@@ -504,13 +547,199 @@
 
 
 
-@if (IsCurrentPlayer)
+@if (IsCurrentPlayer && !Model.GameOver)
 {
     <button id="endTurnButton" class="btn-darkPurple btn px-5 fs-3" onclick="endTurn();">End Turn</button>
+
+
+    <!--Your Turn Alert-->
+        <div id="turnContainer" class="toast-container position-fixed bottom-0 p-5" data-bs-delay="100">
+            <div id="turnNotification" class="toast align-items-center show" role="alert" aria-live="assertive" aria-atomic="true" style="color: white; background-color: var(--purple)">
+                <div class="d-flex">
+                    <div class="toast-body fs-3 ms-3">
+                        It's your turn!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            setTimeout(() => { 
+                let turnNotification = document.getElementById("turnContainer");
+                turnNotification.style.transform = 'translateX(400px)';
+            }, 250);
+            setTimeout(() => {
+                let turnNotification = document.getElementById("turnContainer");
+                turnNotification.style.transform = 'translateX(0px)';
+            }, 2000)
+        </script>
+
+
+    <!--Last Turn Alert-->
+        <div id="lastTurnContainer" class="toast-container position-fixed">
+            <div id="lastTurnNotification" class="align-items-center show" style="color: white; background-color: darkred; width: 100%; height: 100%;">
+                <div class=" v-align text-center" style="width: 100%">
+                    <h1 style="font-size: 200%;">This is your last turn.</h1>
+                </div>
+            </div>
+        </div>
+
+
+        <script>
+            True = true; False = false;
+            if (@Model.LastRound) {
+                setTimeout(() => { 
+                    let turnNotification = document.getElementById("lastTurnContainer");
+                    turnNotification.style.transform = 'translate(-50%, 50%)';
+                }, 1000);
+                setTimeout(() => {
+                    let turnNotification = document.getElementById("lastTurnContainer");
+                    turnNotification.style.transform = 'translate(-50%, -100%)';
+                }, 3000)
+            }
+        </script>
+    
+  
 }
 
 <!--Notify Alert-->
-    <section class="notify" id="Notify"></section>
+    <section class="notify align-middle" id="Notify">
+        <div class="v-align">
+        @{
+            int height = 0;
+
+            void DisplayTurn(ITurn turn)
+            {
+                @if (turn == null)
+                {
+                    <h1>Game Started</h1>
+                }
+                else
+                {
+                    if (turn.Noble != null)
+                    {
+                        DisplayTurn(Model.Turns[Model.Turns.IndexOf(turn) + 1]);
+                    }
+
+                    if (turn.ReservedCard != null)
+                    {
+                        height += 5;
+                        <div style="width: 100%;">
+                            <table class="mx-auto">
+                                <tr>
+                                    <td class="pe-3"><h1>@turn.PlayerName reserved</h1></td>
+                                    <td><img class="card" style="width: 3rem;" src="/Images/@turn.ReservedCard.ImageName" alt="@turn.ReservedCard.ImageName" onclick="NobleScreen('@turn.ReservedCard.ImageName')"/></td>
+                                </tr>
+                                @if (turn.TakenTokens != null && turn.TakenTokens.Count > 0) 
+                                {
+                                    height += 5;
+                                    <tr>
+                                        <td class="pe-3"><h1>and returned</h1></td>
+                                        @foreach (KeyValuePair<Token, int> kvp in turn.TakenTokens)
+                                        {
+                                            for (int j = 0; j > kvp.Value; j--)
+                                            {
+                                                <td class="px-1"><img style="width: 3rem;" src="/Images/@(kvp.Key).png" alt="@kvp.Key" /></td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                    }
+                    else if (turn.TakenTokens != null)
+                    {
+                        height += 5;
+                        <div style="width: 100%">
+                                @{
+                                    Dictionary<Token, int> positiveTokens = new Dictionary<Token, int>();
+                                    Dictionary<Token, int> negativeTokens = new Dictionary<Token, int>();
+                                    foreach(KeyValuePair<Token, int> kvp in turn.TakenTokens)
+                                    {
+                                        if (kvp.Value > 0)
+                                        {
+                                            positiveTokens.Add(kvp.Key, kvp.Value);
+                                        }
+                                        else if (kvp.Value < 0)
+                                        {
+                                            negativeTokens.Add(kvp.Key, kvp.Value);
+                                        }
+                                    }
+                                }
+                                @if (positiveTokens.Count > 0)
+                                {
+                                    <table class="mx-auto">
+                                        <tr>
+                                            <td class="pe-3"><h1>@turn.PlayerName acquired</h1></td>
+                                            @foreach (KeyValuePair<Token, int> kvp in positiveTokens)
+                                            {
+                                                for (int j = 0; j < kvp.Value; j++)
+                                                {
+                                                    <td class="px-1"><img style="width: 3rem;" src="/Images/@(kvp.Key).png" alt="@kvp.Key" /></td>
+                                                }
+                                            }
+                                        </tr>
+                                       
+                                        @if (negativeTokens.Count > 0) 
+                                        {
+                                            height += 5;
+                                            <tr>
+                                                <td class="pe-3"><h1>and returned</h1></td>
+                                                @foreach (KeyValuePair<Token, int> kvp in negativeTokens)
+                                                {
+                                                    for (int j = 0; j > kvp.Value; j--)
+                                                    {
+                                                        <td class="px-1"><img style="width: 3rem;" src="/Images/@(kvp.Key).png" alt="@kvp.Key" /></td>
+                                                    }
+                                                }
+                                            </tr>
+                                        }
+                                    </table>
+                                }
+                                else
+                                {
+                                    <h1>@turn.PlayerName passed</h1>
+                                }
+                        </div>
+
+                    }
+                    else if (turn.Card != null)
+                    {
+                        height += 5;
+                        <div style="width: 100%;">
+                            <table class="mx-auto">
+                                <tr>
+                                    <td class="pe-3"><h1>@turn.PlayerName purchased</h1></td>
+                                    <td><img class="card" style="width: 3rem;" src="/Images/@turn.Card.ImageName" alt="@turn.Card.ImageName" onclick="NobleScreen('@turn.Card.ImageName')" /></td>
+                                </tr>
+                            </table>
+                        </div>
+                    }
+
+                    if (turn.Noble != null)
+                    {
+                        height += 5;
+                        <div style="width: 100%;">
+                            <table class="mx-auto">
+                                <tr>
+                                    <td class="pe-3"><h1>and acquired</h1></td>
+                                    <td><img class="card" style="width: 3rem;" src="/Images/@turn.Noble.ImageName" alt="@turn.Noble.ImageName" onclick="NobleScreen('@turn.Noble.ImageName')"/></td>
+                                </tr>
+                            </table>
+                        </div>
+                    }
+
+                }
+                
+            }
+
+
+
+            DisplayTurn(Model.LastTurn);
+        }
+        </div>
+    </section>
      <style>
          .notify {  
               position: fixed;
@@ -520,14 +749,19 @@
               color:white;  
               text-align:center;
               background:rgba(0,0,0,.6);
-              overflow:hidden;
               box-sizing:border-box;
+              overflow: hidden;
               transition:height .2s;
             }
      </style>
      <script>
         window.onload = function () {
-            //document.getElementById("Notify").style.height = "5rem";
+            if (@(Model.LastTurn == null || Model.Players[playerOrdinal].Name != Model.LastTurn.PlayerName)) {
+                document.getElementById("Notify").style.height = @height.ToString() + "rem";
+                setTimeout(() => {
+                    document.getElementById("Notify").style.height = "0rem";
+                }, 3000)
+            }
         }
     </script>
 
@@ -543,7 +777,7 @@
                 <button class="mx-auto btn btn-outline-purple btn-lg" style="border: 2px solid var(--purple); width: 100%;" onclick='ToggleScreen("OptionsScreen")'>Resume</button> 
             </div>
             <div class="mx-auto my-3">
-                <button class="mx-auto btn btn-outline-darkPurple btn-lg" style="width: 100%;" onclick='ToggleScreen("OptionsScreen")'>Game Log</button> 
+                <button class="mx-auto btn btn-outline-darkPurple btn-lg" style="width: 100%;" onclick='ToggleScreen("OptionsScreen"); ToggleScreen("GameLogScreen")'>Game Log</button> 
             </div>
             <div class="mx-auto my-3">
                 <a class="mx-auto btn btn-outline-success btn-lg"  style="width: 100%;" href="https://cdn.1j1ju.com/medias/7f/91/ba-splendor-rulebook.pdf" target="_blank" rel="noopener noreferrer" >Rules</a> 
@@ -551,6 +785,42 @@
             <div class="mx-auto my-3">
                 <button class="mx-auto btn btn-outline-danger btn-lg" style="width: 100%;" onclick='ToggleScreen("OptionsScreen")'>Exit Game</button> 
             </div>
+        </div>
+    </section>
+
+<!-- Game Log Screen -->
+    <section id="GameLogScreen" class="OverlayScreen" style="display: none;">
+        <button class="btn btn-outline-darkPurple position-absolute btn-lg" style="bottom: 5%; left: 5%; width: 30%; max-width: 10rem;" onclick="ToggleScreen('GameLogScreen')">Back</button>
+        <h1 class="display-1 mx-auto text-center mb-5">Game Log</h1>
+        <div class="mx-auto container text-center">
+            @{
+                bool skip = false;
+            }
+            @foreach (ITurn turn in Model.Turns)
+            {
+                
+                if (!skip)
+                {
+                    <div class="p-3">
+                        @{
+                            DisplayTurn(turn);
+                        }
+                        
+                    </div>
+
+
+                    if (turn.Noble != null)
+                    {
+                        skip = true;
+                    }
+                }
+                else 
+                {
+                    skip = false;
+                }
+            }
+
+            <h1>Game Started</h1>
         </div>
     </section>
 
@@ -647,35 +917,36 @@
     </section>
     <script>
         
-        function ReturnTokens() {
+        function ReturnTokens(tokensToReturn, reservedCard=false) {
+            let xxx = 4;
             let innerHtml = `
                 <h1 class="mt-6 display-3 display-sm-1 text-center
                             mt-lg-4
                             mt-xl-5">You have over 10 tokens</h1>
-                <h1 class="text-center">You must return ` + (@(Model.Players[Model.CurrentPlayer].NumberOfTokens()) + CountTokens(TakingTokens) - 10) + ` </h1>
+                <h1 class="text-center">You must return ` + (@(Model.Players[Model.CurrentPlayer].NumberOfTokens()) + tokensToReturn - 10) + ` </h1>
                 <table class="mx-auto mt-10 mt-sm-6 mt-lg-6" style="max-width: 50rem;">
                     <tr>
-                        <td id="EmeraldReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningEmerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldReturningTokenValue">0</h1></td>
-                        <td id="SapphireReturningToken" class="takingToken" onclick="ReturnTokenClick('ReturningSapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireReturningTokenValue">0</h1></td>
-                        <td id="RubyReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningRuby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyReturningTokenValue">0</h1></td>
-                        <td id="DiamondReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningDiamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondReturningTokenValue">0</h1></td>
-                        <td id="OnyxReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningOnyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxReturningTokenValue">0</h1></td>
-                        <td id="GoldReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningGold')"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldReturningTokenValue">0</h1></td>
+                        <td id="EmeraldReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningEmerald',`  + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldReturningTokenValue">0</h1></td>
+                        <td id="SapphireReturningToken" class="takingToken" onclick="ReturnTokenClick('ReturningSapphire',` + tokensToReturn + `)" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireReturningTokenValue">0</h1></td>
+                        <td id="RubyReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningRuby',`     + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyReturningTokenValue">0</h1></td>
+                        <td id="DiamondReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningDiamond',`  + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondReturningTokenValue">0</h1></td>
+                        <td id="OnyxReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningOnyx',`     + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxReturningTokenValue">0</h1></td>
+                        <td id="GoldReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningGold',`     + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldReturningTokenValue">0</h1></td>
                     </tr>
                     <tr>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Emerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="PlayerEmeraldTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Emerald] </h1></td>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Sapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="PlayerSapphireTokenValue">@Model.Players[Model.CurrentPlayer].Tokens[Token.Sapphire]</h1></td>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Ruby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="PlayerRubyTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Ruby]    </h1></td>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Diamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="PlayerDiamondTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Diamond] </h1></td>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Onyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="PlayerOnyxTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Onyx]    </h1></td>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Gold')"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="PlayerGoldTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Gold]    </h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Emerald',` + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="PlayerEmeraldTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Emerald] </h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Sapphire',`+ tokensToReturn + `)" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="PlayerSapphireTokenValue">@Model.Players[Model.CurrentPlayer].Tokens[Token.Sapphire]</h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Ruby',`    + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="PlayerRubyTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Ruby]    </h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Diamond',` + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="PlayerDiamondTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Diamond] </h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Onyx',`    + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="PlayerOnyxTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Onyx]    </h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Gold',`    + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="PlayerGoldTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Gold]    </h1></td>
                     </tr>
                 </table>
 
 
                 <div class="container row mt-5 mx-auto p-0" style="width: 100%; max-width: 50rem;">
                     <button class="btn btn-outline-darkPurple btn-lg col mx-3" style="width: 10rem;" onclick='ToggleScreen("ReturnTokenScreen")'>View Shop</button>
-                    <button id="ReturnButton" disabled class="btn btn-purple btn-lg col mx-3" style="width: 10rem;" onclick='returnTokens()'>Return</button>
+                    <button id="ReturnButton" disabled class="btn btn-purple btn-lg col mx-3" style="width: 10rem;" onclick='returnTokens(` + reservedCard + `)'>Return</button>
                 </div>
             `;
 
@@ -688,14 +959,69 @@
     </script>
 
 <!-- Get Noble Screen -->
+    <section id="GetNoblesScreen" class="OverlayScreen" style="display: none">
+    </section>
+    <script>
+        let selectableNobles = null;
+
+        // Whether you need to choose a noble
+
+        let IsChoosingNobles = @(Model.LastTurn != null && Model.LastTurn.ContinueAction != null && IsCurrentPlayer) ;
+
+        function clickNoble(imageName) {
+            selectableNobles.forEach(noble => {
+                document.getElementById("SelectNoble-" + noble).style.boxShadow = "0 0 0 0 var(--purpleOpacity)";
+            });
+
+            nobleImg = document.getElementById("SelectNoble-" + imageName);
+            nobleImg.style.boxShadow = "0 0 0 0.5rem var(--purpleOpacity)";
+
+            let acquireButton = document.getElementById("NobleAcquireButton");
+            acquireButton.disabled = false;
+            acquireButton.onclick = function () {IsChoosingNobles = false; noble(imageName);};
+        }
+
+        function getNoblesScreen(ImageNames) {
+            let innerHtml = `
+                <h1 class="mt-6 display-3 display-sm-1 text-center
+                            mt-lg-4
+                            mt-xl-5">Which Noble would you like to acquire?</h1>
+                <table class="mx-auto mt-10 mt-sm-6 mt-lg-6" style="max-width: 50rem;">
+                    <tr>`;
+            ImageNames.forEach(imageName =>  {
+                innerHtml += `<td><img id="SelectNoble-` + imageName + `" class="card mx-auto" src="/Images/` + imageName + `" width="auto" style="max-width: 75%; max-height: 50%" onclick="clickNoble('`+ imageName + `');"/></td>`;
+            });
+
+            innerHtml += `
+                    </tr>
+                </table>
+
+
+                <div class="container row mt-5 mx-auto p-0" style="width: 100%; max-width: 50rem;">
+                    <button class="btn btn-outline-darkPurple btn-lg col mx-3" style="width: 10rem;" onclick='ToggleScreen("GetNoblesScreen")'>View Shop</button>
+                    <button disabled id="NobleAcquireButton" class="btn btn-purple btn-lg col mx-3" style="width: 10rem;" >Acquire</button>
+                </div>
+            `;
+
+            let GetNoblesScreen = document.getElementById("GetNoblesScreen")
+
+            GetNoblesScreen.innerHTML = innerHtml;
+            ToggleScreen("GetNoblesScreen");
+
+            document.getElementById("CardScreen").style.display = "none";
+        }
+        
+    </script>
     <script>
         function getNobles(nobles) {
-            alert(JSON.stringify(nobles));
-
             if (nobles.length > 1) {
-                alert("GETTING MORE THAN 1 NOBLE IS NOT IMPLEMMENTED");
+                let ImageNames = [];
+                nobles.forEach(noble => {
+                    ImageNames.push(noble.imageName);
+                });
+                selectableNobles = ImageNames;
+                getNoblesScreen(ImageNames);
             } else {
-                alert(nobles[0].imageName);
                 noble(nobles[0].imageName);
             }
 
@@ -750,4 +1076,60 @@
             ToggleScreen("CardScreen");
         }
     </script>
+
+<!-- Game over screen-->
+    <section id="GameOverScreen" class="OverlayScreen" style="opacity: 0.75;">
+
+        <h1 class="text-center pt-5 splendorHeading" >Game Over</h1>
+        @{
+            List<IPlayer> winners = new List<IPlayer>();
+            winners.Add(Model.Players[0]);
+            for (int j = 1; j < Model.Players.Count; j++)
+            {
+                if (Model.Players[j].PrestigePoints > winners[0].PrestigePoints)
+                {
+                    winners.Clear();
+                    winners.Add(Model.Players[j]);
+                }
+                else if (Model.Players[j].PrestigePoints == winners[0].PrestigePoints)
+                {
+                    winners.Add(Model.Players[j]);
+                }
+            }   
+        }
+        @if (winners.Count > 2)
+        {
+            string winnersString = "";
+            for (int j = winners.Count - 1; j >= 0; j--)
+            {
+                if (j > 0)
+                {
+                    winnersString += winners[j].Name + ", ";
+                }
+                else
+                {
+                    winnersString += "and " + winners[j].Name;
+                }
+            }
+            <div class="mx-auto mt-5">
+                <h1 class="display-2 text-center mx-auto">Congrats @winnersString!</h1>
+            </div>
+        }
+        else if (winners.Count == 2)
+        {
+            <div class="mx-auto mt-5">
+                <h1 class="display-2 text-center mx-auto">Congrats @winners[0].Name and @winners[1].Name!</h1>
+            </div>
+        }
+        else
+        {
+            <div class="mx-auto mt-5">
+                <h1 class="display-3 text-center mx-auto">Congrats @winners[0].Name!</h1>
+            </div>
+        }
+
+        <a class="btn btn-danger position-absolute fs-5" style="bottom: 10%; left: 50%; width: 50%; max-width: 30rem; transform: translateX(-50%);">Exit</a>
+    </section>
+
+
 </body>

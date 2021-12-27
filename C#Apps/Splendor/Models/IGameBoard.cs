@@ -10,8 +10,12 @@
         /// <summary>
         /// The Last Turn executed by the gameboard
         /// </summary>
-        ITurn LastTurn { get; }
+        ITurn? LastTurn { get; }
 
+        /// <summary>
+        /// The Turns executed by the gameboard
+        /// </summary>
+        List<ITurn> Turns { get; }
         /// <summary>
         /// The stack of cards for level 1
         /// </summary>
@@ -68,6 +72,15 @@
         /// <param name="turn">The turn to execute</param>
         public ICompletedTurn ExecuteTurn(ITurn turn);
 
+        /// <summary>
+        /// Whether or not it's the last round
+        /// </summary>
+        public bool LastRound { get; }
+
+        /// <summary>
+        /// Whether or not the game has ended
+        /// </summary>
+        public bool GameOver { get; }
 
     }
 }

@@ -6,40 +6,50 @@
     ViewData["Title"] = "Join Game";
 }
 <script>
+    // Enters into a waiting room with the gameId
     function enterRoom(gameId) {
+        // Get the player-info's form
         var form = document.getElementById('player-info');
+
+        // Validate the form
         if (!form.elements["playerName"].checkValidity())
         {
             form.elements["playerName"].reportValidity();
             return false;
         }
+
+        // Make the gameId of the form == the gameId
         form.elements["gameId"].value = gameId;
         return true;
     }
 
 
-
-    setTimeout(pull, 5000);
+    // Pull once to start
+    setTimeout(pull, 1000);
     
+    // Pull to get new list game state
     function pull() {
         $.ajax({
             url: "/WaitingRoom/ListGamesState",
             type: "GET",
             success: function (response) {
+                // Create a new list
                 let newList = "";
+                // add each game to the list
                 for (const game of response) {
                     newList += `<tr style="width: 80%">
                             <td class="text-start mt-3">` + game.creatingPlayerName +`</td>
                             <td class="text-end mt-3"><input id="`+ game.id +`" type="submit" onclick="return enterRoom('`+ game.id +`');" class="btn-outline-purple btn" value="Join Game"></td>
                         </tr>`;
                 }
-
+                // set the available games to the new list
                 document.getElementById("availableGames").innerHTML = newList;
             },
             error: function () {
                 alert("ERROR - please try again");
             }
         });
+        // Pull every 5 seconds
         setTimeout(pull, 5000);
         return false;
     }
@@ -64,33 +74,33 @@
 
             <div class="mx-auto mt-5 container row p-0">
                 <!-- Available Games -->
-                <div class="col-12 p-0
-                            col-lg-6 mt-lg-3" >
-                    <h5 class="mx-auto fs-3" style="width: 80%">Available Games To Join</h5>
-                    <table id="availableGames" class="mx-auto" style="width: 80%">
-                    @for (int i = 0; i < Model.Count; i++)
-                    {
-                        <tr style="width: 80%">
-                            <td class="text-start mt-3">@Model[i].CreatingPlayerName</td>
-                            <td class="text-end mt-3"><input id="@Model[i].Id" type="submit" onclick="return enterRoom('@Model[i].Id');" class="btn-outline-purple btn" value="Join Game"></td>
-                        </tr>
-                    }
-                    </table>
-                </div>
+                    <div class="col-12 p-0
+                                col-lg-6 mt-lg-3" >
+                        <h5 class="mx-auto fs-3" style="width: 80%">Available Games To Join</h5>
+                        <table id="availableGames" class="mx-auto" style="width: 80%">
+                        @for (int i = 0; i < Model.Count; i++)
+                        {
+                            <tr style="width: 80%">
+                                <td class="text-start mt-3">@Model[i].CreatingPlayerName</td>
+                                <td class="text-end mt-3"><input id="@Model[i].Id" type="submit" onclick="return enterRoom('@Model[i].Id');" class="btn-outline-purple btn" value="Join Game"></td>
+                            </tr>
+                        }
+                        </table>
+                    </div>
 
                 <!-- Enter Game Id -->
-                <div class="col-12 mt-7 p-0
-                            col-lg-6 mt-lg-3">
-                    <div class="mx-auto" style="width: 80%">
-                        <label class="fs-3" for="gameId">Enter Game Id: </label>
+                    <div class="col-12 mt-7 p-0
+                                col-lg-6 mt-lg-3">
+                        <div class="mx-auto" style="width: 80%">
+                            <label class="fs-3" for="gameId">Enter Game Id: </label>
+                        </div>
+                        <div class="text-center">
+                            <input class="mx-auto" type="text" id="gameId" name="gameId" maxlength="20" autocomplete="off" required>
+                        </div>
+                        <div class="text-end mx-auto mt-3" style="width: 80%">
+                            <input class="btn-outline-purple btn" style="width: 40%; max-width: 20rem;" type="submit" value="Join Game">
+                       </div>
                     </div>
-                    <div class="text-center">
-                        <input class="mx-auto" type="text" id="gameId" name="gameId" maxlength="20" autocomplete="off" required>
-                    </div>
-                    <div class="text-end mx-auto mt-3" style="width: 80%">
-                        <input class="btn-outline-purple btn" style="width: 40%; max-width: 20rem;" type="submit" value="Join Game">
-                   </div>
-                </div>
             </div>
             
         </form>
