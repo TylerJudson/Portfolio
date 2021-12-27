@@ -47,7 +47,7 @@ namespace Splendor.Controllers
             if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
             {
                 
-                return Json(gameBoard);
+                return Json(gameBoard.Version);
             }
 
             // The game has ended if the game isn't active

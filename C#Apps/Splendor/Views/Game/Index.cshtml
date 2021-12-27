@@ -21,8 +21,11 @@
 
     var version = @Model.Version;
 
+    True = true; False = false;
     // Pull once after 1 second
-    setTimeout(pull, 1000);
+    if (!@IsCurrentPlayer && !@Model.GameOver) {
+        setTimeout(pull, 1000);
+    }
 
     // pulls to the server to see if anything is new
     function pull() {
@@ -32,15 +35,10 @@
             success: function (response) {
 
                 // if the gameboard's version is different than the current version render the game board and notify!
-                if (response.version != version) {
-                    renderGameBoard(response);
+                if (response != version) {
+                    renderGameBoard();
                 }
-                if (response.gameOver) {
-                    setTimeout(() => {
-                        OtherScreen = true;
-                        document.getElementById("GameOverScreen").style.display = "block";
-                    }, 2000);
-                }
+                
             },
             error: function () {
                 alert("ERROR - Please try again.");
@@ -1159,6 +1157,15 @@
 
         <a class="btn btn-danger position-absolute fs-5" style="bottom: 10%; left: 50%; width: 50%; max-width: 30rem; transform: translateX(-50%);" asp-controller="Home" asp-action="Index">Exit</a>
     </section>
+    <script>
+        True = true; False = false;
+        if (@Model.GameOver) {
+            setTimeout(() => {
+                OtherScreen = true;
+                document.getElementById("GameOverScreen").style.display = "block";
+            }, 2000);
+        }
+    </script>
 
 
 </body>
