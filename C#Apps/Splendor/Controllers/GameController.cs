@@ -28,6 +28,24 @@ namespace Splendor.Controllers
                 return View(gameBoard);
             }
 
+            List<int> gamesToRemove = new List<int>();
+            foreach (KeyValuePair<int, IGameBoard> kvp in ActiveGames)
+            {
+                if (kvp.Value != null && kvp.Value.LastTurn != null)
+                {
+                    if (kvp.Value.LastTurn.TimeStamp < DateTime.UtcNow.Subtract(new TimeSpan(0, 1, 0)))
+                    {
+                        gamesToRemove.Add(kvp.Key);
+                    }
+                }
+            }
+
+            foreach (int gameIdToRemove in gamesToRemove)
+            {
+                ActiveGames.Remove(gameIdToRemove); 
+            }
+
+
             return Redirect("~/ ");
         }
 
@@ -367,6 +385,10 @@ namespace Splendor.Controllers
                     players.Add(new Player(kvp.Value, kvp.Key));
                 }
 
+                // Shuffle the players
+                Random random = new Random();
+                players = players.OrderBy(p => random.Next()).ToList();
+
                 // Create a new game
                 IGameBoard newGame = new GameBoard(players);
 
@@ -379,6 +401,40 @@ namespace Splendor.Controllers
                 // Navigate to the game
                 ViewData["GameId"] = gameId;
                 ViewData["PlayerId"] = 0;
+
+
+
+
+
+
+                List<int> gamesToRemove = new List<int>();
+                foreach (KeyValuePair<int, IGameBoard> kvp in ActiveGames)
+                {
+                    if (kvp.Value != null && kvp.Value.LastTurn != null)
+                    {
+                        if (kvp.Value.LastTurn.TimeStamp < DateTime.UtcNow.Subtract(new TimeSpan(0, 1, 0)))
+                        {
+                            gamesToRemove.Add(kvp.Key);
+                        }
+                    } 
+                    else if (kvp.Value != null)
+                    {
+                        if (kvp.Value.GameStartTimeStamp < DateTime.UtcNow.Subtract(new TimeSpan(0, 1, 0)))
+                        {
+                            gamesToRemove.Add(kvp.Key);
+                        }
+                    }
+                }
+
+                foreach (int gameIdToRemove in gamesToRemove)
+                {
+                    ActiveGames.Remove(gameIdToRemove);
+                }
+
+
+
+
+
 
                 return Redirect("/Game/Index?gameId=" + gameId + "&playerId=0");
 

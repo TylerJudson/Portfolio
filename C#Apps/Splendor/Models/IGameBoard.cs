@@ -2,6 +2,11 @@
 {
     public interface IGameBoard
     {
+
+        /// <summary>
+        /// The Time when the game was started
+        /// </summary>
+        DateTime GameStartTimeStamp { get; }
         /// <summary>
         /// The version number the game is currently at
         /// </summary>

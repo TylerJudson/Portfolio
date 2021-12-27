@@ -14,6 +14,8 @@
 
         public string? PlayerName { get; set; }
 
+        public DateTime TimeStamp { get; } = DateTime.UtcNow;
+
         public Turn(Dictionary<Token, int>? takenTokens, ICard? reservedCard=null)
         {
             TakenTokens = takenTokens;
@@ -34,6 +36,6 @@
         {
             Noble = noble;
         }
-        
+
     }
 }

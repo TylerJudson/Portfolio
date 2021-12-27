@@ -31,5 +31,10 @@
         /// The name of the player who is doing the turn
         /// </summary>
         string? PlayerName { get; set; }
+
+        /// <summary>
+        /// The time the turn was played at
+        /// </summary>
+        DateTime TimeStamp { get; }
     }
 }

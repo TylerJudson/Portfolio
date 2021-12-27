@@ -35,10 +35,11 @@
                 if (response.version != version) {
                     renderGameBoard(response);
                 }
-
                 if (response.gameOver) {
-                    OtherScreen = true;
-                    document.getElementById("GameOverScreen").style.display = "block";
+                    setTimeout(() => {
+                        OtherScreen = true;
+                        document.getElementById("GameOverScreen").style.display = "block";
+                    }, 2000);
                 }
             },
             error: function () {
@@ -233,8 +234,8 @@
                 } else if (data.hasOwnProperty("actionCode")) {
                     continueAction(data);
                 } else {
-                    // Render the gameboard
-                    renderGameBoard(data);
+                    // show you got a noble screen
+                    youGotANobleScreen(ImageName);
                 }
             },
             error: function () {
@@ -578,7 +579,7 @@
 
     <!--Last Turn Alert-->
         <div id="lastTurnContainer" class="toast-container position-fixed">
-            <div id="lastTurnNotification" class="align-items-center show" style="color: white; background-color: darkred; width: 100%; height: 100%;">
+            <div id="lastTurnNotification" class="align-items-center show" style="color: white; background-color: var(--darkPurple); width: 100%; height: 100%;">
                 <div class=" v-align text-center" style="width: 100%">
                     <h1 style="font-size: 200%;">This is your last turn.</h1>
                 </div>
@@ -892,6 +893,24 @@
             NobleScreen.innerHTML = innerHtml;
             ToggleScreen("NobleScreen");
         }
+
+        function youGotANobleScreen(ImageName) {
+            let innerHtml = `
+                <h1 class="text-center mx-auto mt-6"> You got a noble! </h1>
+                <img class="mx-auto card mt-4
+                            mt-md-7"
+                            mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-width: 75%; max-height: 50%"/>
+                <div class="container row mt-5 mx-auto" style="width: 100%">
+                    <button class="btn btn-outline-light btn-lg mx-auto" style="width: 75%; max-width: 30rem;" onclick='renderGameBoard();'>Okay!</button>
+                </div>
+            `;
+
+            let NobleScreen = document.getElementById("NobleScreen")
+
+            NobleScreen.innerHTML = innerHtml;
+            ToggleScreen("NobleScreen");
+        }
+        
     </script>
 
 <!-- Return Token Screen -->
@@ -1128,7 +1147,7 @@
             </div>
         }
 
-        <a class="btn btn-danger position-absolute fs-5" style="bottom: 10%; left: 50%; width: 50%; max-width: 30rem; transform: translateX(-50%);">Exit</a>
+        <a class="btn btn-danger position-absolute fs-5" style="bottom: 10%; left: 50%; width: 50%; max-width: 30rem; transform: translateX(-50%);" asp-controller="Home" asp-action="Index">Exit</a>
     </section>
 
 

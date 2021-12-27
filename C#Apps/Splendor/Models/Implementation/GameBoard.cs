@@ -2,6 +2,8 @@
 {
     public class GameBoard : IGameBoard
     {
+        public DateTime GameStartTimeStamp { get; } = DateTime.UtcNow;
+
         public int Version { get; private set; } = 0;
 
         public ITurn? LastTurn { get; private set; }
