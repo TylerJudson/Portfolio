@@ -1,5 +1,4 @@
-﻿// TODO - Documentation
-
+﻿
 // The tokens the player is trying to take on a given turn
 let TakingTokens = {};
 

@@ -4,7 +4,6 @@ using Splendor.Models.Implementation;
 
 namespace Splendor.Controllers
 {
-    // TODO - Documentation
     public class GameController : Controller
     {
         /// <summary>
@@ -26,23 +25,6 @@ namespace Splendor.Controllers
             if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
             {
                 return View(gameBoard);
-            }
-
-            List<int> gamesToRemove = new List<int>();
-            foreach (KeyValuePair<int, IGameBoard> kvp in ActiveGames)
-            {
-                if (kvp.Value != null && kvp.Value.LastTurn != null)
-                {
-                    if (kvp.Value.LastTurn.TimeStamp < DateTime.UtcNow.Subtract(new TimeSpan(0, 1, 0)))
-                    {
-                        gamesToRemove.Add(kvp.Key);
-                    }
-                }
-            }
-
-            foreach (int gameIdToRemove in gamesToRemove)
-            {
-                ActiveGames.Remove(gameIdToRemove); 
             }
 
 
@@ -72,6 +54,14 @@ namespace Splendor.Controllers
             return Json("The game has ended.");
         }
 
+
+        /// <summary>
+        /// The end point for when the player ends their turn
+        /// </summary>
+        /// <param name="TakenTokens">The tokens the player took during their turn</param>
+        /// <param name="gameId">The id of the game</param>
+        /// <param name="playerId">The id of the player</param>
+        /// <returns>The game</returns>
         [HttpPost]
         [Route("Game/EndTurn/{gameId:int}/{playerId:int}")]
         public JsonResult EndTurn([FromBody] Dictionary<Token, int> TakenTokens, int gameId, int playerId)
@@ -79,11 +69,13 @@ namespace Splendor.Controllers
             // Check to make sure the game is active
             if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
             {
+                // Make sure taken tokens isn't null
                 if (TakenTokens != null)
                 {
-
+                    // execute the turn
                     ICompletedTurn completedTurn = gameBoard.ExecuteTurn( new Turn(TakenTokens));
 
+                    // return the error or continue action
                     if (completedTurn.Error != null)
                     {
                         return Json(completedTurn.Error);
@@ -104,6 +96,13 @@ namespace Splendor.Controllers
 
 
 
+        /// <summary>
+        /// THe end point for when a player purchases a card
+        /// </summary>
+        /// <param name="ImageName">The name of the image for the card to purchase</param>
+        /// <param name="gameId">The id of the game</param>
+        /// <param name="playerId">The id of the player</param>
+        /// <returns>The game</returns>
         [HttpPost]
         [Route("Game/Purchase/{gameId:int}/{playerId:int}")]
         public JsonResult Purchase([FromBody] string ImageName, int gameId, int playerId)
@@ -111,12 +110,15 @@ namespace Splendor.Controllers
             // Check to make sure the game is active
             if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
             {
+                // Check for nullality
                 if (ImageName != null)
                 {
                     ICard Card = null;
 
+                    // If the card is in the level 1 cards
                     if (ImageName[5] == '1')
                     {
+                        // loop through the cards and find the card
                         foreach(ICard? card in gameBoard.Level1Cards)
                         {
                             if (card == null)
@@ -130,8 +132,10 @@ namespace Splendor.Controllers
                             }
                         }
                     }
+                    // If the card is in the level 2 cards
                     else if (ImageName[5] == '2')
                     {
+                        // loop through the cards and find the card
                         foreach (ICard? card in gameBoard.Level2Cards)
                         {
                             if (card == null)
@@ -145,8 +149,10 @@ namespace Splendor.Controllers
                             }
                         }
                     }
+                    // if the card is in the level 3 cards
                     else if (ImageName[5] == '3')
                     {
+                        // loop through the cards and find the card
                         foreach (ICard? card in gameBoard.Level3Cards)
                         {
                             if (card == null)
@@ -161,9 +167,10 @@ namespace Splendor.Controllers
                         }
                     }
                     
+                    // if the card is still null check the player's reserved cards
                     if (Card == null)
                     {
-                        // Check the reserved cards first
+                        // find the index of the player by matching the ids
                         int playerIndex = 0;
                         for (int i = 0; i < gameBoard.Players.Count; i++)
                         {
@@ -172,8 +179,14 @@ namespace Splendor.Controllers
                                 playerIndex = i;
                             }
                         }
+
+                        // loop through the cards and find the card
                         foreach (ICard card in gameBoard.Players[playerIndex].ReservedCards)
                         {
+                            if (card == null)
+                            {
+                                continue;
+                            }
                             if (card.ImageName == ImageName)
                             {
                                 Card = card;
@@ -181,9 +194,11 @@ namespace Splendor.Controllers
                             }
                         }
                     }
-                        
+                    
+                    // execute the turn
                     ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(Card));
 
+                    // return the appropriate erros and continue actions
                     if (completedTurn.Error != null)
                     {
                         return Json(completedTurn.Error);
@@ -201,6 +216,13 @@ namespace Splendor.Controllers
         }
 
 
+        /// <summary>
+        /// The endpoint for when the player reserves a card
+        /// </summary>
+        /// <param name="ImageName">The name of the image for the cards wanting to purchase</param>
+        /// <param name="gameId">The id of the game</param>
+        /// <param name="playerId">The id of the plaeyr</param>
+        /// <returns>the game</returns>
         [HttpPost]
         [Route("Game/Reserve/{gameId:int}/{playerId:int}")]
         public JsonResult Reserve([FromBody] string ImageName, int gameId, int playerId)

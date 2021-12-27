@@ -85,7 +85,6 @@ namespace Splendor.Controllers
 
         public IActionResult ListGamesState()
         {
-            // TODO - documentation
             List<IPotentialGame> availableGamesToJoin = pendingGames.Values.ToList();
             availableGamesToJoin = availableGamesToJoin.FindAll(e => e.Players.Count < e.MaxPlayers);
             return Json(availableGamesToJoin);
@@ -95,7 +94,6 @@ namespace Splendor.Controllers
         [HttpGet]
         public IActionResult EnterGame([FromQuery] int gameId, [FromQuery] string playerName)
         {
-            // TODO - documentation
             // Try to get the game
             if (pendingGames.TryGetValue(gameId, out IPotentialGame? game))
             {
@@ -110,7 +108,6 @@ namespace Splendor.Controllers
                 lock(this)
                 {
                     playerId = game.Players.Keys.Max() + 1;
-                    // TODO: Might be good to see if there are duplicate names and if so append some identifier (such as ip address to the name to differentiate them)
                     game.Players.Add(playerId, playerName);
                 }
                 return Redirect("/WaitingRoom/Index?gameId=" + gameId + "&playerId=" + playerId);
