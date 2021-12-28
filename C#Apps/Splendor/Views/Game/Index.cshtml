@@ -246,9 +246,6 @@
 
 <!-- Options button -->
     <nav class="navbar">   
-        <script>
-            
-        </script>
         <div class="mx-3 btn" onclick='ToggleScreen("OptionsScreen")' > 
             @for (int j = 0; j < 3; j++)
             {
@@ -416,7 +413,7 @@
                                                     col-sm-3
                                                     col-md-4
                                                     ">
-                                            <img id="@Model.Players[i].Id-Reserved:@card.ImageName" class="col-12 p-0 card cursorHover" style="border-color: @BorderColor_r; opacity: @Opacity_r;" maxwidth="33%" src="/Images/@card.ImageName" alt=@card.ImageName onclick='ReserveCardScreen("@card.ImageName", @Purchaseable_r)'/>
+                                            <img id="@Model.Players[i].Id-Reserved:@card.ImageName" class="col-12 p-0 card cursorHover" style="border-color: @BorderColor_r; opacity: @Opacity_r;" maxwidth="33%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/@card.ImageName" alt=@card.ImageName onclick='ReserveCardScreen("@card.ImageName", @Purchaseable_r)'/>
                                         </div>
                                     }
                                 }
@@ -434,19 +431,19 @@
                 <section class="container mx-auto p-0 mb-5" width="100%">
                         <table class="mx-auto" width="100%">
                             <tr>
-                                <td id="EmeraldTakingToken"  class="takingToken" onclick="TokenClick('TakingEmerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldTakingTokenValue">0</h1></td>
-                                <td id="SapphireTakingToken" class="takingToken" onclick="TokenClick('TakingSapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireTakingTokenValue">0</h1></td>
-                                <td id="RubyTakingToken"     class="takingToken" onclick="TokenClick('TakingRuby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyTakingTokenValue">0</h1></td>
-                                <td id="DiamondTakingToken"  class="takingToken" onclick="TokenClick('TakingDiamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondTakingTokenValue">0</h1></td>
-                                <td id="OnyxTakingToken"     class="takingToken" onclick="TokenClick('TakingOnyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxTakingTokenValue">0</h1></td>
+                                <td id="EmeraldTakingToken"  class="takingToken" onclick="TokenClick('TakingEmerald')"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldTakingTokenValue">0</h1></td>
+                                <td id="SapphireTakingToken" class="takingToken" onclick="TokenClick('TakingSapphire')" ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireTakingTokenValue">0</h1></td>
+                                <td id="RubyTakingToken"     class="takingToken" onclick="TokenClick('TakingRuby')"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyTakingTokenValue">0</h1></td>
+                                <td id="DiamondTakingToken"  class="takingToken" onclick="TokenClick('TakingDiamond')"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondTakingTokenValue">0</h1></td>
+                                <td id="OnyxTakingToken"     class="takingToken" onclick="TokenClick('TakingOnyx')"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxTakingTokenValue">0</h1></td>
                             </tr>
                             <tr>
-                                <td class="token cursorHover" onclick="TokenClick('Emerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldTokenValue" >@Model.TokenStacks[Token.Emerald]</h1></td>
-                                <td class="token cursorHover" onclick="TokenClick('Sapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireTokenValue">@Model.TokenStacks[Token.Sapphire]</h1></td>
-                                <td class="token cursorHover" onclick="TokenClick('Ruby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyTokenValue"    >@Model.TokenStacks[Token.Ruby]</h1></td>
-                                <td class="token cursorHover" onclick="TokenClick('Diamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondTokenValue" >@Model.TokenStacks[Token.Diamond]</h1></td>
-                                <td class="token cursorHover" onclick="TokenClick('Onyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxTokenValue"    >@Model.TokenStacks[Token.Onyx]</h1></td>
-                                <td class="token cursorHover" onclick="TokenClick('Gold')"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldTokenValue"    >@Model.TokenStacks[Token.Gold]</h1></td>
+                                <td class="token cursorHover" onclick="TokenClick('Emerald')"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldTokenValue" >@Model.TokenStacks[Token.Emerald]</h1></td>
+                                <td class="token cursorHover" onclick="TokenClick('Sapphire')" ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireTokenValue">@Model.TokenStacks[Token.Sapphire]</h1></td>
+                                <td class="token cursorHover" onclick="TokenClick('Ruby')"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyTokenValue"    >@Model.TokenStacks[Token.Ruby]</h1></td>
+                                <td class="token cursorHover" onclick="TokenClick('Diamond')"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondTokenValue" >@Model.TokenStacks[Token.Diamond]</h1></td>
+                                <td class="token cursorHover" onclick="TokenClick('Onyx')"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxTokenValue"    >@Model.TokenStacks[Token.Onyx]</h1></td>
+                                <td class="token cursorHover" onclick="TokenClick('Gold')"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldTokenValue"    >@Model.TokenStacks[Token.Gold]</h1></td>
 
                             </tr>
                         </table>
@@ -459,7 +456,7 @@
                             <tr>
                                 @foreach (INoble noble in Model.Nobles)
                                 {
-                                    <td><img id="@noble.ImageName" class="card cursorHover" style="width: 100%; opacity: 80%; max-width: 8rem;" src="/Images/@noble.ImageName" alt="@noble" onclick='NobleScreen("@noble.ImageName")' /></td>
+                                    <td><img id="@noble.ImageName" class="card cursorHover" style="width: 100%; opacity: 80%; max-width: 8rem;" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/@noble.ImageName" alt="@noble" onclick='NobleScreen("@noble.ImageName")' /></td>
                                 }
                             </tr>
                         </table>
@@ -492,7 +489,7 @@
 
                                     }
 
-                                    <td><img id="@card.ImageName" class="card cursorHover" style="width: 100%; border-color: @BorderColor; opacity: @Opacity;" src="/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName", @Purchaseable)' /></td>
+                                    <td><img id="@card.ImageName" class="card cursorHover" style="width: 100%; border-color: @BorderColor; opacity: @Opacity;" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName", @Purchaseable)' /></td>
                             
                                 }
                              </tr>
@@ -518,7 +515,7 @@
 
                                     }
 
-                                    <td><img id="@card.ImageName" class="card cursorHover" style="width: 100%; border-color: @BorderColor; opacity: @Opacity;" src="/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName", @Purchaseable)' /></td>
+                                    <td><img id="@card.ImageName" class="card cursorHover" style="width: 100%; border-color: @BorderColor; opacity: @Opacity;" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName", @Purchaseable)' /></td>
                             
                                 }
                              </tr>
@@ -543,7 +540,7 @@
                                         Purchaseable = false;
 
                                     }
-                                    <td><img id="@card.ImageName" class="card cursorHover"  style="width: 100%; border-color: @BorderColor; opacity: @Opacity;" src="/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName", @Purchaseable)' /></td>
+                                    <td><img id="@card.ImageName" class="card cursorHover"  style="width: 100%; border-color: @BorderColor; opacity: @Opacity;" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName", @Purchaseable)' /></td>
                             
                                 }
                              </tr>
@@ -638,7 +635,7 @@
                             <table class="mx-auto">
                                 <tr>
                                     <td class="pe-3"><h1>@turn.PlayerName reserved</h1></td>
-                                    <td><img class="card" style="width: 3rem;" src="/Images/@turn.ReservedCard.ImageName" alt="@turn.ReservedCard.ImageName" onclick="NobleScreen('@turn.ReservedCard.ImageName')"/></td>
+                                    <td><img class="card" style="width: 3rem;" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/@turn.ReservedCard.ImageName" alt="@turn.ReservedCard.ImageName" onclick="NobleScreen('@turn.ReservedCard.ImageName')"/></td>
                                 </tr>
                                 @if (turn.TakenTokens != null && turn.TakenTokens.Count > 0) 
                                 {
@@ -649,7 +646,7 @@
                                         {
                                             for (int j = 0; j > kvp.Value; j--)
                                             {
-                                                <td class="px-1"><img style="width: 3rem;" src="/Images/@(kvp.Key).png" alt="@kvp.Key" /></td>
+                                                <td class="px-1"><img style="width: 3rem;" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/@(kvp.Key).png" alt="@kvp.Key" /></td>
                                             }
                                         }
                                     </tr>
@@ -685,7 +682,7 @@
                                             {
                                                 for (int j = 0; j < kvp.Value; j++)
                                                 {
-                                                    <td class="px-1"><img style="width: 3rem;" src="/Images/@(kvp.Key).png" alt="@kvp.Key" /></td>
+                                                    <td class="px-1"><img style="width: 3rem;" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/@(kvp.Key).png" alt="@kvp.Key" /></td>
                                                 }
                                             }
                                         </tr>
@@ -699,7 +696,7 @@
                                                 {
                                                     for (int j = 0; j > kvp.Value; j--)
                                                     {
-                                                        <td class="px-1"><img style="width: 3rem;" src="/Images/@(kvp.Key).png" alt="@kvp.Key" /></td>
+                                                        <td class="px-1"><img style="width: 3rem;" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/@(kvp.Key).png" alt="@kvp.Key" /></td>
                                                     }
                                                 }
                                             </tr>
@@ -720,7 +717,7 @@
                             <table class="mx-auto">
                                 <tr>
                                     <td class="pe-3"><h1>@turn.PlayerName purchased</h1></td>
-                                    <td><img class="card" style="width: 3rem;" src="/Images/@turn.Card.ImageName" alt="@turn.Card.ImageName" onclick="NobleScreen('@turn.Card.ImageName')" /></td>
+                                    <td><img class="card" style="width: 3rem;" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/@turn.Card.ImageName" alt="@turn.Card.ImageName" onclick="NobleScreen('@turn.Card.ImageName')" /></td>
                                 </tr>
                             </table>
                         </div>
@@ -733,7 +730,7 @@
                             <table class="mx-auto">
                                 <tr>
                                     <td class="pe-3"><h1>and acquired</h1></td>
-                                    <td><img class="card" style="width: 3rem;" src="/Images/@turn.Noble.ImageName" alt="@turn.Noble.ImageName" onclick="NobleScreen('@turn.Noble.ImageName')"/></td>
+                                    <td><img class="card" style="width: 3rem;" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/@turn.Noble.ImageName" alt="@turn.Noble.ImageName" onclick="NobleScreen('@turn.Noble.ImageName')"/></td>
                                 </tr>
                             </table>
                         </div>
@@ -854,7 +851,7 @@
             let innerHtml = `
                 <img class="mx-auto card mt-6
                             mt-md-6
-                            mt-lg-6" src="/Images/` + ImageName + `" width="auto" style="max-height: 50%"/>
+                            mt-lg-6" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/` + ImageName + `" width="auto" style="max-height: 50%"/>
                 <div class="container mt-5 mx-auto" style="width: 90%; max-width: 40rem; ">
                     <div class="row">` +
                         backButton +
@@ -887,7 +884,7 @@
             let innerHtml = `
                 <img class="mx-auto card mt-8
                             mt-md-7"
-                            mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-width: 75%; max-height: 50%"/>
+                            mt-lg-5" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/` + ImageName + `" width="auto" style="max-width: 75%; max-height: 50%"/>
                 <div class="container row mt-5 mx-auto
                             pl-md-6
                             pl-lg-8
@@ -907,7 +904,7 @@
                 <h1 class="text-center mx-auto mt-6"> You got a noble! </h1>
                 <img class="mx-auto card mt-4
                             mt-md-7"
-                            mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-width: 75%; max-height: 50%"/>
+                            mt-lg-5" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/` + ImageName + `" width="auto" style="max-width: 75%; max-height: 50%"/>
                 <div class="container row mt-5 mx-auto" style="width: 100%">
                     <button class="btn btn-outline-light btn-lg mx-auto" style="width: 75%; max-width: 30rem;" onclick='renderGameBoard();'>Okay!</button>
                 </div>
@@ -925,20 +922,20 @@
     <section id="ReturnTokenScreen" class="OverlayScreen" style="display: none">
         <table>
             <tr>
-                <td id="EmeraldReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningEmerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldReturningTokenValue">0</h1></td>
-                <td id="SapphireReturningToken" class="takingToken" onclick="ReturnTokenClick('ReturningSapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireReturningTokenValue">0</h1></td>
-                <td id="RubyReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningRuby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyReturningTokenValue">0</h1></td>
-                <td id="DiamondReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningDiamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondReturningTokenValue">0</h1></td>
-                <td id="OnyxReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningOnyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxReturningTokenValue">0</h1></td>
-                <td id="GoldReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningGold')"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldReturningTokenValue">0</h1></td>
+                <td id="EmeraldReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningEmerald')"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldReturningTokenValue">0</h1></td>
+                <td id="SapphireReturningToken" class="takingToken" onclick="ReturnTokenClick('ReturningSapphire')" ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireReturningTokenValue">0</h1></td>
+                <td id="RubyReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningRuby')"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyReturningTokenValue">0</h1></td>
+                <td id="DiamondReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningDiamond')"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondReturningTokenValue">0</h1></td>
+                <td id="OnyxReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningOnyx')"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxReturningTokenValue">0</h1></td>
+                <td id="GoldReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningGold')"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldReturningTokenValue">0</h1></td>
             </tr>
             <tr>
-                <td class="token cursorHover" onclick="ReturnTokenClick('Emerald')"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="PlayerEmeraldTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Emerald] </h1></td>
-                <td class="token cursorHover" onclick="ReturnTokenClick('Sapphire')" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="PlayerSapphireTokenValue">@Model.Players[Model.CurrentPlayer].Tokens[Token.Sapphire]</h1></td>
-                <td class="token cursorHover" onclick="ReturnTokenClick('Ruby')"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="PlayerRubyTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Ruby]    </h1></td>
-                <td class="token cursorHover" onclick="ReturnTokenClick('Diamond')"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="PlayerDiamondTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Diamond] </h1></td>
-                <td class="token cursorHover" onclick="ReturnTokenClick('Onyx')"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="PlayerOnyxTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Onyx]    </h1></td>
-                <td class="token cursorHover" onclick="ReturnTokenClick('Gold')"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="PlayerGoldTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Gold]    </h1></td>
+                <td class="token cursorHover" onclick="ReturnTokenClick('Emerald')"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="PlayerEmeraldTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Emerald] </h1></td>
+                <td class="token cursorHover" onclick="ReturnTokenClick('Sapphire')" ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Sapphire.png" alt="SapphireToken" /><h1 id="PlayerSapphireTokenValue">@Model.Players[Model.CurrentPlayer].Tokens[Token.Sapphire]</h1></td>
+                <td class="token cursorHover" onclick="ReturnTokenClick('Ruby')"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Ruby.png"     alt="RubyToken"     /><h1 id="PlayerRubyTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Ruby]    </h1></td>
+                <td class="token cursorHover" onclick="ReturnTokenClick('Diamond')"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="PlayerDiamondTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Diamond] </h1></td>
+                <td class="token cursorHover" onclick="ReturnTokenClick('Onyx')"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="PlayerOnyxTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Onyx]    </h1></td>
+                <td class="token cursorHover" onclick="ReturnTokenClick('Gold')"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Gold.png"     alt="GoldToken"     /><h1 id="PlayerGoldTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Gold]    </h1></td>
             </tr>
         </table>
     </section>
@@ -953,20 +950,20 @@
                 <h1 class="text-center">You must return ` + (@(Model.Players[Model.CurrentPlayer].NumberOfTokens()) + tokensToReturn - 10) + ` </h1>
                 <table class="mx-auto mt-10 mt-sm-6 mt-lg-6" style="max-width: 50rem;">
                     <tr>
-                        <td id="EmeraldReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningEmerald',`  + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldReturningTokenValue">0</h1></td>
-                        <td id="SapphireReturningToken" class="takingToken" onclick="ReturnTokenClick('ReturningSapphire',` + tokensToReturn + `)" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireReturningTokenValue">0</h1></td>
-                        <td id="RubyReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningRuby',`     + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyReturningTokenValue">0</h1></td>
-                        <td id="DiamondReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningDiamond',`  + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondReturningTokenValue">0</h1></td>
-                        <td id="OnyxReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningOnyx',`     + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxReturningTokenValue">0</h1></td>
-                        <td id="GoldReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningGold',`     + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldReturningTokenValue">0</h1></td>
+                        <td id="EmeraldReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningEmerald',`  + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldReturningTokenValue">0</h1></td>
+                        <td id="SapphireReturningToken" class="takingToken" onclick="ReturnTokenClick('ReturningSapphire',` + tokensToReturn + `)" ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireReturningTokenValue">0</h1></td>
+                        <td id="RubyReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningRuby',`     + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Ruby.png"     alt="RubyToken"     /><h1 id="RubyReturningTokenValue">0</h1></td>
+                        <td id="DiamondReturningToken"  class="takingToken" onclick="ReturnTokenClick('ReturningDiamond',`  + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="DiamondReturningTokenValue">0</h1></td>
+                        <td id="OnyxReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningOnyx',`     + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="OnyxReturningTokenValue">0</h1></td>
+                        <td id="GoldReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningGold',`     + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldReturningTokenValue">0</h1></td>
                     </tr>
                     <tr>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Emerald',` + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="PlayerEmeraldTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Emerald] </h1></td>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Sapphire',`+ tokensToReturn + `)" ><img class="p-0" style="width: 100%" src="/Images/Sapphire.png" alt="SapphireToken" /><h1 id="PlayerSapphireTokenValue">@Model.Players[Model.CurrentPlayer].Tokens[Token.Sapphire]</h1></td>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Ruby',`    + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="/Images/Ruby.png"     alt="RubyToken"     /><h1 id="PlayerRubyTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Ruby]    </h1></td>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Diamond',` + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="PlayerDiamondTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Diamond] </h1></td>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Onyx',`    + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="PlayerOnyxTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Onyx]    </h1></td>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Gold',`    + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="/Images/Gold.png"     alt="GoldToken"     /><h1 id="PlayerGoldTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Gold]    </h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Emerald',` + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="PlayerEmeraldTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Emerald] </h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Sapphire',`+ tokensToReturn + `)" ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Sapphire.png" alt="SapphireToken" /><h1 id="PlayerSapphireTokenValue">@Model.Players[Model.CurrentPlayer].Tokens[Token.Sapphire]</h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Ruby',`    + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Ruby.png"     alt="RubyToken"     /><h1 id="PlayerRubyTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Ruby]    </h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Diamond',` + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="PlayerDiamondTokenValue" >@Model.Players[Model.CurrentPlayer].Tokens[Token.Diamond] </h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Onyx',`    + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="PlayerOnyxTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Onyx]    </h1></td>
+                        <td class="token cursorHover" onclick="ReturnTokenClick('Gold',`    + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/Gold.png"     alt="GoldToken"     /><h1 id="PlayerGoldTokenValue"    >@Model.Players[Model.CurrentPlayer].Tokens[Token.Gold]    </h1></td>
                     </tr>
                 </table>
 
@@ -1016,7 +1013,7 @@
                 <table class="mx-auto mt-10 mt-sm-6 mt-lg-6" style="max-width: 50rem;">
                     <tr>`;
             ImageNames.forEach(imageName =>  {
-                innerHtml += `<td><img id="SelectNoble-` + imageName + `" class="card mx-auto" src="/Images/` + imageName + `" width="auto" style="max-width: 75%; max-height: 50%" onclick="clickNoble('`+ imageName + `');"/></td>`;
+                innerHtml += `<td><img id="SelectNoble-` + imageName + `" class="card mx-auto" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/` + imageName + `" width="auto" style="max-width: 75%; max-height: 50%" onclick="clickNoble('`+ imageName + `');"/></td>`;
             });
 
             innerHtml += `
@@ -1079,7 +1076,7 @@
             let innerHtml = `
                 <img class="mx-auto card mt-6
                             mt-md-7"
-                            mt-lg-5" src="/Images/` + ImageName + `" width="auto" style="max-height: 50%"/>
+                            mt-lg-5" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/Images/` + ImageName + `" width="auto" style="max-height: 50%"/>
                 <div class="container mt-5 mx-auto" style="width: 90%; max-width: 40rem; ">
                     <div class="row">` +
                         backButton +
