@@ -75,7 +75,7 @@
             if (turn.Card != null) // Check to make sure there is a card to add
             {
                 // Check to make sure we have enough tokens to purchase card
-                if (!CanPurchaseCard(turn.Card))
+                if (!CanPurchaseCardWithGold(turn.Card) && !CanPurchaseCard(turn.Card))
                 {
                     // If we have too little tokens return an error
                     return new CompletedTurn(new Error("You don't have enough tokens for this card", 2));
@@ -199,6 +199,27 @@
             {
                 return false;
             }
+
+            // Check to make sure we have enough tokens to purchase card
+            foreach (KeyValuePair<Token, int> kvp in card.Price)
+            {
+                // If we have too little tokens
+                if (Tokens[kvp.Key] + CardTokens[kvp.Key] < kvp.Value)
+                {
+                    // If we have too little tokens with return false
+                    return false;
+                }
+                
+            }
+            return true;
+        }
+
+        public bool CanPurchaseCardWithGold(ICard card)
+        {
+            if (card == null)
+            {
+                return false;
+            }
             // TODO - Implement Gold Tokens and for user to choose what tokens and cards to purchase the card with
 
             int Gold = Tokens[Token.Gold];
@@ -218,7 +239,7 @@
                         Gold -= kvp.Value - Tokens[kvp.Key] - CardTokens[kvp.Key];
                     }
                 }
-                
+
             }
 
 

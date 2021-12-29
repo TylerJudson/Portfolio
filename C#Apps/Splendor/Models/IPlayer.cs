@@ -62,6 +62,14 @@
         /// <param name="card">The card to check if the player can acquire</param>
         /// <returns>Whether or not the player can purchase the card</returns>
         public bool CanPurchaseCard(ICard card);
+
+        /// <summary>
+        /// Checks to see fi the player can purchase a card with or without gold
+        /// </summary>
+        /// <param name="card">The card to check if the player can acquire</param>
+        /// <returns>Whether or not the player can purchase the card</returns>
+        public bool CanPurchaseCardWithGold(ICard card);
+
         /// <summary>
         /// Finds the cummulative number of tokens the player has
         /// </summary>

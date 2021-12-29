@@ -341,7 +341,7 @@
                                 <tr>
                                     <td>
                                         <svg class="playerStats">
-                                            <text id="@Model.Players[i].Id-TokenTotal" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].NumberOfTokens()</text>
+                                            <text id="@Model.Players[i].Id-TokenTotal" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em" style="opacity: @(Model.Players[i].NumberOfTokens() == 0 ? 0 : 100);">@Model.Players[i].NumberOfTokens()</text>
                                         </svg>
                                     </td>
                                     @foreach(KeyValuePair<Token, string> kvp in Colors)
@@ -366,7 +366,7 @@
                                 <tr>
                                     <td>
                                         <svg class="playerStats">
-                                            <text id="@Model.Players[i].Id-PrestigePoints" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].PrestigePoints</text>
+                                            <text id="@Model.Players[i].Id-PrestigePoints" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em" style="opacity: @(Model.Players[i].PrestigePoints == 0 ? 0 : 100)" >@Model.Players[i].PrestigePoints</text>
                                         </svg>
                                     </td>
                                     @foreach(KeyValuePair<Token, string> kvp in Colors)
@@ -395,10 +395,17 @@
                                     bool Purchaseable_r = false;
                                     foreach (ICard card in Model.Players[i].ReservedCards)
                                     {
-                                        if(playerOrdinal == i && Model.Players[playerOrdinal].CanPurchaseCard(card))
+                                        if (playerOrdinal == i && Model.Players[playerOrdinal].CanPurchaseCard(card))
                                         {
                                             BorderColor_r = "green";
                                             Opacity_r = "100%";
+                                            Purchaseable_r = true;
+
+                                        }
+                                        else if (playerOrdinal == i && Model.Players[playerOrdinal].CanPurchaseCardWithGold(card))
+                                        {
+                                            BorderColor_r = "yellow";
+                                            Opacity_r = "80%";
                                             Purchaseable_r = true;
 
                                         }
@@ -468,7 +475,7 @@
                                     string Opacity = "80%";
                                     bool Purchaseable = false;
                                 }
-                                @foreach (ICard card in Model.Level3Cards)
+                                @foreach (ICard? card in Model.Level3Cards)
                                 {
                                     if (card == null)
                                     {
@@ -480,6 +487,12 @@
                                         Opacity = "100%";
                                         Purchaseable = true;
 
+                                    }
+                                    else if (Model.Players[playerOrdinal].CanPurchaseCardWithGold(card))
+                                    {
+                                        BorderColor = "yellow";
+                                        Opacity = "80%";
+                                        Purchaseable = true;
                                     }
                                     else
                                     {
@@ -494,7 +507,7 @@
                                 }
                              </tr>
                              <tr>
-                                @foreach (ICard card in Model.Level2Cards)
+                                @foreach (ICard? card in Model.Level2Cards)
                                 {
                                     if (card == null)
                                     {
@@ -506,6 +519,12 @@
                                         Opacity = "100%";
                                         Purchaseable = true;
 
+                                    }
+                                    else if (Model.Players[playerOrdinal].CanPurchaseCardWithGold(card))
+                                    {
+                                        BorderColor = "yellow";
+                                        Opacity = "80%";
+                                        Purchaseable = true;
                                     }
                                     else
                                     {
@@ -520,7 +539,7 @@
                                 }
                              </tr>
                              <tr>
-                                @foreach (ICard card in Model.Level1Cards)
+                                @foreach (ICard? card in Model.Level1Cards)
                                 {
                                     if (card == null)
                                     {
@@ -532,6 +551,12 @@
                                         Opacity = "100%";
                                         Purchaseable = true;
 
+                                    }
+                                    else if (Model.Players[playerOrdinal].CanPurchaseCardWithGold(card))
+                                    {
+                                        BorderColor = "yellow";
+                                        Opacity = "80%";
+                                        Purchaseable = true;
                                     }
                                     else
                                     {
@@ -749,6 +774,7 @@
     </section>
      <style>
          .notify {  
+              z-index: 15;
               position: fixed;
               top:0px;
               width:100%;
