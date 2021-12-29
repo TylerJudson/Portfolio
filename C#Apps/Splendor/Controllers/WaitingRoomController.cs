@@ -9,7 +9,7 @@ namespace Splendor.Controllers
         /// <summary>
         /// The list of potential games waiting to start
         /// </summary>
-        public static Dictionary<int, IPotentialGame> PendingGames { get; } = new Dictionary<int, IPotentialGame>();
+        public static Dictionary<int, IPotentialGame> PendingGames { get; set; } = new Dictionary<int, IPotentialGame>();
 
         /// <summary>
         /// Starts up the game?

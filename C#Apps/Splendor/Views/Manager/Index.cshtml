@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Manager";
+}
+
+@model Splendor.Models.Manager
+
+@if (Model != null)
+{
+    <h1 class="text-center splendorHeading mt-3">Manager</h1>
+    <div class="mx-auto mt-7 container row" style="max-width: 75rem;">
+        <!-- Pending Games -->
+            <div class="col-12 p-0
+                        col-lg-6 mt-lg-3" >
+                <h5 class="mx-auto fs-3" style="width: 80%">Pending Games</h5>
+                @if (Model.PendingGames.Count > 0)
+                {
+                    <table id="pendingGames" class="mx-auto" style="width: 80%">
+                    @foreach (int Id in Model.PendingGames.Keys)
+                    {
+                        <tr style="width: 80%">
+                            <td class="text-start mt-3 ps-3 ps-lg-5">@Id</td>
+                            <td class="text-end mt-3"><a class="btn-outline-purple btn" asp-controller="Manager" asp-action="DeletePendingGame" asp-route-id="@Id">Delete</a></td>
+                        </tr>
+                    }
+                    </table>
+                }
+                else 
+                {
+                    <p class="mx-auto ps-5" style="width: 80%">None</p>
+                }
+            </div>
+
+        <!-- Active Games -->
+            <div class="col-12 p-0
+                        col-lg-6 mt-lg-3" >
+                <h5 class="mx-auto fs-3" style="width: 80%">Active Games</h5>
+                @if (Model.ActiveGames.Count > 0)
+                {
+                    <table id="activeGames" class="mx-auto" style="width: 80%">
+                    @foreach (int Id in Model.ActiveGames.Keys)
+                    {
+                        <tr style="width: 80%">
+                            <td class="text-start mt-3 ps-3 ps-lg-5">@Id</td>
+                            <td class="text-end mt-3"><a class="btn-outline-purple btn" asp-controller="Manager" asp-action="DeleteActiveGame" asp-route-id="@Id">Delete</a></td>
+                        </tr>
+                    }
+                    </table>
+                }
+                else 
+                {
+                    <p class="mx-auto ps-5" style="width: 80%">None</p>
+                }
+            </div>
+    </div>
+}
