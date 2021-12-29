@@ -325,14 +325,14 @@
                                         {
                                             <th>
                                                 <svg class="playerStats">
-                                                    <text id='@Model.Players[i].Id-Total:@kvp.Key' x="50%" y="50%" text-anchor="middle" fill=@kvp.Value stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@(Model.Players[i].Tokens[kvp.Key] + Model.Players[i].CardTokens[kvp.Key])</text>
+                                                    <text id='@Model.Players[i].Id-Total:@kvp.Key' x="50%" y="50%" text-anchor="middle" fill=@kvp.Value stroke="black" font-size="2rem" stroke-width="1px" dy=".35em" style="opacity: @(Model.Players[i].Tokens[kvp.Key] + Model.Players[i].CardTokens[kvp.Key] == 0 ? 0 : 100);">@(Model.Players[i].Tokens[kvp.Key] + Model.Players[i].CardTokens[kvp.Key])</text>
                                                 </svg>
                                             </th>
                                         }
 
                                         <th>
                                             <svg class="playerStats">
-                                                    <text id="@Model.Players[i].Id-Total:Gold" x="50%" y="50%" text-anchor="middle" fill="rgb(225,193,37)" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[Token.Gold]</text>
+                                                    <text id="@Model.Players[i].Id-Total:Gold" x="50%" y="50%" text-anchor="middle" fill="rgb(225,193,37)" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em" style="opacity: @(Model.Players[i].Tokens[Token.Gold] == 0 ? 0 : 100);">@Model.Players[i].Tokens[Token.Gold]</text>
                                             </svg>
                                         </th>
                                 </tr>
@@ -349,7 +349,7 @@
                                         <td>
                                             <svg class="playerStats">
                                                 <circle cx="50%" cy="50%" r="20" fill=@kvp.Value />
-                                                <text id="@Model.Players[i].Id-Token:@kvp.Key" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[kvp.Key]</text>
+                                                <text id="@Model.Players[i].Id-Token:@kvp.Key" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em" style="opacity: @(Model.Players[i].Tokens[kvp.Key] == 0 ? 0 : 100);">@Model.Players[i].Tokens[kvp.Key]</text>
                                             </svg>
                                         </td>
                                     }
@@ -357,7 +357,7 @@
                                     <td>
                                         <svg class="playerStats">
                                             <circle cx="50%" cy="50%" r="20" fill="rgb(225,193,37)" />
-                                            <text id="@Model.Players[i].Id-Token:Gold" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].Tokens[Token.Gold]</text>
+                                            <text id="@Model.Players[i].Id-Token:Gold" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em" style="opacity: @(Model.Players[i].Tokens[Token.Gold] == 0 ? 0 : 100);">@Model.Players[i].Tokens[Token.Gold]</text>
                                         </svg>
                                     </td>
                                 </tr>
@@ -374,7 +374,7 @@
                                         <td>
                                             <svg class="playerStats">
                                                 <rect x="10%" rx="10" ry="10" width="2.4rem" height="3rem" fill=@kvp.Value />
-                                                <text id="@Model.Players[i].Id-Card:@kvp.Key" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em">@Model.Players[i].CardTokens[kvp.Key]</text>
+                                                <text id="@Model.Players[i].Id-Card:@kvp.Key" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em" style="opacity: @(Model.Players[i].CardTokens[kvp.Key] == 0 ? 0 : 100);">@Model.Players[i].CardTokens[kvp.Key]</text>
                                             </svg>
                                         </td>
                                     }
@@ -550,7 +550,7 @@
         </section>
 
 </section>
-
+    
 
 
 @if (IsCurrentPlayer && !Model.GameOver)
