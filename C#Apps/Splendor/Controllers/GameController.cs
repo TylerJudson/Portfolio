@@ -420,7 +420,7 @@ namespace Splendor.Controllers
         public IActionResult Start([FromQuery]int gameId)
         {
             // Get the Game out of pending games
-            if (WaitingRoomController.pendingGames.TryGetValue(gameId, out IPotentialGame? gameInfo))
+            if (WaitingRoomController.PendingGames.TryGetValue(gameId, out IPotentialGame? gameInfo))
             {
                 // Create a list of the players
                 List<IPlayer> players = new List<IPlayer>();
@@ -442,7 +442,7 @@ namespace Splendor.Controllers
                 ActiveGames.Add(gameId, newGame);
 
                 // Remove the game from pending games
-                WaitingRoomController.pendingGames.Remove(gameId);
+                WaitingRoomController.PendingGames.Remove(gameId);
 
                 // Navigate to the game
                 ViewData["GameId"] = gameId;

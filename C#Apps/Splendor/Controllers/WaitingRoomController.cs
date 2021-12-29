@@ -9,7 +9,7 @@ namespace Splendor.Controllers
         /// <summary>
         /// The list of potential games waiting to start
         /// </summary>
-        public static Dictionary<int, IPotentialGame> pendingGames { get; } = new Dictionary<int, IPotentialGame>();
+        public static Dictionary<int, IPotentialGame> PendingGames { get; } = new Dictionary<int, IPotentialGame>();
 
         /// <summary>
         /// Starts up the game?
@@ -20,7 +20,7 @@ namespace Splendor.Controllers
         public IActionResult Index(int gameId, int playerId)
         {
             // Make sure the game id is in the pending games
-            if (pendingGames.TryGetValue(gameId, out IPotentialGame? game))
+            if (PendingGames.TryGetValue(gameId, out IPotentialGame? game))
             {
                 ViewData["GameId"] = gameId;
                 ViewData["PlayerId"] = playerId;
@@ -56,7 +56,7 @@ namespace Splendor.Controllers
                 potentialGameId = random.Next();
                 
                 // Make sure the id isn't already in pending games
-                while (pendingGames.ContainsKey(potentialGameId))
+                while (PendingGames.ContainsKey(potentialGameId))
                 {
                     // Get a new random Id
                     potentialGameId = random.Next();
@@ -66,7 +66,7 @@ namespace Splendor.Controllers
                 IPotentialGame pendingGame = new PotentialGame(potentialGameId, playerName);
 
                 // Add it to the list
-                pendingGames.Add(potentialGameId, pendingGame);
+                PendingGames.Add(potentialGameId, pendingGame);
 
             }
             // Go to the game info view
@@ -79,13 +79,13 @@ namespace Splendor.Controllers
         /// <returns></returns>
         public IActionResult ListGames()
         {
-            List<IPotentialGame> availableGamesToJoin = pendingGames.Values.ToList();
+            List<IPotentialGame> availableGamesToJoin = PendingGames.Values.ToList();
             return View(availableGamesToJoin);
         }
 
         public IActionResult ListGamesState()
         {
-            List<IPotentialGame> availableGamesToJoin = pendingGames.Values.ToList();
+            List<IPotentialGame> availableGamesToJoin = PendingGames.Values.ToList();
             availableGamesToJoin = availableGamesToJoin.FindAll(e => e.Players.Count < e.MaxPlayers);
             return Json(availableGamesToJoin);
         }
@@ -95,7 +95,7 @@ namespace Splendor.Controllers
         public IActionResult EnterGame([FromQuery] int gameId, [FromQuery] string playerName)
         {
             // Try to get the game
-            if (pendingGames.TryGetValue(gameId, out IPotentialGame? game))
+            if (PendingGames.TryGetValue(gameId, out IPotentialGame? game))
             {
                 // If there are too many players display a message
                 if (game.Players.Count >= game.MaxPlayers)
@@ -129,7 +129,7 @@ namespace Splendor.Controllers
         public JsonResult State(int gameId, int playerId)
         {
             // Try to get the game from pending game
-            if (pendingGames.TryGetValue(gameId, out IPotentialGame? game))
+            if (PendingGames.TryGetValue(gameId, out IPotentialGame? game))
             {
                 // Make sure the game has the playerId
                 if (!game.Players.ContainsKey(playerId))
@@ -159,7 +159,7 @@ namespace Splendor.Controllers
         public JsonResult RemovePlayer(int gameId, int playerId)
         {
             // Make sure the game is in pending games
-            if (pendingGames.TryGetValue(gameId, out IPotentialGame? game))
+            if (PendingGames.TryGetValue(gameId, out IPotentialGame? game))
             {
                 // Remove the player
                 game.Players.Remove(playerId);
