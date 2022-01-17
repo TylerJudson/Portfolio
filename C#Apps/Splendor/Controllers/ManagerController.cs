@@ -16,8 +16,6 @@ namespace Splendor.Controllers
         [HttpGet]
         public IActionResult DeletePendingGame(int id)
         {
-
-
             WaitingRoomController.PendingGames.Remove(id);
 
             return Redirect("~/manager");

@@ -22,5 +22,10 @@
         /// </summary>
         public int MaxPlayers { get; }
 
+        /// <summary>
+        /// The Time when the potential game was started
+        /// </summary>
+        DateTime TimeCreated { get; }
+
     }
 }

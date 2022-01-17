@@ -10,6 +10,8 @@
 
         public int MaxPlayers { get; } = 4;
 
+        public DateTime TimeCreated { get; } = DateTime.UtcNow;
+
         /// <summary>
         /// Initializes the potential game
         /// </summary>

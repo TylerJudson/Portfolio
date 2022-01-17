@@ -69,6 +69,28 @@ namespace Splendor.Controllers
                 PendingGames.Add(potentialGameId, pendingGame);
 
             }
+
+
+
+
+            List<int> pendingGamesToRemove = new List<int>();
+            foreach (KeyValuePair<int, IPotentialGame> kvp in PendingGames)
+            {
+                if (kvp.Value != null)
+                {
+                    if (kvp.Value.TimeCreated < DateTime.UtcNow.Subtract(new TimeSpan(0, 30, 0)))
+                    {
+                        pendingGamesToRemove.Add(kvp.Key);
+                    }
+                }
+
+            }
+
+            foreach (int pendingGameIdToRemove in pendingGamesToRemove)
+            {
+                PendingGames.Remove(pendingGameIdToRemove);
+            }
+
             // Go to the game info view
             return Redirect("/WaitingRoom/Index?gameId=" + potentialGameId + "&playerId=0");
         }

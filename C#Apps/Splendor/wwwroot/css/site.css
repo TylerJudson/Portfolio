@@ -6,7 +6,9 @@
     --purpleOpacity: rgba(110, 10, 150, 0.5);
 }
 
-
+* {
+    touch-action: manipulation;
+}
 
 html {
     font-size: 14px;

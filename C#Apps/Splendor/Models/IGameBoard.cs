@@ -7,6 +7,7 @@
         /// The Time when the game was started
         /// </summary>
         DateTime GameStartTimeStamp { get; }
+
         /// <summary>
         /// The version number the game is currently at
         /// </summary>
@@ -86,6 +87,11 @@
         /// Whether or not the game has ended
         /// </summary>
         public bool GameOver { get; }
+
+        /// <summary>
+        /// Whether or not the game is paused
+        /// </summary>
+        public bool IsPaused { get; set; }
 
     }
 }

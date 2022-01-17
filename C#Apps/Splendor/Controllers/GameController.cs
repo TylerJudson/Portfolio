@@ -46,7 +46,10 @@ namespace Splendor.Controllers
             // Check to make sure the game is active
             if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
             {
-                
+                if (gameBoard.IsPaused)
+                {
+                    return Json("IsPaused");
+                }
                 return Json(gameBoard.Version);
             }
 
@@ -408,7 +411,31 @@ namespace Splendor.Controllers
             return Json("");
         }
 
+        [HttpPost]
+        [Route("Game/Pause/{gameId:int}/{playerId:int}")]
+        public JsonResult Pause(int gameId, int playerId)
+        {
+            // Check to make sure the game is active
+            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+            {
+                gameBoard.IsPaused = true;
+            }
 
+            return Json("");
+        }
+
+        [HttpPost]
+        [Route("Game/Resume/{gameId:int}/{playerId:int}")]
+        public JsonResult Resume(int gameId, int playerId)
+        {
+            // Check to make sure the game is active
+            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+            {
+                gameBoard.IsPaused = false;
+            }
+
+            return Json("");
+        }
 
         /// <summary>
         /// Starts the game
@@ -458,14 +485,14 @@ namespace Splendor.Controllers
                 {
                     if (kvp.Value != null && kvp.Value.LastTurn != null)
                     {
-                        if (kvp.Value.LastTurn.TimeStamp < DateTime.UtcNow.Subtract(new TimeSpan(0, 30, 0)))
+                        if (kvp.Value.LastTurn.TimeStamp < DateTime.UtcNow.Subtract(new TimeSpan(0, 30, 0)) && !kvp.Value.IsPaused)
                         {
                             gamesToRemove.Add(kvp.Key);
                         }
                     } 
                     else if (kvp.Value != null)
                     {
-                        if (kvp.Value.GameStartTimeStamp < DateTime.UtcNow.Subtract(new TimeSpan(0, 30, 0)))
+                        if (kvp.Value.GameStartTimeStamp < DateTime.UtcNow.Subtract(new TimeSpan(0, 30, 0)) && !kvp.Value.IsPaused)
                         {
                             gamesToRemove.Add(kvp.Key);
                         }
@@ -476,6 +503,7 @@ namespace Splendor.Controllers
                 {
                     ActiveGames.Remove(gameIdToRemove);
                 }
+
 
 
 

@@ -34,6 +34,8 @@
 
         public bool GameOver { get; private set; } = false;
 
+        public bool IsPaused { get; set; } = false;
+
         /// <summary>
         /// Initializes the Gameboard
         /// </summary>
@@ -60,12 +62,6 @@
 
         public ICompletedTurn ExecuteTurn(ITurn turn)
         {
-
-            //Players[CurrentPlayer].CardTokens[Token.Emerald] = 2;
-            //Players[CurrentPlayer].CardTokens[Token.Ruby] = 2;
-            //Players[CurrentPlayer].CardTokens[Token.Sapphire] = 2;
-            //Players[CurrentPlayer].CardTokens[Token.Diamond] = 2;
-            //Players[CurrentPlayer].CardTokens[Token.Onyx] = 2;
 
             // If the game is over prevent the player from playing
             if (GameOver)

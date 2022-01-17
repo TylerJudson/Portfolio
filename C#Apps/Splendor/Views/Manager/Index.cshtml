@@ -40,7 +40,14 @@
                     @foreach (int Id in Model.ActiveGames.Keys)
                     {
                         <tr style="width: 80%">
-                            <td class="text-start mt-3 ps-3 ps-lg-5">@Id</td>
+                            @{
+                                string Paused = "";
+                                if (Model.ActiveGames[Id].IsPaused)
+                                {
+                                    Paused = "(paused)";
+                                }
+                            }
+                            <td class="text-start mt-3 ps-3 ps-lg-5">@Id @Paused</td>
                             <td class="text-end mt-3"><a class="btn-outline-purple btn" asp-controller="Manager" asp-action="DeleteActiveGame" asp-route-id="@Id">Delete</a></td>
                         </tr>
                     }
