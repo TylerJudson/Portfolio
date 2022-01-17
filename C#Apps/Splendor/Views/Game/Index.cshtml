@@ -578,13 +578,15 @@
     
 
 
+
+
 @if (IsCurrentPlayer && !Model.GameOver)
 {
     <button id="endTurnButton" class="btn-darkPurple btn px-5 fs-3" onclick="endTurn();">End Turn</button>
+    <audio id="AlertAudio" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/TurnAlert.mp3"></audio>
 
 
     <!--Your Turn Alert-->
-        <audio src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Apps/Splendor/wwwroot/TurnAlert.mp3" autoplay="autoplay" ></audio>
         <div id="turnContainer" class="toast-container position-fixed bottom-0 p-5" data-bs-delay="100">
             <div id="turnNotification" class="toast align-items-center show" role="alert" aria-live="assertive" aria-atomic="true" style="color: white; background-color: var(--purple)">
                 <div class="d-flex">
@@ -598,6 +600,7 @@
 
         <script>
             setTimeout(() => { 
+                document.getElementById("AlertAudio").play();
                 let turnNotification = document.getElementById("turnContainer");
                 turnNotification.style.transform = 'translateX(400px)';
             }, 250);
@@ -605,6 +608,9 @@
                 let turnNotification = document.getElementById("turnContainer");
                 turnNotification.style.transform = 'translateX(0px)';
             }, 2000)
+            setTimeout(() => {
+                //document.getElementById("AlertAudio").pause();
+            }, 4000)
         </script>
 
 
@@ -872,8 +878,7 @@
 
 
             let reserveButton = getReserveButton(@IsCurrentPlayer, @(Model.Players[playerOrdinal].ReservedCards.Count < 3), ImageName);
-            let selectPurchaseButton = getSelectPurchaseButton(@IsCurrentPlayer, purchaseable, @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0), ImageName);
-            let purchaseButton =             getPurchaseButton(@IsCurrentPlayer, purchaseable, @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0), ImageName);
+            let purchaseButton = getPurchaseButton(@IsCurrentPlayer, purchaseable, @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0), ImageName);
 
             let innerHtml = `
                 <img class="mx-auto card mt-6
@@ -885,7 +890,6 @@
                         reserveButton +
                     `</div>
                     <div class="row mt-3"> ` +
-                        selectPurchaseButton +
                         purchaseButton + `
                     </div>
                 <div>`;
@@ -1085,19 +1089,13 @@
     <script>
         var True = true, False = false;
         function ReserveCardScreen(ImageName, purchaseable=false) {
-            let backButton = `<div class="col p-0 `
-            if (purchaseable && @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0) && @IsCurrentPlayer) {
-                backButton += "pe-3";
-            }
-            
-            backButton +=                             `">
+            let backButton = `<div class="col p-0 pe-3">
                                 <div class="purple p-0 mx-auto" style="width: 100%;">
                                     <button class="mx-auto btn btn-outline-light btn-lg" style="width: 100%;" onclick='ToggleScreen("CardScreen")'>Back</button>
                                 </div>
                             </div>`;
 
 
-            let selectPurchaseButton = getSelectPurchaseReserveButton(@IsCurrentPlayer, purchaseable, @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0), ImageName);
             let purchaseButton =             getPurchaseReserveButton(@IsCurrentPlayer, purchaseable, @(Model.Players[playerOrdinal].Tokens[Token.Gold] > 0), ImageName);
 
             let innerHtml = `
@@ -1107,9 +1105,6 @@
                 <div class="container mt-5 mx-auto" style="width: 90%; max-width: 40rem; ">
                     <div class="row">` +
                         backButton +
-                        selectPurchaseButton +
-                    `</div>
-                    <div class="row mt-3"> ` +
                         purchaseButton + `
                     </div>
                 <div>`;
