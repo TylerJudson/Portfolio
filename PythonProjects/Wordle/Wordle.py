@@ -28,15 +28,7 @@ class Wordle:
 
 		
 		# Create the title for the startScreen
-		
-		# Create the font
-		font = pygame.font.Font(self.font, 75)
-		# Set the title
-		title = font.render("WORDLE", True, WHITE)
-		# Get the rectangle of the text for centering
-		titleRect = title.get_rect(center=(self.width/2, 100))
-
-
+		title = Text((self.width / 2, 100), self.font, 75, "WORDLE", WHITE)
 		
 
 		# Create the Log in button for the startScreen
@@ -80,7 +72,7 @@ class Wordle:
 						return
 
 				# render the title
-				startScreen.display.blit(title, titleRect)
+				startScreen.display.blit(title.surface, title.rect)
 
 
 				
@@ -114,14 +106,13 @@ class Wordle:
 
 		# create the header
 		header = Surface((self.width, 35), CYBERGRAPE)
+
 		# create the button to go back to the home page that doubles as the title
 		titleButton = Button((header.width / 2 - 75, 2), Surface((150, 35), CYBERGRAPE),
 							 "WORDLE", self.font, 25, WHITE)
 
 		# Create the title for the screen
 		title = Text((self.width / 2, 125), self.font, 75, "LOG IN", WHITE)
-
-		# TODO: Make a text object
 
 		
 		while True:
@@ -149,7 +140,7 @@ class Wordle:
 				logInScreen.display.blit(header.display, (0, 0))
 
 				# render the title
-				logInScreen.display.blit(title.txt, title.rect)
+				logInScreen.display.blit(title.surface, title.rect)
 				
 				# render the screen
 				self.window.display.blit(logInScreen.display, (0, 0))

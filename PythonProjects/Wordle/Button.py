@@ -2,6 +2,8 @@ import pygame
 from pygame.locals import *
 from Surface import Surface
 		
+
+#TODO: MAke parameter be text object! 
 class Button:
 	def __init__(self, pos, surface, text, font, fontSize, color, fill=False, fillColor=(0, 0, 0), border=False, borderColor=(0, 0, 0), borderRadius=0, hoverStyle=None):
 		self.pos = pos
