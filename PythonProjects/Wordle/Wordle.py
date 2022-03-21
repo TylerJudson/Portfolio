@@ -174,3 +174,8 @@ class Wordle:
 
 	def SignUp(self):
 		print("SIGNING UP")
+
+
+
+wordle = Wordle()
+wordle.Start()
