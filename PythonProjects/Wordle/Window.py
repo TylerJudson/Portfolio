@@ -4,6 +4,7 @@ from Screen import Screen
 
 class Window(Screen):
 	def __init__(self, size, caption, backgroundColor):
+
 		Screen.__init__(self, size)
 		self.display = pygame.display.set_mode(self.size)
 		pygame.display.set_caption(caption)
