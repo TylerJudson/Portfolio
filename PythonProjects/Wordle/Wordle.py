@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+from Text import Text
 from colors import *
 from Window import Window
 from Surface import Surface
@@ -118,15 +119,7 @@ class Wordle:
 							 "WORDLE", self.font, 25, WHITE)
 
 		# Create the title for the screen
-
-		# Create the font
-		font = pygame.font.Font(self.font, 75)
-		# Set the title
-		title = font.render("LOG IN", True, WHITE)
-		# Get the rectangle of the text for centering
-		titleRect = title.get_rect(center=(self.width/2, 125))
-
-
+		title = Text((self.width / 2, 125), self.font, 75, "LOG IN", WHITE)
 
 		# TODO: Make a text object
 
@@ -156,7 +149,7 @@ class Wordle:
 				logInScreen.display.blit(header.display, (0, 0))
 
 				# render the title
-				logInScreen.display.blit(title, titleRect)
+				logInScreen.display.blit(title.txt, title.rect)
 				
 				# render the screen
 				self.window.display.blit(logInScreen.display, (0, 0))
