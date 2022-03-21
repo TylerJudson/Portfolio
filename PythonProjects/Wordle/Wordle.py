@@ -114,32 +114,21 @@ class Wordle:
 		# create the header
 		header = Surface((self.width, 35), CYBERGRAPE)
 		# create the button to go back to the home page that doubles as the title
-		titleButton = Button((header.width / 2 - 75, 0), Surface((150, 50), header.backgroundColor),
-							 "WORDLE", self.font, 25, WHITE,
-							 fill=False)
-		header.display.blit(titleButton.surface.display, titleButton.pos)
-
-		"""
-		# Create the font
-		font = pygame.font.Font(self.font, 25)
-		# Set the title
-		headerTitle = font.render("WORDLE", True, WHITE)
-		# Get the rectangle of the text for centering
-		headerTitleRect = headerTitle.get_rect(center=(header.width / 2, header.height / 2))
-		# place the title on the header
-		header.display.blit(headerTitle, headerTitleRect)
-		"""
+		titleButton = Button((header.width / 2 - 75, 2), Surface((150, 35), CYBERGRAPE),
+							 "WORDLE", self.font, 25, WHITE)
 
 		# Create the title for the screen
 
 		# Create the font
-		font = pygame.font.Font(self.font, 50)
+		font = pygame.font.Font(self.font, 75)
 		# Set the title
 		title = font.render("LOG IN", True, WHITE)
 		# Get the rectangle of the text for centering
-		titleRect = title.get_rect(center=(self.width/2, 80))
+		titleRect = title.get_rect(center=(self.width/2, 125))
 
 
+
+		# TODO: Make a text object
 
 		
 		while True:
@@ -155,10 +144,15 @@ class Wordle:
 
 				# Checks for the MOUSEDOWN event
 				if event.type == pygame.MOUSEBUTTONDOWN:
-					""""""
+					# if the mouse clicked the log in button
+					if (titleButton.mouseIsHovering(pygame.mouse.get_pos())):
+						self.Start()
+						return
 
 				
 				# render the header
+				titleButton.render()
+				header.display.blit(titleButton.surface.display, titleButton.pos)
 				logInScreen.display.blit(header.display, (0, 0))
 
 				# render the title
@@ -170,7 +164,6 @@ class Wordle:
 				# update
 				pygame.display.update()
 		
-		print("LOGGING IN")
 
 	def SignUp(self):
 		print("SIGNING UP")

@@ -3,7 +3,7 @@ from pygame.locals import *
 from Surface import Surface
 		
 class Button:
-	def __init__(self, pos, surface, text, font, fontSize, color, fill=True, fillColor=(0, 0, 0), border=False, borderColor=(0, 0, 0), borderRadius=0, hoverStyle=None):
+	def __init__(self, pos, surface, text, font, fontSize, color, fill=False, fillColor=(0, 0, 0), border=False, borderColor=(0, 0, 0), borderRadius=0, hoverStyle=None):
 		self.pos = pos
 		self.surface = surface
 		
@@ -24,11 +24,9 @@ class Button:
 		
 		self.rect = Rect(0, 0, self.surface.size[0], self.surface.size[1])
 
-	def render(self, mousePos):
+	def render(self, mousePos=(-1, -1)):
 		# clear the surface
 		self.surface.clear()
-		
-		
 		# If we want to hover and the mouse is hovering over the button
 		# Changes the style of the button
 		if (self.hoverStyle != None and self.mouseIsHovering(mousePos)):
