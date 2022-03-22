@@ -2,6 +2,7 @@ from turtle import fillcolor
 import pygame
 from pygame.locals import *
 from Text import Text
+from TextBox import TextBox
 from colors import *
 from Window import Window
 from Surface import Surface
@@ -48,14 +49,14 @@ class Wordle:
 
 		# Create the Log in button for the startScreen
 		logInButton = Button((self.width / 4 - 75 + 5, 400), Surface((0, 0), (150, 50), self.backgroundColor),
-								Text((75, 25), self.font, 25, "LOG IN", DENIM),
+								Text((75, 25), self.font, 25, "LOG IN", DENIM), fillColor=self.backgroundColor,
 								border=True, borderColor=DENIM,
-								hoverStyle=HoverStyle(Text((75, 25), self.font, 25, "LOG IN", WHITE), fillColor=DENIM, borderColor=DENIM),
+								hoverStyle=HoverStyle(Text((75, 25), self.font, 26, "LOG IN", WHITE), fillColor=DENIM, borderColor=DENIM),
 								borderRadius=5)
 
 		# Create the sign up button for the startScreen
 		signUpButton = Button((self.width * 3 / 4 - 75 - 5, 400), Surface((0, 0), (150, 50), self.backgroundColor),
-								Text((75, 25), self.font, 25, "SIGN UP", ORCHID),
+								Text((75, 25), self.font, 24, "SIGN UP", ORCHID), fillColor=self.backgroundColor,
 								border=True, borderColor=ORCHID,
 								hoverStyle=HoverStyle(Text((75, 25), self.font, 25, "SIGN UP", WHITE), fillColor=ORCHID, borderColor=ORCHID),
 								borderRadius=5)
@@ -120,7 +121,7 @@ class Wordle:
 
 		# create the button to go back to the home page that doubles as the title
 		titleButton = Button((header.width / 2 - 75, 2), Surface((0, 0), (150, 35), CYBERGRAPE),
-								Text((150 / 2, 35 / 2), self.font, 25, "WORDLE", WHITE))
+								Text((150 / 2, 35 / 2), self.font, 25, "WORDLE", WHITE), fillColor=CYBERGRAPE)
 
 
 
@@ -129,6 +130,11 @@ class Wordle:
 
 		# Create the Username label for the screen
 		usernameLbl = Text((self.width / 4, 200), self.font, 20, "USERNAME", WHITE)
+
+		# Create the username text box for the screen
+		usernameTxt = TextBox((self.width / 4 - 50, 225), Surface((0, 0), (300, 25), self.backgroundColor),
+								Text((75, 25 / 2), self.font, 25, "username", BLACK),
+								borderColor=DENIM, borderRadius=5)
 
 		# Create the Password label for the screen
 		passwordLbl = Text((self.width / 4, 300), self.font, 20, "PASSWORD", WHITE)
@@ -167,6 +173,9 @@ class Wordle:
 			# render the username label
 			logInScreen.display.blit(usernameLbl.display, usernameLbl.rect)
 
+			# render the username Text box
+			usernameTxt.render()
+			logInScreen.display.blit(usernameTxt.surface.display, usernameTxt.pos)
 
 			# render the password label
 			logInScreen.display.blit(passwordLbl.display, passwordLbl.rect)

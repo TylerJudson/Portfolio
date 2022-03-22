@@ -9,12 +9,14 @@ from Text import Text
 class Button:
 	"""Creates a button on the screen that is clickable and hoverable
 	"""
-	def __init__(self, pos: Tuple[int, int], surface: Surface, text: Text, border: bool=False, borderColor: Tuple[int, int, int]=(0, 0, 0), borderRadius: int=0, hoverStyle: HoverStyle=None):
+	def __init__(self, pos: Tuple[int, int], surface: Surface, text: Text, fill: bool=True, fillColor: Tuple[int, int, int]=(0, 0, 0), border: bool=False, borderColor: Tuple[int, int, int]=(0, 0, 0), borderRadius: int=0, hoverStyle: HoverStyle=None):
 		"""Initializes the Button
 			Args:
 				pos (Tuple[int, int]): The position of the button on the screen
 				surface (Surface): The surface of the button used to display
 				text (Text): The text of the button
+				fill (bool, optional): Whether or not to fill the button. Defaults to True
+				fillColor (Tuple[int, int, int], optional): The fill color to fill the button if the fill is True
 				border (bool, optional): Whether or not to display a border. Defaults to False.
 				borderColor (Tuple[int, int, int], optional): The border color to display if border is True. Defaults to (0, 0, 0).
 				borderRadius (int, optional): How rounded the corners of the border are. Defaults to 0.
@@ -28,6 +30,12 @@ class Button:
 		self.text = text
 		"""The text of the button"""
 		
+		self.fill = fill
+		"""Whether or not to fill the button"""
+		self.fillColor = fillColor
+		"""The color to fill the button with"""
+
+
 		self.border = border
 		"""Whether or not to display a border"""
 		self.borderColor = borderColor
@@ -69,6 +77,9 @@ class Button:
 			
 		# Else draw the button normally
 		else:
+			# fills the button
+			if (self.fill):
+				pygame.draw.rect(self.surface.display, self.fillColor, self.rect, 0, self.borderRadius)
 			# makes the border
 			if (self.border):
 				pygame.draw.rect(self.surface.display, self.borderColor, self.rect, 2, self.borderRadius)
@@ -86,7 +97,7 @@ class Button:
 			bool: Whether the mouse is over the button or not
 		"""
 
-		# If the mouse pos is inside of the 
+		# If the mouse pos is inside of the button
 		if (self.pos[0] <= mousePos[0] <= self.pos[0] + self.surface.size[0] and self.pos[1] <= mousePos[1] <= self.pos[1] + self.surface.size[1]):
 			return True
 
