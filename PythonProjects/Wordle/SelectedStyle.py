@@ -1,0 +1,5 @@
+
+
+class SelectedStyle:
+    something = "Something"
+    

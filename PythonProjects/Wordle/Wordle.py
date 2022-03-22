@@ -10,23 +10,36 @@ from HoverStyle import HoverStyle
 
 
 class Wordle:
+	"""A class to play the game Wordle
+	"""
 
 	size = (400, 550)
+	"""The size of the game window"""
 	width = size[0]
+	"""The width of the game window"""
 	height = size[1]
+	"""The height of the game window"""
 
 
 	caption = "WORDLE"
+	"""The caption for the game window"""
 	backgroundColor = (23, 23, 23)
+	"""The background color for the game window"""
 	clock = pygame.time.Clock()
+	"""The clock for the game to keep track of the time between each frame"""
 	font = "HelveticaNeueBold.ttf"
+	"""The font for the game"""
 
 	def __init__(self):
+		"""Initializes the Game
+		"""
+		# Initializes pygame and creates the window
 		pygame.init()
 		self.window = Window(self.size, self.caption, self.backgroundColor)
 
-
 	def Start(self):
+		"""Shows the start screen for the game
+		"""
 		# create the startScreen		
 		startScreen = Surface((0, 0), self.size, self.backgroundColor)
 
@@ -74,7 +87,7 @@ class Wordle:
 						return
 
 			# render the title
-			startScreen.display.blit(title.surface, title.rect)
+			startScreen.display.blit(title.display, title.rect)
 
 			# render the buttons
 
@@ -92,14 +105,14 @@ class Wordle:
 			# update
 			pygame.display.update()
 
-
-	
 	def LogIn(self):
+		""" Shows the log in screen for the game
+		"""
 		# create the log in screen
 		logInScreen = Surface((0, 0), self.size, self.backgroundColor)
-
-
 		
+
+
 		# Create the header for the screen
 
 		# create the header
@@ -109,10 +122,18 @@ class Wordle:
 		titleButton = Button((header.width / 2 - 75, 2), Surface((0, 0), (150, 35), CYBERGRAPE),
 								Text((150 / 2, 35 / 2), self.font, 25, "WORDLE", WHITE))
 
+
+
 		# Create the title for the screen
 		title = Text((self.width / 2, 125), self.font, 75, "LOG IN", WHITE)
 
-		
+		# Create the Username label for the screen
+		usernameLbl = Text((self.width / 4, 200), self.font, 20, "USERNAME", WHITE)
+
+		# Create the Password label for the screen
+		passwordLbl = Text((self.width / 4, 300), self.font, 20, "PASSWORD", WHITE)
+
+
 		while True:
 			# run at 60 fps
 			self.clock.tick(60)
@@ -141,7 +162,14 @@ class Wordle:
 			logInScreen.display.blit(header.display, header.pos)
 
 			# render the title
-			logInScreen.display.blit(title.surface, title.rect)
+			logInScreen.display.blit(title.display, title.rect)
+
+			# render the username label
+			logInScreen.display.blit(usernameLbl.display, usernameLbl.rect)
+
+
+			# render the password label
+			logInScreen.display.blit(passwordLbl.display, passwordLbl.rect)
 			
 			# render the screen
 			self.window.display.blit(logInScreen.display, logInScreen.pos)
@@ -151,6 +179,8 @@ class Wordle:
 		
 
 	def SignUp(self):
+		"""Shows the sign up screen for the game
+		"""
 		print("SIGNING UP")
 
 

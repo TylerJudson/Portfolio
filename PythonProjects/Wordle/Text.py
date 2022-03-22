@@ -21,8 +21,8 @@ class Text:
         self.font = pygame.font.Font(font, fontSize)
         """The font object used to style the text"""
 
-        self.surface = self.font.render(txt, True, color)
+        self.display = self.font.render(txt, True, color)
         """The surface that gets displayed"""
 
-        self.rect = self.surface.get_rect(center=(pos[0], pos[1]))
+        self.rect = self.display.get_rect(center=(pos[0], pos[1]))
         """The Rect used for positioning"""

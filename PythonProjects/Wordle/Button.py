@@ -64,7 +64,7 @@ class Button:
 				pygame.draw.rect(self.surface.display, self.hoverStyle.borderColor, self.rect, 2, self.borderRadius)
 
 			# render the text on the screen
-			self.surface.display.blit(self.hoverStyle.text.surface, self.hoverStyle.text.rect)
+			self.surface.display.blit(self.hoverStyle.text.display, self.hoverStyle.text.rect)
 
 			
 		# Else draw the button normally
@@ -74,7 +74,7 @@ class Button:
 				pygame.draw.rect(self.surface.display, self.borderColor, self.rect, 2, self.borderRadius)
 
 			# render the text on the screen
-			self.surface.display.blit(self.text.surface, self.text.rect)
+			self.surface.display.blit(self.text.display, self.text.rect)
 
 	def mouseIsHovering(self, mousePos: Tuple[int, int]) -> bool:
 		"""Determines whether the mouse is over the button or not
