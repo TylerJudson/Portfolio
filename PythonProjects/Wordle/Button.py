@@ -1,7 +1,7 @@
 from typing import Tuple
 import pygame
 from pygame.locals import *
-from HoverStyle import HoverStyle
+from Style import Style
 from Surface import Surface
 from Text import Text
 		
@@ -9,17 +9,12 @@ from Text import Text
 class Button:
 	"""Creates a button on the screen that is clickable and hoverable
 	"""
-	def __init__(self, pos: Tuple[int, int], surface: Surface, text: Text, fill: bool=True, fillColor: Tuple[int, int, int]=(0, 0, 0), border: bool=False, borderColor: Tuple[int, int, int]=(0, 0, 0), borderRadius: int=0, hoverStyle: HoverStyle=None):
+	def __init__(self, pos: Tuple[int, int], surface: Surface, style: Style, hoverStyle: Style=None):
 		"""Initializes the Button
 			Args:
 				pos (Tuple[int, int]): The position of the button on the screen
 				surface (Surface): The surface of the button used to display
-				text (Text): The text of the button
-				fill (bool, optional): Whether or not to fill the button. Defaults to True
-				fillColor (Tuple[int, int, int], optional): The fill color to fill the button if the fill is True
-				border (bool, optional): Whether or not to display a border. Defaults to False.
-				borderColor (Tuple[int, int, int], optional): The border color to display if border is True. Defaults to (0, 0, 0).
-				borderRadius (int, optional): How rounded the corners of the border are. Defaults to 0.
+				style (Style): The style of the button used to display
 				hoverStyle (HoverStyle, optional): The Style the button is when the mouse is hovering over it. Defaults to None.
 		"""
 		self.pos = pos
@@ -27,23 +22,8 @@ class Button:
 		self.surface = surface
 		"""The surface of the button used to display"""
 		
-		self.text = text
-		"""The text of the button"""
-		
-		self.fill = fill
-		"""Whether or not to fill the button"""
-		self.fillColor = fillColor
-		"""The color to fill the button with"""
-
-
-		self.border = border
-		"""Whether or not to display a border"""
-		self.borderColor = borderColor
-		"""The border color to display if border is True"""
-
-		self.borderRadius = borderRadius
-		"""How rounded the corners of the border are."""
-
+		self.style = style
+		"""The style of the button used to display"""
 		self.hoverStyle = hoverStyle
 		"""The Style the button is when the mouse is hovering over it"""
 		
@@ -65,27 +45,35 @@ class Button:
 
 			# fills the button
 			if (self.hoverStyle.fillColor != None):
-				pygame.draw.rect(self.surface.display, self.hoverStyle.fillColor, self.rect, 0, self.borderRadius)
+				pygame.draw.rect(self.surface.display, self.hoverStyle.fillColor, self.rect, 0, self.hoverStyle.borderRadius)
 
 			# makes the border
 			if (self.hoverStyle.borderColor != None):
-				pygame.draw.rect(self.surface.display, self.hoverStyle.borderColor, self.rect, 2, self.borderRadius)
+				pygame.draw.rect(self.surface.display, self.hoverStyle.borderColor, self.rect,
+								 self.hoverStyle.borderWidth, self.hoverStyle.borderRadius)
 
 			# render the text on the screen
-			self.surface.display.blit(self.hoverStyle.text.display, self.hoverStyle.text.rect)
+			if (self.hoverStyle.text != None):
+				self.surface.display.blit(self.hoverStyle.text.display, self.hoverStyle.text.rect)
 
 			
 		# Else draw the button normally
 		else:
 			# fills the button
-			if (self.fill):
-				pygame.draw.rect(self.surface.display, self.fillColor, self.rect, 0, self.borderRadius)
+			if (self.style.fillColor != None):
+				pygame.draw.rect(self.surface.display, self.style.fillColor,
+								 self.rect, 0, self.style.borderRadius)
+
 			# makes the border
-			if (self.border):
-				pygame.draw.rect(self.surface.display, self.borderColor, self.rect, 2, self.borderRadius)
+			if (self.style.borderColor != None):
+				pygame.draw.rect(self.surface.display, self.style.borderColor,
+								 self.rect, self.style.borderWidth, self.style.borderRadius)
 
 			# render the text on the screen
-			self.surface.display.blit(self.text.display, self.text.rect)
+			if (self.style.text != None):
+				self.surface.display.blit(self.style.text.display, self.style.text.rect)
+
+
 
 	def mouseIsHovering(self, mousePos: Tuple[int, int]) -> bool:
 		"""Determines whether the mouse is over the button or not

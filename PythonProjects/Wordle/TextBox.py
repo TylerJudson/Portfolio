@@ -1,50 +1,36 @@
 
 
+from pickle import TRUE
 from typing import Tuple
 
 import pygame
 from pygame.locals import *
-from SelectedStyle import SelectedStyle
-
+from Cursor import Cursor
+from Style import Style
 from Surface import Surface
-from Text import Text
-from colors import DENIM
+import time
 
 
 class TextBox:
     """Creates a textbox on the screen that is selectable and typeable
     """
 
-    def __init__(self, pos: Tuple[int, int], surface: Surface, text: Text, fill: bool=True, fillColor: Tuple[int, int, int]=(0, 0, 0), border: bool=True, borderColor: Tuple[int, int, int]=(0, 0, 0), borderRadius: int=0, selectedStyle: SelectedStyle=None):
+    def __init__(self, pos: Tuple[int, int], surface: Surface, style: Style, selectedStyle: Style):
         """Initializes the TextBox
 
         Args:
             pos (Tuple[int, int]): The position of the Text Box on the screen
             surface (Surface): The surface of the Text Box used to display
-            text (Text): The text of the Text Box
-            border (bool, optional): Whether or not to display a border. Defaults to True.
-            borderColor (Tuple[int, int, int], optional): The border color to display if border is True. Defaults to (0, 0, 0).
-            borderRadius (int, optional): How rounded the corners of the border are. Defaults to 0.
-            selectedStyle (SelectedStyle, optional): The Style the buton is when the Text Box is Selected. Defaults to None.
+            style (Style): The style of the text box used to display
+            selectedStyle (Style): The Style the text box is when the Text Box is Selected. Defaults to None.
         """
         self.pos = pos
         """The position of the Text Box on the screen"""
         self.surface = surface
         """The surface of the Text Box used to display"""
-        self.text = text
-        """The text of the Text Box"""
-
-        self.fill = fill
-        """Whether or not to fill the text box"""
-        self.fillColor = fillColor
-        """The color to fill the text box with"""
-
-        self.border = border
-        """Whether or not to display a border"""
-        self.borderColor = borderColor
-        """The border color to display if border is True"""
-        self.borderRadius = borderRadius
-        """How rounded the corners of the border are"""
+        
+        self.style = style
+        """The style to display"""
 
         self.selectedStyle = selectedStyle
         """The Style of the the Text Box when it is selected"""
@@ -55,6 +41,9 @@ class TextBox:
         self.isSelected = False
         """Whether the text box is selected or not"""
 
+        self.cursor = Cursor(self.style.text, self.style.text.color)
+        """The cursor that blinks"""
+        
     def render(self):
         """Renders the textBox"""
 
@@ -62,27 +51,50 @@ class TextBox:
         self.surface.clear()
 
         if (self.isSelected):
-            # makes the border:
-            if (self.border):
-                pygame.draw.rect(self.selectedStyle.surface.display, self.selectedStyle.borderColor, self.rect, 2, self.borderRadius)
+            # fills the text box:
+            if (self.selectedStyle.fillColor != None):
+                pygame.draw.rect(self.surface.display, self.selectedStyle.fillColor,
+                                 self.rect, 0, self.selectedStyle.borderRadius)
 
-            # renders the text on the screen
-            self.surface.display.blit(self.selectedStyle.text.display, self.selectedStyle.text.rect)
+            # makes the border:
+            if (self.selectedStyle.borderColor != None):
+                pygame.draw.rect(self.surface.display, self.selectedStyle.borderColor, 
+                                    self.rect, self.selectedStyle.borderWidth, self.selectedStyle.borderRadius)
+            if (self.style.text != None):
+                # renders the text on the screen
+                self.surface.display.blit(self.style.text.display, self.style.text.rect)
+
+            # render the cursor
+            self.cursor.render(self.surface.display)
         else:
+            # fills the text box:
+            if (self.style.fillColor != None):
+                pygame.draw.rect(self.surface.display, self.style.fillColor,
+                                 self.rect, 0, self.style.borderRadius)
+
             # makes the border:
-            if (self.border):
-                pygame.draw.rect(self.surface.display, self.borderColor, self.rect, 2, self.borderRadius)
+            if (self.style.borderColor != None):
+                pygame.draw.rect(self.surface.display, self.style.borderColor,
+                 self.rect, self.style.borderWidth, self.style.borderRadius)
 
-            pygame.draw.rect(self.surface.display, DENIM, self.rect, 0, self.borderRadius)
+            if (self.style.text != None):
+                # renders the text on the screen
+                self.surface.display.blit(self.style.text.display, self.style.text.rect)
 
-            # renders the text on the screen
-            self.surface.display.blit(self.text.display, self.text.rect)
+    def insert(self, char: str):
+        """Inserts a character into the text box
 
-    def insert(self, index):
-        """"""
+        Args:
+            char (str): The character to insert
+        """
+        self.style.text.text += char
+        self.cursor.move(self.style.text)
 
     def backSpace(self):
-        """"""
+        """Deletes the character the cursor is on in the text box"""
+        self.style.text.text = self.style.text.text[:-1]
+        self.cursor.move(self.style.text)
+
 
     def mouseClick(self, mousePos: Tuple[int, int]) -> bool:
         """Determines whether the mouse has clicked the button or not
