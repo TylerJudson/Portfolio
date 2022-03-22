@@ -5,11 +5,6 @@ from colors import BLACK
 
 class Text:
     """Represents a text object in pygame
-
-        Attributes:
-            font (Font): The font object used to style the text
-            surface (Surface): The surface that gets displayed
-            rect (Rect): The Rect used for positioning
     """
 
     def __init__(self, pos: Tuple[int, int], font: str, fontSize: int, txt: str, color: Tuple[int, int, int]):
