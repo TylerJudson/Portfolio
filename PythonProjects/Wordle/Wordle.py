@@ -186,7 +186,16 @@ class Wordle:
 						self.Start()
 						return
 					elif (logInButton.mouseIsHovering(mousePos)):
-						self.Start()
+						
+						error = ""
+						if usernameTxt.style.text.text == "":
+							error = "Username is a required field."
+						elif passwordTxt.style.text.text == "":
+							error = "Password is a required field."
+						
+
+
+						self.Play()
 						return
 
 					# check if the mouse hit the username text box
@@ -206,7 +215,6 @@ class Wordle:
 							passwordTxt.isSelected = True
 						# attempt to log in
 						elif(passwordTxt.isSelected):
-							passwordTxt.isSelected = False
 							self.Start()
 							return
 
@@ -300,11 +308,11 @@ class Wordle:
 
 
 		# Create the Username label for the screen
-		usernameLbl = Text((self.width / 4 + 20, 200), self.font, 25, "USERNAME", WHITE)
+		usernameLbl = Text((self.width / 4 + 20, 180), self.font, 25, "USERNAME", WHITE)
 
 		# Create the username text box for the screen
-		usernameTxt = TextBox((self.width / 4 - 30, 225), Surface((0, 0), (300, 30), self.backgroundColor),
-								Style(Text((10, 20 / 2), self.font, 15, "", WHITE),
+		usernameTxt = TextBox((self.width / 4 - 30, 200), Surface((0, 0), (300, 30), self.backgroundColor),
+								Style(Text((10, 30 / 2), self.font, 15, "", WHITE),
                     			borderColor=LIGHTGREEN, borderRadius=5),
 
                    		 		selectedStyle=Style(borderColor=LIGHTGREEN, borderWidth=4, borderRadius=5))
@@ -313,21 +321,21 @@ class Wordle:
 
 
 		# Create the Password label for the screen
-		passwordLbl = Text((self.width / 4 + 20, 300), self.font, 25, "PASSWORD", WHITE)
+		passwordLbl = Text((self.width / 4 + 20, 270), self.font, 25, "PASSWORD", WHITE)
 
 		# Create the password text box for the screen
-		passwordTxt = TextBox((self.width / 4 - 30, 325), Surface((0, 0), (300, 30), self.backgroundColor),
-                        		Style(Text((10, 20 / 2), self.font, 15, "", WHITE),
+		passwordTxt = TextBox((self.width / 4 - 30, 290), Surface((0, 0), (300, 30), self.backgroundColor),
+                        		Style(Text((10, 30 / 2), self.font, 15, "", WHITE),
                                 borderColor=LIGHTGREEN, borderRadius=5),
 
                         		selectedStyle=Style(borderColor=LIGHTGREEN, borderWidth=4, borderRadius=5))
 
 		# Create the verify Password label for the screen
-		verifyPasswordLbl = Text((self.width / 4 + 70, 400), self.font, 25, "VERIFY PASSWORD", WHITE)
+		verifyPasswordLbl = Text((self.width / 4 + 70, 360), self.font, 25, "VERIFY PASSWORD", WHITE)
 
 		# Create the verify password text box for the screen
-		verifyPasswordTxt = TextBox((self.width / 4 - 30, 425), Surface((0, 0), (300, 30), self.backgroundColor),
-                        		Style(Text((10, 20 / 2), self.font, 15, "", WHITE),
+		verifyPasswordTxt = TextBox((self.width / 4 - 30, 380), Surface((0, 0), (300, 30), self.backgroundColor),
+                        		Style(Text((10, 30 / 2), self.font, 15, "", WHITE),
                                 borderColor=LIGHTGREEN, borderRadius=5),
 
                        			selectedStyle=Style(borderColor=LIGHTGREEN, borderWidth=4, borderRadius=5))
@@ -370,6 +378,9 @@ class Wordle:
 					# check if th mouse hit the password text box
 					passwordTxt.mouseClick(mousePos)
 
+					# check if the mouse hit the verify password text box
+					verifyPasswordTxt.mouseClick(mousePos)
+
 
 				# Checks for the KEYDOWN event
 				if event.type == pygame.KEYDOWN:
@@ -378,21 +389,30 @@ class Wordle:
 						# jump to the password text box
 						if (usernameTxt.isSelected):
 							usernameTxt.isSelected = False
+							verifyPasswordTxt.isSelected = False
 							passwordTxt.isSelected = True
-						# attempt to log in
+						# jump to the verify password text box
 						elif(passwordTxt.isSelected):
 							passwordTxt.isSelected = False
+							verifyPasswordTxt.isSelected = True
+						# Sign up
+						else:
 							self.Start()
 							return
-
+							
 					# if the tab key is pressed
 					elif event.key == pygame.K_TAB:
 						# jump to the password text box
 						if (usernameTxt.isSelected):
 							usernameTxt.isSelected = False
 							passwordTxt.isSelected = True
+						elif (passwordTxt.isSelected):
+							usernameTxt.isSelected = False
+							passwordTxt.isSelected = False
+							verifyPasswordTxt.isSelected = True
 						# jump to the username text box
 						else:
+							verifyPasswordTxt.isSelected = False
 							passwordTxt.isSelected = False
 							usernameTxt.isSelected = True
 
@@ -404,6 +424,9 @@ class Wordle:
 						# if password text box is selected -> backspace
 						elif (passwordTxt.isSelected):
 							passwordTxt.backSpace()
+						# if verify password text box is selected -> backspace
+						elif (verifyPasswordTxt.isSelected):
+							verifyPasswordTxt.backSpace()
 					else:
 						# if the username text box is selevted -> insert the character
 						if (usernameTxt.isSelected):
@@ -411,6 +434,9 @@ class Wordle:
 						# if the password text box is selevted -> insert the character
 						elif (passwordTxt.isSelected):
 							passwordTxt.insert(event.unicode)
+						# if verify password text box is selected -> insert the character
+						elif (verifyPasswordTxt.isSelected):
+							verifyPasswordTxt.insert(event.unicode)
 				
 
 
@@ -460,5 +486,26 @@ class Wordle:
 
 
 
+	def Play(self):
+		"""Plays the game"""
+
+
+	def verifyLogin(self, username: str, password: str):
+		"""Verifies the login username and password
+
+		Args:
+			username (str): The username to compare the password to
+			password (str): The password for the username
+		"""
+
+		return True
+
+	def createNewUser(self, username: str, password: str):
+		"""Creates a new user with the given username and password
+
+		Args:
+			username (str): the username for the user
+			password (str): The password for the user
+		"""
 wordle = Wordle()
 wordle.Start()
