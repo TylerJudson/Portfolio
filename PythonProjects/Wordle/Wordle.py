@@ -1,8 +1,11 @@
 from graphlib import CycleError
 from textwrap import fill
+from time import sleep
 from turtle import fillcolor
+from typing import List, Tuple
 import pygame
 from pygame.locals import *
+from Alert import Alert
 from Text import Text
 from TextBox import TextBox
 from colors import *
@@ -69,6 +72,9 @@ class Wordle:
 			# run at 60 fps
 			self.clock.tick(60)
 
+			# clear the screen
+			startScreen.clear()
+
 			# get the position of the mouse for later use
 			mousePos = pygame.mouse.get_pos()
 
@@ -122,6 +128,7 @@ class Wordle:
 		# create the log in screen
 		logInScreen = Surface((0, 0), self.size, self.backgroundColor)
 		
+
 		# Create the header for the screen
 
 		# create the header
@@ -165,9 +172,18 @@ class Wordle:
 								hoverStyle=Style(Text((75, 25), self.font, 26, "LOG IN", WHITE),
                          fillColor=DENIM, borderRadius=5))
 
+
+
+		
+		# create the potential alert message for the screen
+		alert = Alert((-1, -1), Surface((0, 0), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
+
 		while True:
 			# run at 60 fps
 			self.clock.tick(60)
+
+			# clear the screen
+			logInScreen.clear()
 
 			# get the position of the mouse for later use
 			mousePos = pygame.mouse.get_pos()
@@ -181,22 +197,23 @@ class Wordle:
 
 				# Checks for the MOUSEDOWN event
 				if event.type == pygame.MOUSEBUTTONDOWN:
-					# if the mouse clicked the log in button
+					# if the mouse clicked the Title button go back to start
 					if (titleButton.mouseIsHovering(mousePos)):
 						self.Start()
 						return
+
+					# if the mouse clicked the log in button
 					elif (logInButton.mouseIsHovering(mousePos)):
 						
-						error = ""
-						if usernameTxt.style.text.text == "":
-							error = "Username is a required field."
-						elif passwordTxt.style.text.text == "":
-							error = "Password is a required field."
-						
+						verification = self.verifyLogin(usernameTxt.style.text.text, passwordTxt.style.text.text)
+						if (verification[0]):
+							self.Play()
+							return
+						# Show a message window
+						alert = verification[1]
 
-
-						self.Play()
-						return
+					elif (alert.mouseClickClose(mousePos)):
+						alert = Alert((-1, -1), Surface((0, 0), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
 
 					# check if the mouse hit the username text box
 					usernameTxt.mouseClick(mousePos)
@@ -215,8 +232,12 @@ class Wordle:
 							passwordTxt.isSelected = True
 						# attempt to log in
 						elif(passwordTxt.isSelected):
-							self.Start()
-							return
+							verification = self.verifyLogin(usernameTxt.style.text.text, passwordTxt.style.text.text)
+							if (verification[0]):
+								self.Play()
+								return
+							# Show a message window
+							alert = verification[1]
 
 					# if the tab key is pressed
 					elif event.key == pygame.K_TAB:
@@ -277,6 +298,10 @@ class Wordle:
 			# render the login button
 			logInButton.render(mousePos)
 			logInScreen.display.blit(logInButton.surface.display, logInButton.pos)
+
+			# render the alert
+			alert.render(mousePos)
+			logInScreen.display.blit(alert.surface.display, alert.pos)
 
 			# render the screen
 			self.window.display.blit(logInScreen.display, logInScreen.pos)
@@ -348,9 +373,15 @@ class Wordle:
 								hoverStyle=Style(Text((75, 25), self.font, 26, "LOG IN", WHITE),
                          		fillColor=ORCHID, borderRadius=5))
 
+	 	# create the potential alert message for the screen
+		alert = Alert((-1, -1), Surface((0, 0), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
+
 		while True:
 			# run at 60 fps
 			self.clock.tick(60)
+
+			# clear the screen
+			signUpScreen.clear()
 
 			# get the position of the mouse for later use
 			mousePos = pygame.mouse.get_pos()
@@ -369,8 +400,18 @@ class Wordle:
 						self.Start()
 						return
 					elif (logInButton.mouseIsHovering(mousePos)):
-						self.Start()
-						return
+
+						newUserSuccess = self.createNewUser(usernameTxt.style.text.text, passwordTxt.style.text.text, verifyPasswordTxt.style.text.text)
+						if (newUserSuccess[0]):
+							self.Play()
+							return
+						# Show a message window
+						alert = newUserSuccess[1]
+
+					# if the mouse clicks the close button on the alert
+					elif (alert.mouseClickClose(mousePos)):
+						alert = Alert((-1, -1), Surface((0, 0), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
+
 
 					# check if the mouse hit the username text box
 					usernameTxt.mouseClick(mousePos)
@@ -397,8 +438,12 @@ class Wordle:
 							verifyPasswordTxt.isSelected = True
 						# Sign up
 						else:
-							self.Start()
-							return
+							newUserSuccess = self.createNewUser(usernameTxt.style.text.text, passwordTxt.style.text.text, verifyPasswordTxt.style.text.text)
+							if (newUserSuccess[0]):
+								self.Play()
+								return
+							# Show a message window
+							alert = newUserSuccess[1]
 							
 					# if the tab key is pressed
 					elif event.key == pygame.K_TAB:
@@ -478,6 +523,10 @@ class Wordle:
 			logInButton.render(mousePos)
 			signUpScreen.display.blit(logInButton.surface.display, logInButton.pos)
 
+			# render the alert
+			alert.render(mousePos)
+			signUpScreen.display.blit(alert.surface.display, alert.pos)
+
 			# render the screen
 			self.window.display.blit(signUpScreen.display, signUpScreen.pos)
 
@@ -490,22 +539,68 @@ class Wordle:
 		"""Plays the game"""
 
 
-	def verifyLogin(self, username: str, password: str):
+	def verifyLogin(self, username: str, password: str) -> Tuple[bool, Alert]:
 		"""Verifies the login username and password
 
 		Args:
 			username (str): The username to compare the password to
 			password (str): The password for the username
 		"""
+		
+		error = ""
+		# If the user didn't fill in the username field
+		if username.strip() == "":
+			error = "USERNAME is a required field."
+		# If the user didn't fill in the password field
+		elif password.strip() == "":
+			error = "PASSWORD is a required field."
+		# If the login is invalid
+		elif False:
+			# Verify that the login has correct username and password
+			pass
 
-		return True
+		# Else the verification was successful
+		else:							
+			return [True, Alert((self.width / 2 - 350 / 2, 80), Surface((0, 0), (350, 100), self.backgroundColor),
+                      Text((145, 50), self.font, 18, "Success!", BLACK), "Success")]
 
-	def createNewUser(self, username: str, password: str):
+		return [False, Alert((self.width / 2 - 350 / 2, 80), Surface((0, 0), (350, 100), self.backgroundColor),
+									 Text((145, 50), self.font, 18, error, BLACK), "Warning")]
+
+	def createNewUser(self, username: str, password: str, verifyPassword: str) -> Tuple[bool, Alert]:
 		"""Creates a new user with the given username and password
 
 		Args:
 			username (str): the username for the user
 			password (str): The password for the user
+			verifyPassword (str): The password verification for the user
 		"""
+		error = ""
+		type = "Warning"
+		fontSize = 18
+		# If the user didn't fill in the username field
+		if username.strip() == "":
+			error = "USERNAME is a required field."
+		# If the user didn't fill in the password field
+		elif password.strip() == "":
+			error = "PASSWORD is a required field."
+		# If the user didn't fill in the verify password field
+		elif verifyPassword.strip() == "":
+			error = "VERIFY PASSWORD is a required field."
+			fontSize = 14
+		# Check to make sure the passwords match
+		elif password != verifyPassword:
+			error = "PASSWORDS don't match."
+		# If the login is invalid
+		elif False:
+			# Verify that the login has correct username and password
+			type = "Danger"
+
+		# After all the validation return true
+		else:
+			return [True, None]
+
+		return[False, Alert((self.width / 2 - 350 / 2, 80), Surface((0, 0), (350, 100), self.backgroundColor),
+									Text((145, 50), self.font, fontSize, error, BLACK), type)]
 wordle = Wordle()
 wordle.Start()

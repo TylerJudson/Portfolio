@@ -3,7 +3,6 @@ import pygame
 from pygame.locals import *
 from Style import Style
 from Surface import Surface
-from Text import Text
 		
 
 class Button:
@@ -27,7 +26,7 @@ class Button:
 		self.hoverStyle = hoverStyle
 		"""The Style the button is when the mouse is hovering over it"""
 		
-		self.rect = Rect(self.surface.pos[0], self.surface.pos[0], self.surface.size[0], self.surface.size[1])
+		self.rect = Rect(self.surface.pos[0], self.surface.pos[1], self.surface.size[0], self.surface.size[1])
 		"""The Rect of the button used for rendering"""
 
 	def render(self, mousePos: Tuple[int, int]=(-1, -1)):
