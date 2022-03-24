@@ -608,6 +608,32 @@ class Wordle:
 			gameScreen.display.blit(header.display, header.pos)
 
 
+
+			# Create the words in the squares
+			words = Surface((0, 100), (self.width, 500), DENIM)
+			for i in range(0, 6):
+				wordRect = words.display.get_rect()
+				y = (wordRect.height - 50) * i / 6 + 25
+				row = Surface((0, y), (words.width, 50), self.backgroundColor)
+
+
+				for j in range(0, 5):
+					rowRect = row.display.get_rect()
+					x = (rowRect.width - 50) * j / 5 + 25
+					box = Button((x, 0), Surface((0, 0), (row.height, row.height), self.backgroundColor), Style(Text(
+						(row.height / 2, row.height / 2), self.font, 25, "W", WHITE), borderColor=WHITE, borderRadius=5))
+					box.render()
+					row.display.blit(box.surface.display, box.pos)
+			
+				words.display.blit(row.display, row.pos)
+
+
+			gameScreen.display.blit(words.display, words.pos)
+
+
+
+
+
 			# render the alert
 			alert.render(mousePos)
 			gameScreen.display.blit(alert.surface.display, alert.pos)
