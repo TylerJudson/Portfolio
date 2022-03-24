@@ -19,7 +19,7 @@ class Wordle:
 	"""A class to play the game Wordle
 	"""
 
-	size = (400, 550)
+	size = (400, 600)
 	"""The size of the game window"""
 	width = size[0]
 	"""The width of the game window"""
@@ -610,25 +610,24 @@ class Wordle:
 
 
 			# Create the words in the squares
-			words = Surface((0, 100), (self.width, 500), DENIM)
+			wordBlocks = Surface((self.width / 2 - 125, 75), (250, 250), DENIM)
 			for i in range(0, 6):
-				wordRect = words.display.get_rect()
-				y = (wordRect.height - 50) * i / 6 + 25
-				row = Surface((0, y), (words.width, 50), self.backgroundColor)
+				y = wordBlocks.display.get_rect().height * i / 6
+				row = Surface((0, y), (wordBlocks.width, wordBlocks.height / 5), ORCHID)
 
 
 				for j in range(0, 5):
-					rowRect = row.display.get_rect()
-					x = (rowRect.width - 50) * j / 5 + 25
-					box = Button((x, 0), Surface((0, 0), (row.height, row.height), self.backgroundColor), Style(Text(
-						(row.height / 2, row.height / 2), self.font, 25, "W", WHITE), borderColor=WHITE, borderRadius=5))
+					x = (row.display.get_rect().width) * j / 5
+					side = row.height
+					box = Button((x, 0), Surface((0, 0), (side, side), self.backgroundColor), Style(Text(
+						(side / 2, side / 2), self.font, 25, "W", WHITE), borderColor=WHITE, borderRadius=5))
 					box.render()
 					row.display.blit(box.surface.display, box.pos)
 			
-				words.display.blit(row.display, row.pos)
+				wordBlocks.display.blit(row.display, row.pos)
 
 
-			gameScreen.display.blit(words.display, words.pos)
+			gameScreen.display.blit(wordBlocks.display, wordBlocks.pos)
 
 
 
