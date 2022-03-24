@@ -15,17 +15,14 @@ class TextBox:
     """Creates a textbox on the screen that is selectable and typeable
     """
 
-    def __init__(self, pos: Tuple[int, int], surface: Surface, style: Style, selectedStyle: Style):
+    def __init__(self, surface: Surface, style: Style, selectedStyle: Style):
         """Initializes the TextBox
 
         Args:
-            pos (Tuple[int, int]): The position of the Text Box on the screen
             surface (Surface): The surface of the Text Box used to display
             style (Style): The style of the text box used to display
             selectedStyle (Style): The Style the text box is when the Text Box is Selected. Defaults to None.
         """
-        self.pos = pos
-        """The position of the Text Box on the screen"""
         self.surface = surface
         """The surface of the Text Box used to display"""
         
@@ -35,7 +32,7 @@ class TextBox:
         self.selectedStyle = selectedStyle
         """The Style of the the Text Box when it is selected"""
 
-        self.rect = Rect(self.surface.pos[0], self.surface.pos[0], self.surface.size[0], self.surface.size[1])
+        self.rect = Rect(0, 0, self.surface.size[0], self.surface.size[1])
         """The Rect of the Text Box used for renderering"""
 
         self.isSelected = False
@@ -107,7 +104,7 @@ class TextBox:
         """
 
         # If the mouse pos is inside of the textbos
-        if (self.pos[0] <= mousePos[0] <= self.pos[0] + self.surface.size[0] and self.pos[1] <= mousePos[1] <= self.pos[1] + self.surface.size[1]):
+        if (self.surface.pos[0] <= mousePos[0] <= self.surface.pos[0] + self.surface.size[0] and self.surface.pos[1] <= mousePos[1] <= self.surface.pos[1] + self.surface.size[1]):
             self.isSelected = True
             return True
 

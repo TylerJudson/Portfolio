@@ -54,7 +54,7 @@ class Wordle:
 		title = Text((self.width / 2, 100), self.font, 75, "WORDLE", WHITE)
 
 		# Create the Log in button for the startScreen
-		logInButton = Button((self.width/ 4 - 75 + 5, 400), Surface((0, 0), (150, 50), self.backgroundColor),
+		logInButton = Button(Surface((self.width/ 4 - 75 + 5, 400), (150, 50), self.backgroundColor),
 							Style(Text((75, 25), self.font, 25, "LOG IN", DENIM),
 							fillColor=self.backgroundColor, borderColor=DENIM, borderRadius=5),
 
@@ -62,7 +62,7 @@ class Wordle:
 							fillColor=DENIM, borderColor=DENIM, borderRadius=5))
 
 		# Create the sign up button for the startScreen
-		signUpButton = Button((self.width * 3 / 4 - 75 - 5, 400), Surface((0, 0), (150, 50), self.backgroundColor),
+		signUpButton = Button(Surface((self.width * 3 / 4 - 75 - 5, 400), (150, 50), self.backgroundColor),
 								Style(Text((75, 25), self.font, 24, "SIGN UP", ORCHID),
 								fillColor=self.backgroundColor, borderColor=ORCHID, borderRadius=5),
 
@@ -111,11 +111,11 @@ class Wordle:
 
 			# render the log in button
 			logInButton.render(mousePos)
-			startScreen.display.blit(logInButton.surface.display, logInButton.pos)
+			startScreen.display.blit(logInButton.surface.display, logInButton.surface.pos)
 
 			# render the sign up button
 			signUpButton.render(mousePos)
-			startScreen.display.blit(signUpButton.surface.display, signUpButton.pos)
+			startScreen.display.blit(signUpButton.surface.display, signUpButton.surface.pos)
 
 			# render the screen
 			self.window.display.blit(startScreen.display, startScreen.pos)
@@ -136,7 +136,7 @@ class Wordle:
 		header = Surface((0, 0), (self.width, 50), CYBERGRAPE)
 
 		# create the button to go back to the home page that doubles as the title
-		titleButton = Button((header.width / 2 - 75, 2), Surface((0, 0), (150, 50), CYBERGRAPE),
+		titleButton = Button(Surface((header.width / 2 - 75, 2), (150, 50), CYBERGRAPE),
 								Style(Text((150 / 2, 50 / 2), self.font, 25, "WORDLE", WHITE),
 								fillColor=CYBERGRAPE))
 
@@ -149,7 +149,7 @@ class Wordle:
 		usernameLbl = Text((self.width / 4 + 20, 225), self.font, 30, "USERNAME", WHITE)
 
 		# Create the username text box for the screen
-		usernameTxt = TextBox((self.width / 4 - 30, 250), Surface((0, 0), (300, 35), self.backgroundColor),
+		usernameTxt = TextBox(Surface((self.width / 4 - 30, 250), (300, 35), self.backgroundColor),
 								Style(Text((10, 35 / 2), self.font, 20, "", WHITE),
                     			borderColor=TURQUOISE, borderRadius=5),
 
@@ -159,14 +159,14 @@ class Wordle:
 		passwordLbl = Text((self.width / 4 + 20, 325), self.font, 30, "PASSWORD", WHITE)
 
 		# Create the password text box for the screen
-		passwordTxt = TextBox((self.width / 4 - 30, 350), Surface((0, 0), (300, 35), self.backgroundColor),
+		passwordTxt = TextBox(Surface((self.width / 4 - 30, 350), (300, 35), self.backgroundColor),
                         		Style(Text((10, 35 / 2), self.font, 20, "", WHITE),
 								borderColor=TURQUOISE, borderRadius=5),
 
                         		selectedStyle=Style(borderColor=TURQUOISE, borderWidth=4, borderRadius=5))
 
 		# Create the login button for the screen
-		logInButton = Button((self.width / 2 + 20, 415), Surface((0, 0), (150, 50), self.backgroundColor),
+		logInButton = Button(Surface((self.width / 2 + 20, 415), (150, 50), self.backgroundColor),
                        			Style(Text((75, 25), self.font, 25, "LOG IN", DENIM),
                                 borderColor=DENIM, borderRadius=5),
 
@@ -177,7 +177,7 @@ class Wordle:
 
 		
 		# create the potential alert message for the screen
-		alert = Alert((-1, -1), Surface((0, 0), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
+		alert = Alert(Surface((-1, -1), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
 
 		while True:
 			# run at 60 fps
@@ -214,7 +214,7 @@ class Wordle:
 						alert = verification[1]
 
 					elif (alert.mouseClickClose(mousePos)):
-						alert = Alert((-1, -1), Surface((0, 0), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
+						alert = Alert(Surface((-1, -1), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
 
 					# check if the mouse hit the username text box
 					usernameTxt.mouseClick(mousePos)
@@ -276,7 +276,7 @@ class Wordle:
 
 			# render the header
 			titleButton.render()
-			header.display.blit(titleButton.surface.display, titleButton.pos)
+			header.display.blit(titleButton.surface.display, titleButton.surface.pos)
 			logInScreen.display.blit(header.display, header.pos)
 
 			# render the title
@@ -287,22 +287,22 @@ class Wordle:
 
 			# render the username Text box
 			usernameTxt.render()
-			logInScreen.display.blit(usernameTxt.surface.display, usernameTxt.pos)
+			logInScreen.display.blit(usernameTxt.surface.display, usernameTxt.surface.pos)
 
 			# render the password label
 			logInScreen.display.blit(passwordLbl.display, passwordLbl.rect)
 			
 			# render the password Text Box
 			passwordTxt.render()
-			logInScreen.display.blit(passwordTxt.surface.display, passwordTxt.pos)
+			logInScreen.display.blit(passwordTxt.surface.display, passwordTxt.surface.pos)
 
 			# render the login button
 			logInButton.render(mousePos)
-			logInScreen.display.blit(logInButton.surface.display, logInButton.pos)
+			logInScreen.display.blit(logInButton.surface.display, logInButton.surface.pos)
 
 			# render the alert
 			alert.render(mousePos)
-			logInScreen.display.blit(alert.surface.display, alert.pos)
+			logInScreen.display.blit(alert.surface.display, alert.surface.pos)
 
 			# render the screen
 			self.window.display.blit(logInScreen.display, logInScreen.pos)
@@ -322,7 +322,7 @@ class Wordle:
 		header = Surface((0, 0), (self.width, 50), CYBERGRAPE)
 
 		# create the button to go back to the home page that doubles as the title
-		titleButton = Button((header.width / 2 - 75, 2), Surface((0, 0), (150, 50), CYBERGRAPE),
+		titleButton = Button(Surface((header.width / 2 - 75, 2), (150, 50), CYBERGRAPE),
 								Style(Text((150 / 2, 50 / 2), self.font, 25, "WORDLE", WHITE),
 								fillColor=CYBERGRAPE))
 
@@ -337,7 +337,7 @@ class Wordle:
 		usernameLbl = Text((self.width / 4 + 20, 180), self.font, 25, "USERNAME", WHITE)
 
 		# Create the username text box for the screen
-		usernameTxt = TextBox((self.width / 4 - 30, 200), Surface((0, 0), (300, 30), self.backgroundColor),
+		usernameTxt = TextBox(Surface((self.width / 4 - 30, 200), (300, 30), self.backgroundColor),
 								Style(Text((10, 30 / 2), self.font, 15, "", WHITE),
                     			borderColor=LIGHTGREEN, borderRadius=5),
 
@@ -350,7 +350,7 @@ class Wordle:
 		passwordLbl = Text((self.width / 4 + 20, 270), self.font, 25, "PASSWORD", WHITE)
 
 		# Create the password text box for the screen
-		passwordTxt = TextBox((self.width / 4 - 30, 290), Surface((0, 0), (300, 30), self.backgroundColor),
+		passwordTxt = TextBox(Surface((self.width / 4 - 30, 290), (300, 30), self.backgroundColor),
                         		Style(Text((10, 30 / 2), self.font, 15, "", WHITE),
                                 borderColor=LIGHTGREEN, borderRadius=5),
 
@@ -360,14 +360,14 @@ class Wordle:
 		verifyPasswordLbl = Text((self.width / 4 + 70, 360), self.font, 25, "VERIFY PASSWORD", WHITE)
 
 		# Create the verify password text box for the screen
-		verifyPasswordTxt = TextBox((self.width / 4 - 30, 380), Surface((0, 0), (300, 30), self.backgroundColor),
+		verifyPasswordTxt = TextBox(Surface((self.width / 4 - 30, 380), (300, 30), self.backgroundColor),
                         		Style(Text((10, 30 / 2), self.font, 15, "", WHITE),
                                 borderColor=LIGHTGREEN, borderRadius=5),
 
                        			selectedStyle=Style(borderColor=LIGHTGREEN, borderWidth=4, borderRadius=5))
 
 		# Create the login button for the screen
-		logInButton = Button((self.width / 2 + 20, 440), Surface((0, 0), (150, 50), self.backgroundColor),
+		logInButton = Button(Surface((self.width / 2 + 20, 440), (150, 50), self.backgroundColor),
                        			Style(Text((75, 25), self.font, 25, "LOG IN", ORCHID),
                                 borderColor=ORCHID, borderRadius=5),
 
@@ -375,7 +375,7 @@ class Wordle:
                          		fillColor=ORCHID, borderRadius=5))
 
 	 	# create the potential alert message for the screen
-		alert = Alert((-1, -1), Surface((0, 0), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
+		alert = Alert(Surface((-1, -1), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
 
 		while True:
 			# run at 60 fps
@@ -411,7 +411,7 @@ class Wordle:
 
 					# if the mouse clicks the close button on the alert
 					elif (alert.mouseClickClose(mousePos)):
-						alert = Alert((-1, -1), Surface((0, 0), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
+						alert = Alert(Surface((-1, -1), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
 
 
 					# check if the mouse hit the username text box
@@ -493,7 +493,7 @@ class Wordle:
 
 			# render the header
 			titleButton.render()
-			header.display.blit(titleButton.surface.display, titleButton.pos)
+			header.display.blit(titleButton.surface.display, titleButton.surface.pos)
 			signUpScreen.display.blit(header.display, header.pos)
 
 			# render the title
@@ -504,36 +504,35 @@ class Wordle:
 
 			# render the username Text box
 			usernameTxt.render()
-			signUpScreen.display.blit(usernameTxt.surface.display, usernameTxt.pos)
+			signUpScreen.display.blit(usernameTxt.surface.display, usernameTxt.surface.pos)
 
 			# render the password label
 			signUpScreen.display.blit(passwordLbl.display, passwordLbl.rect)
 
 			# render the password Text Box
 			passwordTxt.render()
-			signUpScreen.display.blit(passwordTxt.surface.display, passwordTxt.pos)
+			signUpScreen.display.blit(passwordTxt.surface.display, passwordTxt.surface.pos)
 
 			# render the password label
 			signUpScreen.display.blit(verifyPasswordLbl.display, verifyPasswordLbl.rect)
 
 			# render the password Text Box
 			verifyPasswordTxt.render()
-			signUpScreen.display.blit(verifyPasswordTxt.surface.display, verifyPasswordTxt.pos)
+			signUpScreen.display.blit(verifyPasswordTxt.surface.display, verifyPasswordTxt.surface.pos)
 
 			# render the login button
 			logInButton.render(mousePos)
-			signUpScreen.display.blit(logInButton.surface.display, logInButton.pos)
+			signUpScreen.display.blit(logInButton.surface.display, logInButton.surface.pos)
 
 			# render the alert
 			alert.render(mousePos)
-			signUpScreen.display.blit(alert.surface.display, alert.pos)
+			signUpScreen.display.blit(alert.surface.display, alert.surface.pos)
 
 			# render the screen
 			self.window.display.blit(signUpScreen.display, signUpScreen.pos)
 
 			# update
 			pygame.display.update()
-
 
 	def Play(self):
 		"""Plays the game"""
@@ -546,23 +545,16 @@ class Wordle:
 		header = Surface((0, 0), (self.width, 50), CYBERGRAPE)
 
 		# create the button to go back to the home page that doubles as the title
-		titleButton = Button((header.width / 2 - 75, 2), Surface((0, 0), (150, 50), CYBERGRAPE),
+		titleButton = Button(Surface((header.width / 2 - 75, 2), (150, 50), CYBERGRAPE),
                        Style(Text((150 / 2, 50 / 2), self.font, 25, "WORDLE", WHITE),
                              fillColor=CYBERGRAPE))
 
 		# the words for the game
-		firstWord = ""
-		secondWord = ""
-		thirdWord = ""
-		fourthWord = ""
-		fifthWord = ""
-		sixthWord = ""
-
-		trialWord = ""
+		words = [[""] * 6]
 
 
 
-		alert = Alert((-1, -1), Surface((0, 0), (0, 0),
+		alert = Alert(Surface((-1, -1), (0, 0),
 		              self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
 
 		while True:
@@ -591,7 +583,7 @@ class Wordle:
 
 					# if the mouse clicked the close button on the alert
 					elif (alert.mouseClickClose(mousePos)):
-						alert = Alert((-1, -1), Surface((0, 0), (0, 0),
+						alert = Alert(Surface((-1, -1), (0, 0),
 						              self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
 
 
@@ -604,38 +596,73 @@ class Wordle:
 
 			# render the header
 			titleButton.render()
-			header.display.blit(titleButton.surface.display, titleButton.pos)
+			header.display.blit(titleButton.surface.display, titleButton.surface.pos)
 			gameScreen.display.blit(header.display, header.pos)
 
 
 
 			# Create the words in the squares
-			wordBlocks = Surface((self.width / 2 - 125, 75), (250, 250), DENIM)
-			for i in range(0, 6):
-				y = wordBlocks.display.get_rect().height * i / 6
-				row = Surface((0, y), (wordBlocks.width, wordBlocks.height / 5), ORCHID)
+			# wordBlocks = Surface((0, 75), (self.width, 400), DENIM)
+			# for i in range(0, 6):
+			# 	y = wordBlocks.display.get_rect().height * i / 6
+			# 	row = Surface((0, y), (wordBlocks.width, wordBlocks.height / 6), ORCHID)
 
 
-				for j in range(0, 5):
-					x = (row.display.get_rect().width) * j / 5
-					side = row.height
-					box = Button((x, 0), Surface((0, 0), (side, side), self.backgroundColor), Style(Text(
-						(side / 2, side / 2), self.font, 25, "W", WHITE), borderColor=WHITE, borderRadius=5))
-					box.render()
-					row.display.blit(box.surface.display, box.pos)
+			# 	for j in range(0, 5):
+			# 		x = (row.display.get_rect().width) * j / 5
+			# 		side = row.height
+			# 		box = Button((x, 0), Surface((0, 0), (side, side), self.backgroundColor), Style(Text(
+			# 			(side / 2, side / 2), self.font, 25, "W", WHITE), borderColor=WHITE, borderRadius=5))
+			# 		box.render()
+			# 		row.display.blit(box.surface.display, box.pos)
 			
-				wordBlocks.display.blit(row.display, row.pos)
+			# 	wordBlocks.display.blit(row.display, row.pos)
 
 
-			gameScreen.display.blit(wordBlocks.display, wordBlocks.pos)
+			# gameScreen.display.blit(wordBlocks.display, wordBlocks.pos)
+
+			# make the keyboard
+			keyBoardHeight = 175
+			marginx = 5
+			marginy = 7
+			keyHeight = (keyBoardHeight - marginy * 3) / 3
+			keyWidth = (self.width - marginx * 11) / 10
+
+			qRow = "QWERTYUIOP"
+			for i, letter in enumerate(qRow):
+				key = Button(Surface((i * keyWidth + (i + 1) * marginx, self.height - keyBoardHeight), (keyWidth, keyHeight), self.backgroundColor),
+							Style(Text((keyWidth / 2, keyHeight / 2), self.font, 14, letter, WHITE), borderRadius=3, fillColor=LIGHTGRAY))
+				key.render()
+				gameScreen.display.blit(key.surface.display, key.surface.pos)
 
 
+			aRow = "ASDFGHJKL"
+			for i, letter in enumerate(aRow):
+				key = Button(Surface((i * keyWidth + ((i + 1) * marginx + marginx / 2) + (keyWidth / 2), self.height - keyBoardHeight * 2 / 3), (keyWidth, keyHeight), self.backgroundColor),
+							Style(Text((keyWidth / 2, keyHeight / 2), self.font, 14, letter, WHITE), borderRadius=3, fillColor=LIGHTGRAY))
+				key.render()
+				gameScreen.display.blit(key.surface.display, key.surface.pos)
 
+			zRow = "ZXCVBNM"
+			for i, letter in enumerate(zRow):
+				key = Button(Surface((i * keyWidth + ((i + 1) * marginx + marginx * 3 / 2) + keyWidth * 3 / 2, self.height - keyBoardHeight / 3), (keyWidth, keyHeight), self.backgroundColor),
+							Style(Text((keyWidth / 2, keyHeight / 2), self.font, 14, letter, WHITE), borderRadius=3, fillColor=LIGHTGRAY))
+				key.render()
+				gameScreen.display.blit(key.surface.display, key.surface.pos)
 
+			enterButton = Button(Surface((marginx + 2, self.height - keyBoardHeight / 3), (keyWidth * 3 / 2, keyHeight), self.backgroundColor),
+                            Style(Text((keyWidth * 3 / 4, keyHeight / 2), self.font, 12, "ENTER", WHITE), borderRadius=3, fillColor=LIGHTGRAY))
+			enterButton.render()
+			gameScreen.display.blit(enterButton.surface.display, enterButton.surface.pos)
+
+			# backButton = Button(Surface((marginx, self.height - keyBoardHeight / 3), (keyWidth, keyHeight), self.backgroundColor),
+            #                 Style(Text((keyWidth / 2, keyHeight / 2), self.font, 10, letter, WHITE), borderRadius=3, fillColor=LIGHTGRAY))
+			# #backButton.render()
+			# gameScreen.display.blit(enterButton.surface.display, enterButton.surface.pos)
 
 			# render the alert
 			alert.render(mousePos)
-			gameScreen.display.blit(alert.surface.display, alert.pos)
+			gameScreen.display.blit(alert.surface.display, alert.surface.pos)
 
 			# render the screen
 			self.window.display.blit(gameScreen.display, gameScreen.pos)
@@ -667,10 +694,10 @@ class Wordle:
 
 		# Else the verification was successful
 		else:							
-			return [True, Alert((self.width / 2 - 350 / 2, 80), Surface((0, 0), (350, 100), self.backgroundColor),
+			return [True, Alert(Surface((self.width / 2 - 350 / 2, 80), (350, 100), self.backgroundColor),
                       Text((145, 50), self.font, 18, "Success!", BLACK), "Success")]
 
-		return [False, Alert((self.width / 2 - 350 / 2, 80), Surface((0, 0), (350, 100), self.backgroundColor),
+		return [False, Alert(Surface((self.width / 2 - 350 / 2, 80), (350, 100), self.backgroundColor),
 									 Text((145, 50), self.font, 18, error, BLACK), "Warning")]
 
 	def createNewUser(self, username: str, password: str, verifyPassword: str) -> Tuple[bool, Alert]:
@@ -706,9 +733,9 @@ class Wordle:
 		else:
 			return [True, None]
 
-		return[False, Alert((self.width / 2 - 350 / 2, 80), Surface((0, 0), (350, 100), self.backgroundColor),
+		return[False, Alert(Surface((self.width / 2 - 350 / 2, 80), (350, 100), self.backgroundColor),
 									Text((145, 50), self.font, fontSize, error, BLACK), type)]
 
 							
 wordle = Wordle()
-wordle.Start()
+wordle.Play()

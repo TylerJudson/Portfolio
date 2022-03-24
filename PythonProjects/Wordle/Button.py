@@ -8,25 +8,21 @@ from Surface import Surface
 class Button:
 	"""Creates a button on the screen that is clickable and hoverable
 	"""
-	def __init__(self, pos: Tuple[int, int], surface: Surface, style: Style, hoverStyle: Style=None):
+	def __init__(self, surface: Surface, style: Style, hoverStyle: Style=None):
 		"""Initializes the Button
 			Args:
-				pos (Tuple[int, int]): The position of the button on the screen
 				surface (Surface): The surface of the button used to display
 				style (Style): The style of the button used to display
 				hoverStyle (HoverStyle, optional): The Style the button is when the mouse is hovering over it. Defaults to None.
 		"""
-		self.pos = pos
-		"""The position of the button on the screen"""
 		self.surface = surface
 		"""The surface of the button used to display"""
-		
 		self.style = style
 		"""The style of the button used to display"""
 		self.hoverStyle = hoverStyle
 		"""The Style the button is when the mouse is hovering over it"""
 		
-		self.rect = Rect(self.surface.pos[0], self.surface.pos[1], self.surface.size[0], self.surface.size[1])
+		self.rect = Rect(0, 0, self.surface.size[0], self.surface.size[1])
 		"""The Rect of the button used for rendering"""
 
 	def render(self, mousePos: Tuple[int, int]=(-1, -1)):
@@ -85,7 +81,7 @@ class Button:
 		"""
 
 		# If the mouse pos is inside of the button
-		if (self.pos[0] <= mousePos[0] <= self.pos[0] + self.surface.size[0] and self.pos[1] <= mousePos[1] <= self.pos[1] + self.surface.size[1]):
+		if (self.surface.pos[0] <= mousePos[0] <= self.surface.pos[0] + self.surface.size[0] and self.surface.pos[1] <= mousePos[1] <= self.surface.pos[1] + self.surface.size[1]):
 			return True
 
 		return False

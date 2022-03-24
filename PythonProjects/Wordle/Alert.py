@@ -13,7 +13,7 @@ from colors import *
 
 class Alert:
 
-    def __init__(self, pos: Tuple[int, int], surface: Surface, text: Text, type: str="Simple"):
+    def __init__(self, surface: Surface, text: Text, type: str="Simple"):
         """Initializes Alert
 
         Args:
@@ -22,9 +22,6 @@ class Alert:
             text (Text): The text that will be displayed on the alert
             type (str, optional): The type of the alert: "Simple", "Success", "Danger", "Warning". Defaults to "Simple".
         """
-
-        self.pos = pos
-        """The position of the alert on the screen"""
 
         self.surface = surface
         """The surface of the alert on the screen"""
@@ -49,12 +46,12 @@ class Alert:
             self.color = (255, 198, 122)
             self.secondaryColor = (175, 108, 22)
 
-        self.closeButton = Button((self.surface.width * 9 / 10 - 20, self.surface.height / 2 - 20), Surface((0, 0), (40, 40), self.color),
+        self.closeButton = Button(Surface((self.surface.width * 9 / 10 - 20, self.surface.height / 2 - 20), (40, 40), self.color),
                                  Style(Text((20, 15), "HelveticaNeueBold.ttf", 40, "x", self.secondaryColor), borderColor=self.secondaryColor, borderRadius=5),
                                  
                                   hoverStyle=Style(Text((20, 14), "HelveticaNeueBold.ttf", 44, "x", self.color), fillColor=self.secondaryColor, borderColor=self.color, borderRadius=5))
 
-        self.rect = Rect(self.surface.pos[0], self.surface.pos[1], self.surface.size[0], self.surface.size[1])
+        self.rect = Rect(0, 0, self.surface.size[0], self.surface.size[1])
         """The rect of the alert used for rendering"""
 
     def render(self, mousePos: Tuple[int, int]=(-1, -1)):
@@ -70,8 +67,8 @@ class Alert:
         pygame.draw.rect(self.surface.display, self.color, self.rect, 0, 10)
         pygame.draw.rect(self.surface.display, self.secondaryColor, (0, 0, 10, self.surface.height), border_top_left_radius=10, border_bottom_left_radius=10)
 
-        self.closeButton.render((mousePos[0] - self.pos[0], mousePos[1] - self.pos[1]))
-        self.surface.display.blit(self.closeButton.surface.display, self.closeButton.pos)
+        self.closeButton.render((mousePos[0] - self.surface.pos[0], mousePos[1] - self.surface.pos[1]))
+        self.surface.display.blit(self.closeButton.surface.display, self.closeButton.surface.pos)
 
         self.surface.display.blit(self.text.display, self.text.rect)
 
@@ -82,7 +79,7 @@ class Alert:
             mousePos (Tuple[int, int]): The location of the mouse on the screen
         """
 
-        if (self.closeButton.mouseIsHovering((mousePos[0] - self.pos[0], mousePos[1] - self.pos[1]))):
+        if (self.closeButton.mouseIsHovering((mousePos[0] - self.surface.pos[0], mousePos[1] - self.surface.pos[1]))):
             return True
         return False
         
