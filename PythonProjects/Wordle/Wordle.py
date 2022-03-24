@@ -36,6 +36,7 @@ class Wordle:
 	font = "HelveticaNeueBold.ttf"
 	"""The font for the game"""
 
+
 	def __init__(self):
 		"""Initializes the Game
 		"""
@@ -534,9 +535,89 @@ class Wordle:
 			pygame.display.update()
 
 
-
 	def Play(self):
 		"""Plays the game"""
+		# create the game in screen
+		gameScreen = Surface((0, 0), self.size, self.backgroundColor)
+
+		# Create the header for the screen
+
+		# create the header
+		header = Surface((0, 0), (self.width, 50), CYBERGRAPE)
+
+		# create the button to go back to the home page that doubles as the title
+		titleButton = Button((header.width / 2 - 75, 2), Surface((0, 0), (150, 50), CYBERGRAPE),
+                       Style(Text((150 / 2, 50 / 2), self.font, 25, "WORDLE", WHITE),
+                             fillColor=CYBERGRAPE))
+
+		# the words for the game
+		firstWord = ""
+		secondWord = ""
+		thirdWord = ""
+		fourthWord = ""
+		fifthWord = ""
+		sixthWord = ""
+
+		trialWord = ""
+
+
+
+		alert = Alert((-1, -1), Surface((0, 0), (0, 0),
+		              self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
+
+		while True:
+			# run at 60 fps
+			self.clock.tick(60)
+
+			# clear the screen
+			gameScreen.clear()
+
+			# get the position of the mouse for later use
+			mousePos = pygame.mouse.get_pos()
+
+			# loop through the events
+			for event in pygame.event.get():
+
+				# Check for QUIT event
+				if event.type == pygame.QUIT:
+					return
+
+				# Checks for the MOUSEDOWN event
+				if event.type == pygame.MOUSEBUTTONDOWN:
+					# if the mouse clicked the Title button go back to start
+					if (titleButton.mouseIsHovering(mousePos)):
+						self.Start()
+						return
+
+					# if the mouse clicked the close button on the alert
+					elif (alert.mouseClickClose(mousePos)):
+						alert = Alert((-1, -1), Surface((0, 0), (0, 0),
+						              self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
+
+
+			# create the rectangles
+			pygame.draw.rect(gameScreen.display, LIGHTGREEN,
+			                 (-33, 69, 320, 700), 2, 10)
+			pygame.draw.rect(gameScreen.display, ORCHID, (130, 200, 600, 600), 2, 10)
+			pygame.draw.rect(gameScreen.display, CYBERGRAPE,
+			                 (-33, 500, 600, 300), 2, 10)
+
+			# render the header
+			titleButton.render()
+			header.display.blit(titleButton.surface.display, titleButton.pos)
+			gameScreen.display.blit(header.display, header.pos)
+
+
+			# render the alert
+			alert.render(mousePos)
+			gameScreen.display.blit(alert.surface.display, alert.pos)
+
+			# render the screen
+			self.window.display.blit(gameScreen.display, gameScreen.pos)
+
+			# update
+			pygame.display.update()
+		
 
 
 	def verifyLogin(self, username: str, password: str) -> Tuple[bool, Alert]:
@@ -602,5 +683,7 @@ class Wordle:
 
 		return[False, Alert((self.width / 2 - 350 / 2, 80), Surface((0, 0), (350, 100), self.backgroundColor),
 									Text((145, 50), self.font, fontSize, error, BLACK), type)]
+
+							
 wordle = Wordle()
 wordle.Start()
