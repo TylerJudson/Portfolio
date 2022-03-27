@@ -707,37 +707,71 @@ class Wordle:
 			margin = 8
 			boxSize = (wordsHeight - padding * 2 - margin * 4) / 5
 			for i in range(0, len(words)):
-				for j in range(0, 5):
-					# get the text from the words
-					text = words[i][j] if j < len(words[i]) else ""
+				# make sure the word has been entered
+				if (i < currentWord):
 
+					# created a copy of the words
+					text = words[i]
+					copyOfSecretWord = secretWord
+					word = {}
+					for j in range(0, 5):
+						word.update({j: text[j]})
 					
-					
-					# determine the fill color of the letter
-					fillColor = self.backgroundColor
-					# only show the color if we have entered the word
-					if (i < currentWord):
-						# if the indexes match turn the fill color to green and add the letter to green letters
-						if (secretWord[j] == text):
-							fillColor = GREEN
-							# if the text is not already in the greenletters add it
-							if (text not in greenLetters):
-								greenLetters += text
-						# if the text is in the secretword turn the fill color to yellow and add the letter to yellow letters
-						elif (text in secretWord and text != ""):
-							fillColor = YELLOW
-							# if the text is not already in the yellowletters add it
-							if (text not in yellowLetters):
-								yellowLetters += text
-						else:
-							fillColor = DARKGRAY
-							if (text not in blackLetters):
-								blackLetters += text
+					# loop through and check to see if we should turn any letters green
+					for j in word.copy():
+						# if the letters are in the correct spot
+						if word[j] == copyOfSecretWord[j]:
+							# add it to greenletters
+							if (text[j] not in greenLetters):
+								greenLetters += text[j]
 
-					box = Button(Surface((padding + j * (boxSize + margin), i * (boxSize + margin) + 75), (boxSize, boxSize), self.backgroundColor), Style(Text(
-							(boxSize / 2, boxSize / 2), self.font, 25, text, WHITE), borderColor=WHITE, borderRadius=5, fillColor=fillColor))
-					box.render()
-					gameScreen.display.blit(box.surface.display, box.surface.pos)
+							# create the box
+							box = Button(Surface((padding + j * (boxSize + margin), i * (boxSize + margin) + 75), (boxSize, boxSize), self.backgroundColor), Style(Text(
+								(boxSize / 2, boxSize / 2), self.font, 25, text[j], WHITE), borderColor=WHITE, borderRadius=5, fillColor=GREEN))
+							box.render()
+							gameScreen.display.blit(box.surface.display, box.surface.pos)
+
+							# delete the letter from the copy of the words
+							copyOfSecretWord = copyOfSecretWord[:j] + " " + copyOfSecretWord[j + 1:]
+							word.pop(j)
+					
+					# loop throuhg and check to see if we should turn any yellow
+					for j in word.copy():
+						fillcolor = DARKGRAY
+
+						# if the letters are in the word
+						if (word[j] in copyOfSecretWord):
+							# add it to yellowletters
+							if (text[j] not in yellowLetters):
+								yellowLetters += text[j]
+							
+							# change the fillcolor
+							fillcolor = YELLOW
+
+							# delete the letter from the copy of the words
+							index = copyOfSecretWord.index(word[j])
+							copyOfSecretWord = copyOfSecretWord[:index] + " " + copyOfSecretWord[index + 1:]
+							word.pop(j)
+						# else the letters are not in the word
+						elif (text[j] not in blackLetters):
+							blackLetters += text[j]
+						
+						# render the box
+						box = Button(Surface((padding + j * (boxSize + margin), i * (boxSize + margin) + 75), (boxSize, boxSize), self.backgroundColor), Style(Text(
+								(boxSize / 2, boxSize / 2), self.font, 25, text[j], WHITE), borderColor=WHITE, borderRadius=5, fillColor=fillcolor))
+						box.render()
+						gameScreen.display.blit(box.surface.display, box.surface.pos)
+
+				else:
+					for j in range(0, 5):
+						# get the text from the words
+						text = words[i][j] if j < len(words[i]) else ""
+
+						# render the box
+						box = Button(Surface((padding + j * (boxSize + margin), i * (boxSize + margin) + 75), (boxSize, boxSize), self.backgroundColor), Style(Text(
+								(boxSize / 2, boxSize / 2), self.font, 25, text, WHITE), borderColor=WHITE, borderRadius=5, fillColor=self.backgroundColor))
+						box.render()
+						gameScreen.display.blit(box.surface.display, box.surface.pos)
 
 			
 
@@ -767,6 +801,8 @@ class Wordle:
 					text = Text((endScreen.width / 2, 50), self.font, 50, "VICTORY!", LIGHTGREEN)
 				else:
 					text = Text((endScreen.width / 2, 50), self.font, 50, "DEFEAT", (255, 0, 0))
+					word = Text((endScreen.width / 2, 80), self.font, 15, f"The word was {secretWord}", GRAY)
+					endScreen.display.blit(word.display, word.rect)
 				endScreen.display.blit(text.display, text.rect)
 
 

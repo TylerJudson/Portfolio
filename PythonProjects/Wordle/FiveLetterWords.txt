@@ -215,6 +215,7 @@ aunts
 aunty
 aural
 auras
+aurei
 autos
 auxin
 avail
@@ -2179,6 +2180,7 @@ slept
 slice
 slide
 slope
+sloth
 slots
 small
 smart
@@ -2213,6 +2215,7 @@ sperm
 spice
 spicy
 spike
+spill
 spine
 spite
 split
