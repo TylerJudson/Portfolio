@@ -1,4 +1,6 @@
+import random
 from typing import Tuple
+from xml.dom.minidom import Notation
 import pygame
 from pygame.locals import *
 from Alert import Alert
@@ -31,6 +33,13 @@ class Wordle:
 	"""The clock for the game to keep track of the time between each frame"""
 	font = "HelveticaNeueBold.ttf"
 	"""The font for the game"""
+
+	acceptedWords = set(map(str.strip, open('FiveLetterWords.txt')))
+	"""The accepted words for the game in a set"""
+
+	acceptedWordsList = list(map(str.strip, open('FiveLetterWords.txt')))
+	"""THe accepted words for the game in a list"""
+
 
 
 	def __init__(self):
@@ -556,7 +565,7 @@ class Wordle:
                              fillColor=CYBERGRAPE))
 
 		# the words for the game
-		secretWord = "TTAAA"
+		secretWord = random.choice(self.acceptedWordsList).upper()
 		words = [""] * 6
 		currentWord = 0
 		greenLetters = ""
@@ -566,9 +575,12 @@ class Wordle:
 		keyboard = self.createKeyboard(175, (5, 7))
 
 
-		alert = Alert(Surface((-1, -1), (0, 0),
+		alert = Alert(Surface((-1, -1), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
+
+		notAWordAlert = Alert(Surface((-1, -1), (0, 0),
 		              self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
 
+		displayAlertTime = pygame.time.get_ticks()
 
 		endScreen = Surface((self.width / 2 - 150, self.height / 2 - 200), (300, 400), self.backgroundColor)
 		# display the play agian button
@@ -586,7 +598,6 @@ class Wordle:
 		while True:
 			# run at 60 fps
 			self.clock.tick(60)
-
 
 
 			# check for game over
@@ -634,7 +645,12 @@ class Wordle:
 								# if the key is the enter button encrement the current word
 								if (key == "ENTER"):
 									if (len(words[currentWord]) == 5):
-										currentWord += 1
+										if (words[currentWord].lower() in self.acceptedWords):
+											currentWord += 1
+										else:
+											notAWordAlert = Alert(Surface((self.width / 2 - 125, 40), (250, 75), self.backgroundColor), Text((125, 75 / 2), self.font, 25, "Not in Word List", BLACK))
+											notAWordAlert.closeButton = Button(Surface((0, 0), (0, 0), self.backgroundColor), Style())
+											displayAlertTime = pygame.time.get_ticks()
 								# if the key is the back button delete the last character of the current word
 								elif (key == "BACK"):
 									words[currentWord] = words[currentWord][:-1]
@@ -657,7 +673,12 @@ class Wordle:
 					# if the return key is pressed
 					if event.key == pygame.K_RETURN:
 						if (len(words[currentWord]) == 5):
-							currentWord += 1
+							if (words[currentWord].lower() in self.acceptedWords):
+								currentWord += 1
+							else:
+								notAWordAlert = Alert(Surface((self.width / 2 - 125, 40), (250, 75), self.backgroundColor), Text((125, 75 / 2), self.font, 25, "Not in Word List", BLACK))
+								notAWordAlert.closeButton = Button(Surface((0, 0), (0, 0), self.backgroundColor), Style())
+								displayAlertTime = pygame.time.get_ticks()
 					# if the backspace key is pressed
 					elif event.key == pygame.K_BACKSPACE:
 						words[currentWord] = words[currentWord][:-1]
@@ -768,13 +789,18 @@ class Wordle:
 			alert.render(mousePos)
 			gameScreen.display.blit(alert.surface.display, alert.surface.pos)
 
+			if (pygame.time.get_ticks() - displayAlertTime < 2000):
+				# render the not a word alert
+				notAWordAlert.render(mousePos)
+				gameScreen.display.blit(notAWordAlert.surface.display, notAWordAlert.surface.pos)
+
+
 			# render the screen
 			self.window.display.blit(gameScreen.display, gameScreen.pos)
 
 			# update
 			pygame.display.update()
 		
-
 
 	def verifyLogin(self, username: str, password: str) -> Tuple[bool, Alert]:
 		"""Verifies the login username and password
@@ -884,12 +910,13 @@ class Wordle:
 						Style(Text((keyWidth / 2, keyHeight / 2), self.font, 14, letter, WHITE), borderRadius=3, fillColor=LIGHTGRAY),
 						hoverStyle = Style(Text((keyWidth / 2, keyHeight / 2), self.font, 15, letter, WHITE), borderRadius=3, fillColor=GRAY))})
 
-		keyboard.update({"BACK": Button(Surface((keyWidth * 17 / 2 + margin[0] * 9 + 2, self.height - keyboardHeight / 3), (keyWidth * 3 / 2, keyHeight), self.backgroundColor),
+		keyboard.update({"BACK": Button(Surface((keyWidth * 17 / 2 + margin[0] * 9 + 3, self.height - keyboardHeight / 3), (keyWidth * 3 / 2, keyHeight), self.backgroundColor),
 					Style(Text((keyWidth * 3 / 4, keyHeight / 2), self.font, 12, "BACK", WHITE), borderRadius=3, fillColor=LIGHTGRAY),
 					hoverStyle = Style(Text((keyWidth * 3 / 4, keyHeight / 2), self.font, 13, "BACK", WHITE), borderRadius=3, fillColor=GRAY))})
 
 		return keyboard
 
-							
+
+		
 wordle = Wordle()
 wordle.Play()
