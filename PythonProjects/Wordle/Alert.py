@@ -72,7 +72,7 @@ class Alert:
 
         self.surface.display.blit(self.text.display, self.text.rect)
 
-    def mouseClickClose(self, mousePos: Tuple[int, int]):
+    def mouseClickClose(self, mousePos: Tuple[int, int]) -> bool:
         """Check to see if the mosue hit the close button
 
         Args:

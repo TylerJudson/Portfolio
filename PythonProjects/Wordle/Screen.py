@@ -18,3 +18,6 @@ class Screen:
 
 		self.height = size[1]
 		"""The height of the screen"""
+	def clear():
+		"""Clears the screen
+		"""

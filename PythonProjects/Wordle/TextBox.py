@@ -8,7 +8,6 @@ from pygame.locals import *
 from Cursor import Cursor
 from Style import Style
 from Surface import Surface
-import time
 
 
 class TextBox:
