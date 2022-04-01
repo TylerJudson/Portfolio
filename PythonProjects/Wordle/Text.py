@@ -32,7 +32,7 @@ class Text:
 
         self.rect = self.display.get_rect(center=(pos[0], pos[1]))
         """The Rect used for positioning"""
-
+        
         self.text = txt
 
     @property

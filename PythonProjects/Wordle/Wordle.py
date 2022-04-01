@@ -168,7 +168,7 @@ class Wordle:
                         		Style(Text((10, 35 / 2), self.font, 20, "", WHITE),
 								borderColor=TURQUOISE, borderRadius=5),
 
-                        		selectedStyle=Style(borderColor=TURQUOISE, borderWidth=4, borderRadius=5))
+                        		selectedStyle=Style(borderColor=TURQUOISE, borderWidth=4, borderRadius=5), hidden=True)
 
 		# Create the login button for the screen
 		logInButton = Button(Surface((self.width / 2 + 20, 415), (150, 50), self.backgroundColor),
@@ -222,11 +222,50 @@ class Wordle:
 					elif (alert.mouseClickClose(mousePos)):
 						alert = Alert(Surface((-1, -1), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
 
-					# check if the mouse hit the username text box
-					usernameTxt.mouseClick(mousePos)
 
-					# check if th mouse hit the password text box
-					passwordTxt.mouseClick(mousePos)
+					keyboardClicked = False
+					# check to see if the user clicked on the keyboard
+					for key in keyboard:
+						if (keyboard[key].mouseIsHovering(mousePos)):
+							keyboardClicked = True
+							# if the key is the enter button encrement the current word
+							if (key == "ENTER"):
+								# jump to the password text box
+								if (usernameTxt.isSelected):
+									usernameTxt.isSelected = False
+									passwordTxt.isSelected = True
+								# attempt to log in
+								elif(passwordTxt.isSelected):
+									verification = self.verifyLogin(
+										usernameTxt.style.text.text, passwordTxt.style.text.text)
+									if (verification[0]):
+										self.Play()
+										return
+									# Show a message window
+									alert = verification[1]
+							# if the key is the back button delete the last character of the current word
+							elif (key == "BACK"):
+								# if username text box is selected -> backspace
+								if (usernameTxt.isSelected):
+									usernameTxt.backSpace()
+								# if password text box is selected -> backspace
+								elif (passwordTxt.isSelected):
+									passwordTxt.backSpace()
+							# else just add the word if the length is less than 5
+							else:
+								# if the username text box is selected -> insert the character 
+								if (usernameTxt.isSelected):
+									usernameTxt.insert(key)
+								# if the password text box is selected -> insert the character
+								elif (passwordTxt.isSelected):
+									passwordTxt.insert(key)
+
+					if not keyboardClicked:
+						# check if the mouse hit the username text box
+						usernameTxt.mouseClick(mousePos)
+
+						# check if th mouse hit the password text box
+						passwordTxt.mouseClick(mousePos)
 
 
 				# Checks for the KEYDOWN event
@@ -367,7 +406,7 @@ class Wordle:
                         		Style(Text((10, 30 / 2), self.font, 15, "", WHITE),
                                 borderColor=LIGHTGREEN, borderRadius=5),
 
-                        		selectedStyle=Style(borderColor=LIGHTGREEN, borderWidth=4, borderRadius=5))
+                        		selectedStyle=Style(borderColor=LIGHTGREEN, borderWidth=4, borderRadius=5), hidden=True)
 
 		# Create the verify Password label for the screen
 		verifyPasswordLbl = Text((self.width / 4 + 70, 360), self.font, 25, "VERIFY PASSWORD", WHITE)
@@ -377,15 +416,19 @@ class Wordle:
                         		Style(Text((10, 30 / 2), self.font, 15, "", WHITE),
                                 borderColor=LIGHTGREEN, borderRadius=5),
 
-                       			selectedStyle=Style(borderColor=LIGHTGREEN, borderWidth=4, borderRadius=5))
+                       			selectedStyle=Style(borderColor=LIGHTGREEN, borderWidth=4, borderRadius=5), hidden=True)
 
 		# Create the login button for the screen
-		logInButton = Button(Surface((self.width / 2 + 20, 440), (150, 50), self.backgroundColor),
-                       			Style(Text((75, 25), self.font, 25, "LOG IN", ORCHID),
+		signUpButton = Button(Surface((self.width / 2 + 20, 440), (150, 50), self.backgroundColor),
+                       			Style(Text((75, 25), self.font, 25, "SIGN UP", ORCHID),
                                 borderColor=ORCHID, borderRadius=5),
 
-								hoverStyle=Style(Text((75, 25), self.font, 26, "LOG IN", WHITE),
+								hoverStyle=Style(Text((75, 25), self.font, 26, "SIGN UP", WHITE),
                          		fillColor=ORCHID, borderRadius=5))
+
+
+		# Create the keyboard
+		keyboard = self.createKeyboard(175, (5, 7))
 
 	 	# create the potential alert message for the screen
 		alert = Alert(Surface((-1, -1), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
@@ -413,7 +456,7 @@ class Wordle:
 					if (titleButton.mouseIsHovering(mousePos)):
 						self.Start()
 						return
-					elif (logInButton.mouseIsHovering(mousePos)):
+					elif (signUpButton.mouseIsHovering(mousePos)):
 
 						newUserSuccess = self.createNewUser(usernameTxt.style.text.text, passwordTxt.style.text.text, verifyPasswordTxt.style.text.text)
 						if (newUserSuccess[0]):
@@ -426,15 +469,63 @@ class Wordle:
 					elif (alert.mouseClickClose(mousePos)):
 						alert = Alert(Surface((-1, -1), (0, 0), self.backgroundColor), Text((0, 0), None, 0, "", (0, 0, 0)))
 
+					keyboardClicked = False
+					# check to see if the user clicked on the keyboard
+					for key in keyboard:
+						if (keyboard[key].mouseIsHovering(mousePos)):
+							keyboardClicked = True
+							# if the key is the enter button encrement the current word
+							if (key == "ENTER"):
+								# jump to the password text box
+								if (usernameTxt.isSelected):
+									usernameTxt.isSelected = False
+									verifyPasswordTxt.isSelected = False
+									passwordTxt.isSelected = True
+								# jump to the verify password text box
+								elif(passwordTxt.isSelected):
+									passwordTxt.isSelected = False
+									verifyPasswordTxt.isSelected = True
+								# Sign up
+								else:
+									newUserSuccess = self.createNewUser(
+										usernameTxt.style.text.text, passwordTxt.style.text.text, verifyPasswordTxt.style.text.text)
+									if (newUserSuccess[0]):
+										self.Play()
+										return
+									# Show a message window
+									alert = newUserSuccess[1]
+							# if the key is the back button delete the last character of the current word
+							elif (key == "BACK"):
+								# if username text box is selected -> backspace
+								if (usernameTxt.isSelected):
+									usernameTxt.backSpace()
+								# if password text box is selected -> backspace
+								elif (passwordTxt.isSelected):
+									passwordTxt.backSpace()
+								# if verify password text box is selected -> backspace
+								elif (verifyPasswordTxt.isSelected):
+									verifyPasswordTxt.backSpace()
+							# else just add the word if the length is less than 5
+							else:
+								# if the username text box is selevted -> insert the character
+								if (usernameTxt.isSelected):
+									usernameTxt.insert(key)
+								# if the password text box is selevted -> insert the character
+								elif (passwordTxt.isSelected):
+									passwordTxt.insert(key)
+								# if verify password text box is selected -> insert the character
+								elif (verifyPasswordTxt.isSelected):
+									verifyPasswordTxt.insert(key)
 
-					# check if the mouse hit the username text box
-					usernameTxt.mouseClick(mousePos)
+					if not keyboardClicked:
+						# check if the mouse hit the username text box
+						usernameTxt.mouseClick(mousePos)
 
-					# check if th mouse hit the password text box
-					passwordTxt.mouseClick(mousePos)
+						# check if th mouse hit the password text box
+						passwordTxt.mouseClick(mousePos)
 
-					# check if the mouse hit the verify password text box
-					verifyPasswordTxt.mouseClick(mousePos)
+						# check if the mouse hit the verify password text box
+						verifyPasswordTxt.mouseClick(mousePos)
 
 
 				# Checks for the KEYDOWN event
@@ -534,8 +625,14 @@ class Wordle:
 			signUpScreen.display.blit(verifyPasswordTxt.surface.display, verifyPasswordTxt.surface.pos)
 
 			# render the login button
-			logInButton.render(mousePos)
-			signUpScreen.display.blit(logInButton.surface.display, logInButton.surface.pos)
+			signUpButton.render(mousePos)
+			signUpScreen.display.blit(signUpButton.surface.display, signUpButton.surface.pos)
+
+			# render the keyboard
+			for key in keyboard:
+				keyboard[key].render(mousePos)
+				signUpScreen.display.blit(
+					keyboard[key].surface.display, keyboard[key].surface.pos)
 
 			# render the alert
 			alert.render(mousePos)
@@ -582,7 +679,26 @@ class Wordle:
 
 		displayAlertTime = pygame.time.get_ticks()
 
+
+		# create the endscreen
 		endScreen = Surface((self.width / 2 - 150, self.height / 2 - 200), (300, 400), self.backgroundColor)
+
+		statsTxt = Text((150, 125), self.font, 15, "STATISTICS", WHITE)
+
+		winPercent = Text((100 - 5, 175), self.font, 35, "100", WHITE)
+		winPercentTxt = Text((100 - 2, 200), self.font, 10, "WIN %", LIGHTGRAY)
+
+		played = Text((200 + 5, 175), self.font, 35, "5", WHITE)
+		playedTxt = Text((200 + 7, 200), self.font, 10, "played", LIGHTGRAY)
+
+		gamesWon = Text((100 - 5, 275), self.font, 35, "5", WHITE)
+		gamesWonTxt = Text((100 - 3, 300), self.font, 10, "games won", LIGHTGRAY)
+
+
+		gamesLost = Text((200 + 5, 275), self.font, 35, "0", WHITE)
+		gamesLostTxt = Text((200 + 7, 300), self.font, 10, "games lost", LIGHTGRAY)
+
+
 		# display the play agian button
 		playAgainBtn = Button(Surface((10, 340), (125, 50), self.backgroundColor),
 								Style(Text((125 / 2, 25), self.font, 15, "PLAY AGAIN", DENIM), borderColor=DENIM, borderRadius=5),
@@ -764,8 +880,8 @@ class Wordle:
 
 				else:
 					textColor = WHITE
-					if i == currentWord and words[i] not in self.acceptedWords:
-						textColor = WHITE
+					if i == currentWord and len(words[i]) == 5 and words[i].lower() not in self.acceptedWords:
+						textColor = LIGHTRED
 
 
 					for j in range(0, 5):
@@ -774,7 +890,7 @@ class Wordle:
 
 						# render the box
 						box = Button(Surface((padding + j * (boxSize + margin), i * (boxSize + margin) + 75), (boxSize, boxSize), self.backgroundColor), Style(Text(
-								(boxSize / 2, boxSize / 2), self.font, 25, text, WHITE), borderColor=WHITE, borderRadius=5, fillColor=self.backgroundColor))
+								(boxSize / 2, boxSize / 2), self.font, 25, text, textColor), borderColor=WHITE, borderRadius=5, fillColor=self.backgroundColor))
 						box.render()
 						gameScreen.display.blit(box.surface.display, box.surface.pos)
 
@@ -803,12 +919,28 @@ class Wordle:
 
 				# display the title
 				if (win):
-					text = Text((endScreen.width / 2, 50), self.font, 50, "VICTORY!", LIGHTGREEN)
+					text = Text((endScreen.width / 2, 75), self.font, 50, "VICTORY!", LIGHTGREEN)
 				else:
 					text = Text((endScreen.width / 2, 50), self.font, 50, "DEFEAT", (255, 0, 0))
 					word = Text((endScreen.width / 2, 80), self.font, 15, f"The word was {secretWord}", GRAY)
 					endScreen.display.blit(word.display, word.rect)
+
+				endScreen.display.blit(statsTxt.display, statsTxt.rect)
+
+				endScreen.display.blit(winPercent.display, winPercent.rect)
+				endScreen.display.blit(winPercentTxt.display, winPercentTxt.rect)
+
+				endScreen.display.blit(played.display, played.rect)
+				endScreen.display.blit(playedTxt.display, playedTxt.rect)
+
+				endScreen.display.blit(gamesWon.display, gamesWon.rect)
+				endScreen.display.blit(gamesWonTxt.display, gamesWonTxt.rect)
+
+				endScreen.display.blit(gamesLost.display, gamesLost.rect)
+				endScreen.display.blit(gamesLostTxt.display, gamesLostTxt.rect)
+
 				endScreen.display.blit(text.display, text.rect)
+
 
 
 				# render play again button
