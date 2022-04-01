@@ -763,6 +763,11 @@ class Wordle:
 						gameScreen.display.blit(box.surface.display, box.surface.pos)
 
 				else:
+					textColor = WHITE
+					if i == currentWord and words[i] not in self.acceptedWords:
+						textColor = WHITE
+
+
 					for j in range(0, 5):
 						# get the text from the words
 						text = words[i][j] if j < len(words[i]) else ""
