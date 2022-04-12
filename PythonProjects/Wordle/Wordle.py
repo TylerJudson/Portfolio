@@ -1,6 +1,5 @@
 import random
 from typing import Tuple
-from xml.dom.minidom import Notation
 import pygame
 from pygame.locals import *
 from Alert import Alert
@@ -10,7 +9,17 @@ from colors import *
 from Window import Window
 from Surface import Surface
 from Button import Button
+from tinydb import TinyDB, Query
 from Style import Style
+from User import User
+
+
+
+
+
+
+
+
 
 
 class Wordle:
@@ -39,6 +48,11 @@ class Wordle:
 
 	acceptedWordsList = list(map(str.strip, open('FiveLetterWords.txt')))
 	"""THe accepted words for the game in a list"""
+
+	db = TinyDB('db.json')
+	"""Need a Docstring"""
+	user = User("", "")
+	"""Need a Docsstring"""
 
 
 
@@ -974,7 +988,6 @@ class Wordle:
 			# update
 			pygame.display.update()
 		
-
 	def verifyLogin(self, username: str, password: str) -> Tuple[bool, Alert]:
 		"""Verifies the login username and password
 
@@ -1033,13 +1046,14 @@ class Wordle:
 		# Check to make sure the passwords match
 		elif password != verifyPassword:
 			error = "PASSWORDS don't match."
-		# If the login is invalid
-		elif False:
-			# Verify that the login has correct username and password
-			type = "Danger"
+		# If there is another user with the same username don't allow it
+		elif self.db.search(Query()['username'] == username):
+			error = "USERNAME is already taken."
 
-		# After all the validation return true
+		# After all the validation return true and add the new user
 		else:
+			self.user = User(username, password)
+			self.db.insert({'username': self.user.username, 'password': self.user.password, 'winPercent': self.user.winPercent, 'played': self.user.played, 'gamesWon': self.user.gamesWon, 'gamesLost': self.user.gamesLost})
 			return [True, None]
 
 		return[False, Alert(Surface((self.width / 2 - 350 / 2, 80), (350, 100), self.backgroundColor),
