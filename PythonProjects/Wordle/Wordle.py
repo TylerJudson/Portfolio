@@ -998,26 +998,34 @@ class Wordle:
 		Returns:
 			Tuple[bool, Alert]: [0] whether it was a success or not, [1] the alert to display on fail
 		"""
-		
+
+
+		user = self.db.search(Query()['username'] == username)[0]
+
+
 		error = ""
+		type = "Warning"
 		# If the user didn't fill in the username field
 		if username.strip() == "":
 			error = "USERNAME is a required field."
 		# If the user didn't fill in the password field
 		elif password.strip() == "":
 			error = "PASSWORD is a required field."
-		# If the login is invalid
-		elif False:
-			# Verify that the login has correct username and password
-			pass
-
+		# If the username doesn't exist in the database
+		elif not user:
+			error = "USERNAME is an invalid field."
+			type = "Danger"
+		elif user['password'] != password:
+			error = "WRONG PASSWORD.              "
+			type = "Danger"
 		# Else the verification was successful
-		else:							
+		else:
+			self.user = user
 			return [True, Alert(Surface((self.width / 2 - 350 / 2, 80), (350, 100), self.backgroundColor),
                       Text((145, 50), self.font, 18, "Success!", BLACK), "Success")]
 
 		return [False, Alert(Surface((self.width / 2 - 350 / 2, 80), (350, 100), self.backgroundColor),
-									 Text((145, 50), self.font, 18, error, BLACK), "Warning")]
+									 Text((145, 50), self.font, 18, error, BLACK), type)]
 
 	def createNewUser(self, username: str, password: str, verifyPassword: str) -> Tuple[bool, Alert]:
 		"""Creates a new user with the given username and password
@@ -1106,4 +1114,4 @@ class Wordle:
 
 		
 wordle = Wordle()
-wordle.Play()
+wordle.LogIn()
