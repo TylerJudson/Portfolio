@@ -44,5 +44,13 @@ class Text:
     def text(self, value: str):
         self._text = value
         self.display = self.font.render(self._text, True, self.color)
-        self.rect.size = self.display.get_size()
+        self.rect = self.display.get_rect(center=(self.pos[0], self.pos[1]))
 
+    def addText(self, value: str):
+        self._text += value
+        self.display = self.font.render(self._text, True, self.color)
+        self.rect.size = self.display.get_size()
+    def setText(self, value: str):
+        self._text = value
+        self.display = self.font.render(self._text, True, self.color)
+        self.rect.size = self.display.get_size()

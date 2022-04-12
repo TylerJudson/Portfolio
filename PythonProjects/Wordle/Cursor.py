@@ -33,7 +33,7 @@ class Cursor:
         Args:
             text (Text): The text to move the cursor on
         """
-        self.text = text
+        self.text.setText(text)
         self.rect.topleft = text.rect.topright
 
     def render(self, surface: pygame.Surface):

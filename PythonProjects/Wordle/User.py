@@ -20,17 +20,17 @@ class User:
         """The number of games the user has lost"""
         self.played = gamesWon + gamesLost
         """The number of games the user has played"""
-        self.winPercent = gamesWon // 1 if self.played == 0 else self.played
+        self.winPercent = 100 * gamesWon // 1 if self.played == 0 else self.played
         """The percentage of games the user has won"""
 
     def win(self):
         """Increments the number of times the player has won"""
         self.played += 1
         self.gamesWon += 1
-        self.winPercent = self.gamesWon // self.played
+        self.winPercent = 100 * self.gamesWon // self.played
 
     def lose(self):
         """Increments the number of times the player has lost"""
         self.played += 1
         self.gamesLost += 1
-        self.winPercent = self.gamesWon // self.played
+        self.winPercent = 100 * self.gamesWon // self.played

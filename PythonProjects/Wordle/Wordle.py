@@ -45,14 +45,15 @@ class Wordle:
 
 	acceptedWords = set(map(str.strip, open('FiveLetterWords.txt')))
 	"""The accepted words for the game in a set"""
+	print(acceptedWords)
 
 	acceptedWordsList = list(map(str.strip, open('FiveLetterWords.txt')))
 	"""THe accepted words for the game in a list"""
 
 	db = TinyDB('db.json')
-	"""Need a Docstring"""
+	"""The database that stores all of the information of the users on"""
 	user = User("", "")
-	"""Need a Docsstring"""
+	"""The user that is playing the game"""
 
 
 
@@ -735,9 +736,27 @@ class Wordle:
 				pygame.time.delay(2000)
 				gameover = True
 				win = True
+
+				# update the statistics
+				self.user.win()
+				self.db.update({'winPercent': self.user.winPercent, 'played': self.user.played,
+				               'gamesWon': self.user.gamesWon, 'gamesLost': self.user.gamesLost}, Query()['username'] == self.user.username)
+				winPercent.text = str(self.user.winPercent)
+				played.text = str(self.user.played)
+				gamesWon.text = str(self.user.gamesWon)
+				gamesLost.text = str(self.user.gamesLost)
 			elif (not gameover and currentWord == 6):
 				pygame.time.delay(2000)
 				gameover = True
+
+				# update the statistics
+				self.user.lose()
+				self.db.update({'winPercent': self.user.winPercent, 'played': self.user.played,
+				               'gamesWon': self.user.gamesWon, 'gamesLost': self.user.gamesLost}, Query()['username'] == self.user.username)
+				winPercent.text = str(self.user.winPercent)
+				played.text = str(self.user.played)
+				gamesWon.text = str(self.user.gamesWon)
+				gamesLost.text = str(self.user.gamesLost)
 
 
 			
@@ -1000,7 +1019,7 @@ class Wordle:
 		"""
 
 
-		user = self.db.search(Query()['username'] == username)[0]
+		user = self.db.search(Query()['username'] == username)
 
 
 		error = ""
@@ -1015,12 +1034,12 @@ class Wordle:
 		elif not user:
 			error = "USERNAME is an invalid field."
 			type = "Danger"
-		elif user['password'] != password:
+		elif user[0]['password'] != password:
 			error = "WRONG PASSWORD.              "
 			type = "Danger"
 		# Else the verification was successful
 		else:
-			self.user = user
+			self.user = User(user[0]['username'], user[0]['password'], user[0]['gamesWon'], user[0]['gamesLost'])
 			return [True, Alert(Surface((self.width / 2 - 350 / 2, 80), (350, 100), self.backgroundColor),
                       Text((145, 50), self.font, 18, "Success!", BLACK), "Success")]
 
@@ -1112,6 +1131,6 @@ class Wordle:
 		return keyboard
 
 
-		
+
 wordle = Wordle()
-wordle.LogIn()
+wordle.Start()
