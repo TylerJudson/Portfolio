@@ -1136,4 +1136,4 @@ class Wordle:
 
 
 wordle = Wordle()
-wordle.Play()
+wordle.Start()
