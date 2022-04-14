@@ -50,7 +50,7 @@ class Text:
         self._text += value
         self.display = self.font.render(self._text, True, self.color)
         self.rect.size = self.display.get_size()
-    def setText(self, value: str):
+    def changeText(self, value: str):
         self._text = value
         self.display = self.font.render(self._text, True, self.color)
         self.rect.size = self.display.get_size()

@@ -64,10 +64,10 @@ class TextBox:
             if (self.style.text != None):
                 text = self.style.text.text
                 if (self.hidden):
-                    self.style.text.text = "•" * len(text)
+                    self.style.text.changeText("•" * len(text))
                 # renders the text on the screen
                 self.surface.display.blit(self.style.text.display, self.style.text.rect)
-                self.style.text.text = text
+                self.style.text.changeText(text)
 
             # render the cursor
             self.cursor.render(self.surface.display)
@@ -85,10 +85,10 @@ class TextBox:
             if (self.style.text != None):
                 text = self.style.text.text
                 if (self.hidden):
-                    self.style.text.text = "•" * len(text)
+                    self.style.text.changeText("•" * len(text))
                 # renders the text on the screen
                 self.surface.display.blit(self.style.text.display, self.style.text.rect)
-                self.style.text.text = text
+                self.style.text.changeText(text)
 
     def insert(self, char: str):
         """Inserts a character into the text box
@@ -96,26 +96,26 @@ class TextBox:
         Args:
             char (str): The character to insert
         """
-        self.style.text.text += char
+        self.style.text.addText(char)
 
         text = self.style.text.text
         if (self.hidden):
-            self.style.text.text = "•" * len(text)
+            self.style.text.changeText("•" * len(text))
         # renders the text on the screen
         self.cursor.move(self.style.text)
-        self.style.text.text = text
+        self.style.text.changeText(text)
             
 
     def backSpace(self):
         """Deletes the character the cursor is on in the text box"""
-        self.style.text.text = self.style.text.text[:-1]
+        self.style.text.changeText(self.style.text.text[:-1])
         
         text = self.style.text.text
         if (self.hidden):
-            self.style.text.text = "•" * len(text)
+            self.style.text.changeText("•" * len(text))
         # renders the text on the screen
         self.cursor.move(self.style.text)
-        self.style.text.text = text
+        self.style.text.changeText(text)
 
 
     def mouseClick(self, mousePos: Tuple[int, int]) -> bool:

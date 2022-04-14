@@ -45,7 +45,6 @@ class Wordle:
 
 	acceptedWords = set(map(str.strip, open('FiveLetterWords.txt')))
 	"""The accepted words for the game in a set"""
-	print(acceptedWords)
 
 	acceptedWordsList = list(map(str.strip, open('FiveLetterWords.txt')))
 	"""THe accepted words for the game in a list"""
@@ -952,12 +951,16 @@ class Wordle:
 
 				# display the title
 				if (win):
-					text = Text((endScreen.width / 2, 75), self.font, 50, "VICTORY!", LIGHTGREEN)
+					text = Text((endScreen.width / 2, 60), self.font, 50, "VICTORY!", LIGHTGREEN)
 				else:
 					text = Text((endScreen.width / 2, 50), self.font, 50, "DEFEAT", (255, 0, 0))
 					word = Text((endScreen.width / 2, 80), self.font, 15, f"The word was {secretWord}", GRAY)
 					endScreen.display.blit(word.display, word.rect)
 
+
+				pygame.draw.line(endScreen.display, LIGHTGRAY, (30, 105), (endScreen.width - 30, 105))
+
+				# display the statistics
 				endScreen.display.blit(statsTxt.display, statsTxt.rect)
 
 				endScreen.display.blit(winPercent.display, winPercent.rect)
@@ -1133,4 +1136,4 @@ class Wordle:
 
 
 wordle = Wordle()
-wordle.Start()
+wordle.Play()
