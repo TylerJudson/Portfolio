@@ -836,11 +836,13 @@ class Wordle:
 
 			# create the aesthetic lines
 			pygame.draw.rect(gameScreen.display, LIGHTGREEN,
-			                 (-33, 69, 320, 700), 2, 10)
+			                 (250, 400, 280, 700), 2, 10)
 			pygame.draw.rect(gameScreen.display, ORCHID, 
-							 (130, 200, 600, 600), 2, 10)
+							 (-100, 150, 275, 600), 2, 10)
 			pygame.draw.rect(gameScreen.display, CYBERGRAPE,
 			                 (-33, 500, 600, 300), 2, 10)
+			pygame.draw.rect(gameScreen.display, DENIM,
+                     (100, -30, 600, 280), 2, 10)
 							 
 
 			# render the header
