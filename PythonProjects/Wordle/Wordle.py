@@ -119,7 +119,7 @@ class Wordle:
 
 			# render the background rectangles
 			pygame.draw.rect(startScreen.display, TURQUOISE, (-20, -20, 300, 400), 2, 10)
-			pygame.draw.rect(startScreen.display, CYBERGRAPE, (205, 200, 500, 500), 2, 10)
+			pygame.draw.rect(startScreen.display, CYBERGRAPE, (205, 200, 500, 520), 2, 10)
 			pygame.draw.rect(startScreen.display, LIGHTGREEN, (-20, -20, 112, 600), 2, 10)
 
 
