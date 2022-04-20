@@ -126,6 +126,10 @@ class Wordle:
 			# render the title
 			startScreen.display.blit(title.display, title.rect)
 
+
+
+
+
 			# render the buttons
 
 			# render the log in button
