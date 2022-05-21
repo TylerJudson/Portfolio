@@ -1,0 +1,159 @@
+﻿@model SecretHitler.Models.IPotentialGame
+@{
+    ViewData["Title"] = "Waiting Room";
+}
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+
+    // Pull once to start
+    setTimeout(pull, 1000);
+    
+    // Pull for new waiting room information
+    function pull() {
+        $.ajax({
+            url: "/WaitingRoom/State/@ViewData["GameId"]/@ViewData["PlayerId"]",
+            type: "GET",
+            success: function (response) {
+                // If there is the property players and the waiting room game state
+                if (response.hasOwnProperty("players")) {   
+                    handleGameState(response);
+                // else the player has been removed from the game or the game has started
+                } else {
+                    // If the player has been removed from the game
+                    if (response == "removed from game") {
+                        // Tell the player they have been removed from the game
+                        alert("You have been removed from the game.");
+
+                        // Rederict the player to the listgames view
+                        location.href = "/WaitingRoom/ListGames";
+                        return;
+                    }
+                    // Rederect the player to the game board
+                    location.href = '/Game/Index?gameId=@ViewData["GameId"]&playerId=@ViewData["PlayerId"]';
+                }
+            },
+            error: function () {
+                alert("ERROR - please try again.");
+            }
+        });
+        // Pull every 5 seconds
+        setTimeout(pull, 5000);
+        return false;
+    }
+
+    // Handle the response from the game state
+    function handleGameState(response) {
+            // Get the current players
+            let currentPlayers = response.players;
+
+            // create a new list of the current players
+            let newList = "";   
+            
+            // Whether or not the player is the creator
+            let IsCreator = @ViewData["IsCreator"];
+
+            // For each key in the current players
+            for (const key in currentPlayers) {
+                // If they are the player add a remove button by their name
+                if (IsCreator) {
+                   // Don't create a remove button by the creator's name
+                    if (key == 0) {
+                        newList += `<tr>
+                                        <td class="me-5"></td>
+                                        <td><p class="m-0">- ` + currentPlayers[key] + `</p> </td>
+                                    </tr>`;
+
+                    // Add a remove button by the player's name
+                    } else {
+                        newList += `<tr>
+                                        <td><a onclick="remove(`+ key + `);" class="me-5 btn-outline-darkPurple btn">Remove</a></td>
+                                        <td><p class="m-0">- ` + currentPlayers[key] + `</p> </td>
+                                    </tr>`;
+                    }
+                // List the player's name
+                } else {
+                    newList += `<tr>
+                                    <td><p class="m-0">- ` + currentPlayers[key] + `</p> </td>
+                                </tr>`;
+                }
+            }
+            // add the list to the table
+            document.getElementById("currentPlayers").innerHTML = "<table>" + newList + "</table>";
+
+            // Check to make sure we have enough, but not too many players
+
+            // If the number of players is greater than 2 but less than 4 undisable the button
+            if (2 <= Object.keys(currentPlayers).length && Object.keys(currentPlayers).length <= 4 && IsCreator) {
+                document.getElementById("startGameButton").disabled = false;
+            } else if (IsCreator) {
+                document.getElementById("startGameButton").disabled = true;
+            }
+    }
+
+
+
+
+    // Remove a player from the game
+    function remove(id) {
+        $.ajax({
+            url: "/WaitingRoom/RemovePlayer/@ViewData["GameId"]/" + id,
+            type: "GET",
+            success: function (response) {
+                // Handle the response
+                handleGameState(response);
+            },
+            error: function () {
+                alert("ERROR - please try again.");
+            }
+        });
+    }
+</script>
+
+
+
+
+<div class="mt-5">
+    <h1 class="welcomeHeading text-center display-1" style="font-weight: 500;">Welcome @Model.Players[(int) ViewData["PlayerId"]]</h1>
+    <h1 class="mt-5 text-center display-4">Waiting For Players...</h1>
+    <h4 class="text-center text-purple fw-light">Game Id: @Model.Id</h4>
+
+    <h3 class="mt-5 mx-auto" style="width: 80%">Current Players:</h3>
+    <div id="currentPlayers" class="mt-2 mx-auto" style="width: 80%">
+        <table>
+        @foreach (int key in Model.Players.Keys)
+        {
+            <tr>
+                @if ( ViewData["IsCreator"] == "true")
+                {
+                    @if (key == 0) 
+                    {
+                         <td class="me-5"></td>
+                    }
+                    else 
+                    {
+                         <td><a onclick="remove(@key)" class="me-5 btn-outline-darkPurple btn">Remove</a></td>
+                    }
+                }
+                <td><p class="m-0">- @Model.Players[key] </p> </td>
+            </tr>
+        }
+        </table>
+    </div>
+
+    @if( ViewData["IsCreator"] == "true" )
+    {
+        <form action="/Game/Start" class="mx-auto mt-5" style="width: 80%">
+            <input type="hidden" id="gameId" name="gameId" value='@ViewData["GameId"]'/>
+            @if (@Model.Players.Count >= 2)
+            {
+                <input id="startGameButton" class="btn btn-outline-purple" type="submit" value="Start Game">
+            }
+            else 
+            {
+                <input id="startGameButton" disabled class="btn btn-outline-purple" type="submit" value="Start Game">
+            }
+            
+        </form>
+    }
+</div>
