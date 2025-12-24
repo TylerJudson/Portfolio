@@ -1,3 +1,0 @@
-C:\Users\Tyler\Tyler Judson\Source\Repos\Portfolio\JavascriptGames\Test\Test\obj\Debug\Test.njsproj.AssemblyReference.cache
-C:\Users\Tyler\Tyler Judson\Source\Repos\Portfolio\JavascriptGames\Test\Test\obj\Debug\Test.njsproj.CoreCompileInputs.cache
-C:\Users\Tyler\Tyler Judson\Source\Repos\Portfolio\JavascriptGames\Test\Test\bin\Microsoft.NodejsTools.WebRole.dll
