@@ -37,7 +37,7 @@ public class ContinueActionTests
 
         // Assert
         continueAction.ActionCode.Should().Be(actionCode);
-        continueAction.Nobles.Should().BeNull();
+        continueAction.Nobles.Should().BeEmpty();
     }
 
     [Fact]
@@ -58,8 +58,8 @@ public class ContinueActionTests
         // Assert
         continueAction.Message.Should().Be(message);
         continueAction.ActionCode.Should().Be(actionCode);
-        continueAction.Nobles.Should().BeSameAs(nobles);
         continueAction.Nobles.Should().HaveCount(2);
+        continueAction.Nobles.Should().BeEquivalentTo(nobles);
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class ContinueActionTests
         var continueAction = new ContinueAction(message, actionCode, nobles);
 
         // Assert
-        continueAction.Nobles.Should().BeSameAs(nobles);
         continueAction.Nobles.Should().BeEmpty();
+        continueAction.Nobles.Should().HaveCount(0);
     }
 }

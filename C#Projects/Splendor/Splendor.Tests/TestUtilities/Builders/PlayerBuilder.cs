@@ -116,39 +116,67 @@ public class PlayerBuilder
 
     /// <summary>
     /// Builds the player and applies the configured state.
-    /// Note: Since Player has private setters, we need to use ExecuteTurn to set state.
-    /// For testing purposes, we'll use reflection or create players via valid turns.
+    /// Note: Since Player has private setters, we use reflection to set the private backing fields.
     /// </summary>
     public Player Build()
     {
         var player = new Player(_name, _id);
 
+        // Use reflection to access private backing fields
+        var playerType = typeof(Player);
+
         // Apply tokens if specified
         if (_tokens != null)
         {
-            foreach (var kvp in _tokens)
+            var tokensField = playerType.GetField("_tokens", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var tokensDict = tokensField?.GetValue(player) as Dictionary<Token, int>;
+            if (tokensDict != null)
             {
-                player.Tokens[kvp.Key] = kvp.Value;
+                foreach (var kvp in _tokens)
+                {
+                    tokensDict[kvp.Key] = kvp.Value;
+                }
             }
         }
 
         // Apply cards
-        foreach (var card in _cards)
+        if (_cards.Count > 0)
         {
-            player.Cards.Add(card);
-            player.CardTokens[card.Type] += 1;
+            var cardsField = playerType.GetField("_cards", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var cardsList = cardsField?.GetValue(player) as List<ICard>;
+            var cardTokensField = playerType.GetField("_cardTokens", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var cardTokensDict = cardTokensField?.GetValue(player) as Dictionary<Token, int>;
+
+            foreach (var card in _cards)
+            {
+                cardsList?.Add(card);
+                if (cardTokensDict != null)
+                {
+                    cardTokensDict[card.Type] += 1;
+                }
+            }
         }
 
         // Apply reserved cards
-        foreach (var card in _reservedCards)
+        if (_reservedCards.Count > 0)
         {
-            player.ReservedCards.Add(card);
+            var reservedCardsField = playerType.GetField("_reservedCards", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var reservedCardsList = reservedCardsField?.GetValue(player) as List<ICard>;
+            foreach (var card in _reservedCards)
+            {
+                reservedCardsList?.Add(card);
+            }
         }
 
         // Apply nobles
-        foreach (var noble in _nobles)
+        if (_nobles.Count > 0)
         {
-            player.Nobles.Add(noble);
+            var noblesField = playerType.GetField("_nobles", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            var noblesList = noblesField?.GetValue(player) as List<INoble>;
+            foreach (var noble in _nobles)
+            {
+                noblesList?.Add(noble);
+            }
         }
 
         return player;

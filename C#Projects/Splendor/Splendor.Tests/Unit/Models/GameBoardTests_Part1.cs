@@ -26,7 +26,7 @@ public class GameBoardTests_Part1
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         AssertionHelpers.AssertTokenStacks(board,
@@ -49,7 +49,7 @@ public class GameBoardTests_Part1
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         board.TokenStacks[Token.Gold].Should().Be(5, "gold tokens should always be 5 regardless of player count");
@@ -67,7 +67,7 @@ public class GameBoardTests_Part1
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         AssertionHelpers.AssertTokenStacks(board,
@@ -92,7 +92,7 @@ public class GameBoardTests_Part1
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         AssertionHelpers.AssertTokenStacks(board,
@@ -107,18 +107,17 @@ public class GameBoardTests_Part1
     [Fact]
     public void Constructor_FivePlayers_InitializesTokenStacksWith7GemsEach()
     {
-        // Arrange - Testing 4+ players should use same token counts
+        // Arrange - Testing 4 players (maximum) uses 7 tokens each
         var players = new List<IPlayer>
         {
             new Player("Player1", 0),
             new Player("Player2", 1),
             new Player("Player3", 2),
-            new Player("Player4", 3),
-            new Player("Player5", 4)
+            new Player("Player4", 3)
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         AssertionHelpers.AssertTokenStacks(board,
@@ -141,7 +140,7 @@ public class GameBoardTests_Part1
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         board.Nobles.Should().HaveCount(3, "2 players should have 3 nobles (player count + 1)");
@@ -159,7 +158,7 @@ public class GameBoardTests_Part1
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         board.Nobles.Should().HaveCount(4, "3 players should have 4 nobles (player count + 1)");
@@ -178,7 +177,7 @@ public class GameBoardTests_Part1
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         board.Nobles.Should().HaveCount(5, "4 players should have 5 nobles (player count + 1)");
@@ -195,7 +194,7 @@ public class GameBoardTests_Part1
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         board.CardStackLevel1.Cards.Count.Should().Be(36, "40 level 1 cards - 4 displayed = 36 remaining");
@@ -212,7 +211,7 @@ public class GameBoardTests_Part1
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         board.CardStackLevel2.Cards.Count.Should().Be(26, "30 level 2 cards - 4 displayed = 26 remaining");
@@ -229,7 +228,7 @@ public class GameBoardTests_Part1
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         board.CardStackLevel3.Cards.Count.Should().Be(16, "20 level 3 cards - 4 displayed = 16 remaining");
@@ -246,7 +245,7 @@ public class GameBoardTests_Part1
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         board.Level1Cards.Should().HaveCount(4, "level 1 should have 4 visible cards");
@@ -270,7 +269,7 @@ public class GameBoardTests_Part1
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         board.Version.Should().Be(0, "game should start at version 0");
@@ -287,7 +286,7 @@ public class GameBoardTests_Part1
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         board.CurrentPlayer.Should().Be(0, "first player (index 0) should start");
@@ -304,7 +303,7 @@ public class GameBoardTests_Part1
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         board.GameOver.Should().BeFalse("game should not be over at start");
@@ -321,7 +320,7 @@ public class GameBoardTests_Part1
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         board.LastRound.Should().BeFalse("last round should not be triggered at start");
@@ -340,7 +339,7 @@ public class GameBoardTests_Part1
             new Player("Player1", 0),
             new Player("Player2", 1)
         };
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
         var turn = TurnBuilder.TakeThreeDifferentTokens(Token.Diamond, Token.Sapphire, Token.Emerald);
 
         // Act
@@ -366,7 +365,7 @@ public class GameBoardTests_Part1
             new Player("Player1", 0),
             new Player("Player2", 1)
         };
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
         var turn = TurnBuilder.TakeThreeDifferentTokens(Token.Ruby, Token.Onyx, Token.Emerald);
 
         // Act
@@ -392,7 +391,7 @@ public class GameBoardTests_Part1
             new Player("Player1", 0),
             new Player("Player2", 1)
         };
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
         var turn = TurnBuilder.TakeTwoSameTokens(Token.Diamond);
 
         // Act
@@ -419,7 +418,7 @@ public class GameBoardTests_Part1
             new Player("Player1", 0),
             new Player("Player2", 1)
         };
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
         var turn = TurnBuilder.TakeOneToken(Token.Sapphire);
 
         // Act
@@ -440,7 +439,7 @@ public class GameBoardTests_Part1
             new Player("Player1", 0),
             new Player("Player2", 1)
         };
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
         // Use a dictionary with only the tokens we want to take (excluding gold)
         var turn = new Turn(new Dictionary<Token, int>
         {
@@ -473,7 +472,7 @@ public class GameBoardTests_Part1
             new Player("Player1", 0),
             new Player("Player2", 1)
         };
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
         var initialVersion = board.Version;
         var turn = TurnBuilder.TakeThreeDifferentTokens(Token.Diamond, Token.Sapphire, Token.Emerald);
 
@@ -494,7 +493,7 @@ public class GameBoardTests_Part1
             new Player("Player2", 1),
             new Player("Player3", 2)
         };
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
         var turn = TurnBuilder.TakeOneToken(Token.Diamond);
 
         // Act
@@ -513,7 +512,7 @@ public class GameBoardTests_Part1
             new Player("Player1", 0),
             new Player("Player2", 1)
         };
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Execute turn for player 0 to advance to player 1
         board.ExecuteTurn(TurnBuilder.TakeOneToken(Token.Diamond));
@@ -542,7 +541,7 @@ public class GameBoardTests_Part1
             new Player("Player1", 0),
             new Player("Player2", 1)
         };
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
         var turn = TurnBuilder.TakeFourDifferentTokens();
 
         // Act
@@ -561,7 +560,7 @@ public class GameBoardTests_Part1
             new Player("Player1", 0),
             new Player("Player2", 1)
         };
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
         var turn = TurnBuilder.TakeGold();
 
         // Act
@@ -582,7 +581,7 @@ public class GameBoardTests_Part1
             new Player("Player3", 2),
             new Player("Player4", 3)
         };
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
         var turn = TurnBuilder.TakeThreeSameTokens(Token.Diamond);
 
         // Act
@@ -602,7 +601,7 @@ public class GameBoardTests_Part1
             new Player("Player1", 0),
             new Player("Player2", 1)
         };
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // First player takes 1 diamond, leaving 3 in the stack
         board.ExecuteTurn(TurnBuilder.TakeOneToken(Token.Diamond));
@@ -628,7 +627,7 @@ public class GameBoardTests_Part1
             new Player("Player1", 0),
             new Player("Player2", 1)
         };
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // With 2 players, we start with 4 of each gem
         // Take tokens to deplete the diamond stack
@@ -667,7 +666,7 @@ public class GameBoardTests_Part1
             player1,
             new Player("Player2", 1)
         };
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Player with 10 tokens tries to take more
         var turn = TurnBuilder.TakeOneToken(Token.Diamond);

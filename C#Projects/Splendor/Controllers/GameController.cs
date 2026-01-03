@@ -1,15 +1,48 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Splendor.Models;
 using Splendor.Models.Implementation;
+using Splendor.Repositories;
+using Splendor.Services.Data;
+using Splendor.Services.Lookup;
+using Splendor.Services.Game;
+using Splendor.Utilities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Splendor.Controllers
 {
+    // TODO: Add [Authorize] attribute when authentication is implemented
+    // This controller handles game state and player actions
+    // Authentication will be required to ensure players can only act on their own behalf
     public class GameController : Controller
     {
-        /// <summary>
-        /// The active games currently being played
-        /// </summary>
-        public static Dictionary<int, IGameBoard> ActiveGames { get; set; } = new Dictionary<int, IGameBoard>();
+        private readonly IGameRepository _gameRepository;
+        private readonly IGameDataService _gameDataService;
+        private readonly ICardLookupService _cardLookup;
+        private readonly INobleLookupService _nobleLookup;
+        private readonly IPlayerLookupService _playerLookup;
+        private readonly IGameActivationService _gameActivation;
+        private readonly IGameCleanupService _gameCleanup;
+        private readonly ILogger<GameController> _logger;
+
+        public GameController(
+            IGameRepository gameRepository,
+            IGameDataService gameDataService,
+            ICardLookupService cardLookup,
+            INobleLookupService nobleLookup,
+            IPlayerLookupService playerLookup,
+            IGameActivationService gameActivation,
+            IGameCleanupService gameCleanup,
+            ILogger<GameController> logger)
+        {
+            _gameRepository = gameRepository;
+            _gameDataService = gameDataService;
+            _cardLookup = cardLookup;
+            _nobleLookup = nobleLookup;
+            _playerLookup = playerLookup;
+            _gameActivation = gameActivation;
+            _gameCleanup = gameCleanup;
+            _logger = logger;
+        }
 
         /// <summary>
         /// Renders the Game
@@ -17,17 +50,31 @@ namespace Splendor.Controllers
         /// <param name="gameId">The id of the game</param>
         /// <param name="playerId">The id of the player</param>
         /// <returns>The view of the gameboard</returns>
-        public IActionResult Index(int gameId, int playerId)
+        public async Task<IActionResult> Index(
+            [Range(1, int.MaxValue)] int gameId,
+            [Range(0, int.MaxValue)] int playerId)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = string.Join(", ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                _logger.LogWarning("Validation failed in Index: {Errors}", errors);
+                return View("Error");
+            }
+
+            _logger.LogDebug("Index called for game {GameId}, player {PlayerId}", gameId, playerId);
+
             ViewData["GameId"] = gameId;
             ViewData["PlayerId"] = playerId;
 
-            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+            IGameBoard? gameBoard = await _gameRepository.GetGameAsync(gameId);
+            if (gameBoard != null)
             {
                 return View(gameBoard);
             }
 
-
+            _logger.LogWarning("Game {GameId} not found for player {PlayerId}", gameId, playerId);
             return Redirect("~/ ");
         }
 
@@ -41,20 +88,35 @@ namespace Splendor.Controllers
         /// <returns>Json object of how to update the game</returns>
         [HttpGet]
         [Route("Game/State/{gameId:int}/{playerId:int}")]
-        public JsonResult State(int gameId, int playerId)
+        public async Task<JsonResult> State(
+            [Range(1, int.MaxValue)] int gameId,
+            [Range(0, int.MaxValue)] int playerId)
         {
-            // Check to make sure the game is active
-            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+            if (!ModelState.IsValid)
+            {
+                var errors = string.Join(", ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                _logger.LogWarning("Validation failed in State: {Errors}", errors);
+                return Json(ApiResponse<string>.Fail($"Validation failed: {errors}", 400));
+            }
+
+            _logger.LogDebug("State called for game {GameId}, player {PlayerId}", gameId, playerId);
+
+            IGameBoard? gameBoard = await _gameRepository.GetGameAsync(gameId);
+            if (gameBoard != null)
             {
                 if (gameBoard.IsPaused)
                 {
-                    return Json("IsPaused");
+                    _logger.LogDebug("Game {GameId} is paused", gameId);
+                    return Json(ApiResponse<string>.Ok("IsPaused"));
                 }
-                return Json(gameBoard.Version);
+                return Json(ApiResponse<int>.Ok(gameBoard.Version));
             }
 
             // The game has ended if the game isn't active
-            return Json("The game has ended.");
+            _logger.LogDebug("Game {GameId} not found (game has ended)", gameId);
+            return Json(ApiResponse<string>.Ok("The game has ended."));
         }
 
 
@@ -67,34 +129,48 @@ namespace Splendor.Controllers
         /// <returns>The game</returns>
         [HttpPost]
         [Route("Game/EndTurn/{gameId:int}/{playerId:int}")]
-        public JsonResult EndTurn([FromBody] Dictionary<Token, int> TakenTokens, int gameId, int playerId)
+        [RequestSizeLimit(10240)] // 10KB max request size
+        public async Task<JsonResult> EndTurn(
+            [FromBody] Dictionary<Token, int> TakenTokens,
+            [Range(1, int.MaxValue)] int gameId,
+            [Range(0, int.MaxValue)] int playerId)
         {
-            // Check to make sure the game is active
-            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+            if (!ModelState.IsValid)
             {
-                // Make sure taken tokens isn't null
-                if (TakenTokens != null)
-                {
-                    // execute the turn
-                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn( new Turn(TakenTokens));
-
-                    // return the error or continue action
-                    if (completedTurn.Error != null)
-                    {
-                        return Json(completedTurn.Error);
-                    }
-                    else if (completedTurn.ContinueAction != null)
-                    {
-                        return Json(completedTurn.ContinueAction);
-                    }
-                }
-
-
-                return Json(gameBoard);
+                var errors = string.Join(", ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                _logger.LogWarning("Validation failed in EndTurn: {Errors}", errors);
+                return Json(ApiResponse<string>.Fail($"Validation failed: {errors}", 400));
             }
 
+            _logger.LogDebug("EndTurn called for game {GameId}, player {PlayerId}", gameId, playerId);
 
-            return Json("");
+            IGameBoard? gameBoard = await _gameRepository.GetGameAsync(gameId);
+            if (gameBoard == null)
+            {
+                _logger.LogWarning("Game {GameId} not found in EndTurn", gameId);
+                return Json(ApiResponse<string>.Fail("Game not found", 404));
+            }
+
+            if (TakenTokens != null)
+            {
+                ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(TakenTokens));
+
+                if (completedTurn.Error != null)
+                {
+                    _logger.LogWarning("Turn error in game {GameId}: {Error}", gameId, completedTurn.Error.Message);
+                    return Json(ApiResponse<IError>.Ok(completedTurn.Error));
+                }
+                else if (completedTurn.ContinueAction != null)
+                {
+                    _logger.LogDebug("Turn in game {GameId} requires continue action", gameId);
+                    return Json(ApiResponse<IContinueAction>.Ok(completedTurn.ContinueAction));
+                }
+            }
+
+            _logger.LogDebug("Turn completed successfully for game {GameId}, player {PlayerId}", gameId, playerId);
+            return Json(ApiResponse<IGameBoard>.Ok(gameBoard));
         }
 
 
@@ -108,114 +184,64 @@ namespace Splendor.Controllers
         /// <returns>The game</returns>
         [HttpPost]
         [Route("Game/Purchase/{gameId:int}/{playerId:int}")]
-        public JsonResult Purchase([FromBody] string ImageName, int gameId, int playerId)
+        [RequestSizeLimit(10240)] // 10KB max request size
+        public async Task<JsonResult> Purchase(
+            [FromBody, Required, MinLength(1)] string ImageName,
+            [Range(1, int.MaxValue)] int gameId,
+            [Range(0, int.MaxValue)] int playerId)
         {
-            // Check to make sure the game is active
-            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+            if (!ModelState.IsValid)
             {
-                // Check for nullality
-                if (ImageName != null)
-                {
-                    ICard Card = null;
-
-                    // If the card is in the level 1 cards
-                    if (ImageName[5] == '1')
-                    {
-                        // loop through the cards and find the card
-                        foreach(ICard? card in gameBoard.Level1Cards)
-                        {
-                            if (card == null)
-                            {
-                                continue;
-                            }
-                            if (card.ImageName == ImageName)
-                            {
-                                Card = card;
-                                break;
-                            }
-                        }
-                    }
-                    // If the card is in the level 2 cards
-                    else if (ImageName[5] == '2')
-                    {
-                        // loop through the cards and find the card
-                        foreach (ICard? card in gameBoard.Level2Cards)
-                        {
-                            if (card == null)
-                            {
-                                continue;
-                            }
-                            if (card.ImageName == ImageName)
-                            {
-                                Card = card;
-                                break;
-                            }
-                        }
-                    }
-                    // if the card is in the level 3 cards
-                    else if (ImageName[5] == '3')
-                    {
-                        // loop through the cards and find the card
-                        foreach (ICard? card in gameBoard.Level3Cards)
-                        {
-                            if (card == null)
-                            {
-                                continue;
-                            }
-                            if (card.ImageName == ImageName)
-                            {
-                                Card = card;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    // if the card is still null check the player's reserved cards
-                    if (Card == null)
-                    {
-                        // find the index of the player by matching the ids
-                        int playerIndex = 0;
-                        for (int i = 0; i < gameBoard.Players.Count; i++)
-                        {
-                            if (gameBoard.Players[i].Id == playerId)
-                            {
-                                playerIndex = i;
-                            }
-                        }
-
-                        // loop through the cards and find the card
-                        foreach (ICard card in gameBoard.Players[playerIndex].ReservedCards)
-                        {
-                            if (card == null)
-                            {
-                                continue;
-                            }
-                            if (card.ImageName == ImageName)
-                            {
-                                Card = card;
-                                break;
-                            }
-                        }
-                    }
-                    
-                    // execute the turn
-                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(Card));
-
-                    // return the appropriate erros and continue actions
-                    if (completedTurn.Error != null)
-                    {
-                        return Json(completedTurn.Error);
-                    }
-                    else if (completedTurn.ContinueAction != null)
-                    {
-                        return Json(completedTurn.ContinueAction);
-                    }
-                }
-                return Json(gameBoard);
+                var errors = string.Join(", ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                _logger.LogWarning("Validation failed in Purchase: {Errors}", errors);
+                return Json(ApiResponse<string>.Fail($"Validation failed: {errors}", 400));
             }
 
+            // Sanitize the image name to prevent path traversal
+            string? sanitizedImageName = StringSanitizer.SanitizeImageName(ImageName);
+            if (sanitizedImageName == null)
+            {
+                _logger.LogWarning("Invalid ImageName in Purchase call: {ImageName}", ImageName);
+                return Json(ApiResponse<string>.Fail("Invalid image name format", 400));
+            }
 
-            return Json("");
+            _logger.LogDebug("Purchase called for game {GameId}, player {PlayerId}, card {ImageName}", gameId, playerId, sanitizedImageName);
+
+            IGameBoard? gameBoard = await _gameRepository.GetGameAsync(gameId);
+            if (gameBoard == null)
+            {
+                _logger.LogWarning("Game {GameId} not found in Purchase", gameId);
+                return Json(ApiResponse<string>.Fail("Game not found", 404));
+            }
+
+            ICard? card = _cardLookup.FindCardByImageName(gameBoard, sanitizedImageName);
+
+            if (card == null)
+            {
+                IPlayer? player = _playerLookup.FindPlayerById(gameBoard, playerId);
+                if (player != null)
+                {
+                    card = _cardLookup.FindReservedCardByImageName(player, sanitizedImageName);
+                }
+            }
+
+            ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(card));
+
+            if (completedTurn.Error != null)
+            {
+                _logger.LogWarning("Purchase error in game {GameId}: {Error}", gameId, completedTurn.Error.Message);
+                return Json(ApiResponse<IError>.Ok(completedTurn.Error));
+            }
+            else if (completedTurn.ContinueAction != null)
+            {
+                _logger.LogDebug("Purchase in game {GameId} requires continue action", gameId);
+                return Json(ApiResponse<IContinueAction>.Ok(completedTurn.ContinueAction));
+            }
+
+            _logger.LogDebug("Purchase completed successfully for game {GameId}, player {PlayerId}", gameId, playerId);
+            return Json(ApiResponse<IGameBoard>.Ok(gameBoard));
         }
 
 
@@ -228,213 +254,225 @@ namespace Splendor.Controllers
         /// <returns>the game</returns>
         [HttpPost]
         [Route("Game/Reserve/{gameId:int}/{playerId:int}")]
-        public JsonResult Reserve([FromBody] string ImageName, int gameId, int playerId)
+        [RequestSizeLimit(10240)] // 10KB max request size
+        public async Task<JsonResult> Reserve(
+            [FromBody, Required, MinLength(1)] string ImageName,
+            [Range(1, int.MaxValue)] int gameId,
+            [Range(0, int.MaxValue)] int playerId)
         {
-            // Check to make sure the game is active
-            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+            if (!ModelState.IsValid)
             {
-                if (ImageName != null)
-                {
-                    ICard Card = null;
-                    if (ImageName[5] == '1')
-                    {
-                        foreach (ICard? card in gameBoard.Level1Cards)
-                        {
-                            if (card == null)
-                            {
-                                continue;
-                            }
-                            if (card.ImageName == ImageName)
-                            {
-                                Card = card;
-                                break;
-                            }
-                        }
-                    }
-                    else if (ImageName[5] == '2')
-                    {
-                        foreach (ICard? card in gameBoard.Level2Cards)
-                        {
-                            if (card == null)
-                            {
-                                continue;
-                            }
-                            if (card.ImageName == ImageName)
-                            {
-                                Card = card;
-                                break;
-                            }
-                        }
-                    }
-                    else if (ImageName[5] == '3')
-                    {
-                        foreach (ICard? card in gameBoard.Level3Cards)
-                        {
-                            if (card == null)
-                            {
-                                continue;
-                            }
-                            if (card.ImageName == ImageName)
-                            {
-                                Card = card;
-                                break;
-                            }
-                        }
-                    }
-
-                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(Card, true));
-
-                    if (completedTurn.Error != null)
-                    {
-                        return Json(completedTurn.Error);
-                    }
-                    else if (completedTurn.ContinueAction != null)
-                    {
-                        return Json(completedTurn.ContinueAction);
-                    }
-                }
-                return Json(gameBoard);
+                var errors = string.Join(", ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                _logger.LogWarning("Validation failed in Reserve: {Errors}", errors);
+                return Json(ApiResponse<string>.Fail($"Validation failed: {errors}", 400));
             }
 
+            // Sanitize the image name to prevent path traversal
+            string? sanitizedImageName = StringSanitizer.SanitizeImageName(ImageName);
+            if (sanitizedImageName == null)
+            {
+                _logger.LogWarning("Invalid ImageName in Reserve call: {ImageName}", ImageName);
+                return Json(ApiResponse<string>.Fail("Invalid image name format", 400));
+            }
 
-            return Json("");
+            _logger.LogDebug("Reserve called for game {GameId}, player {PlayerId}, card {ImageName}", gameId, playerId, sanitizedImageName);
+
+            IGameBoard? gameBoard = await _gameRepository.GetGameAsync(gameId);
+            if (gameBoard == null)
+            {
+                _logger.LogWarning("Game {GameId} not found in Reserve", gameId);
+                return Json(ApiResponse<string>.Fail("Game not found", 404));
+            }
+
+            ICard? card = _cardLookup.FindCardByImageName(gameBoard, sanitizedImageName);
+
+            ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(card, true));
+
+            if (completedTurn.Error != null)
+            {
+                _logger.LogWarning("Reserve error in game {GameId}: {Error}", gameId, completedTurn.Error.Message);
+                return Json(ApiResponse<IError>.Ok(completedTurn.Error));
+            }
+            else if (completedTurn.ContinueAction != null)
+            {
+                _logger.LogDebug("Reserve in game {GameId} requires continue action", gameId);
+                return Json(ApiResponse<IContinueAction>.Ok(completedTurn.ContinueAction));
+            }
+
+            _logger.LogDebug("Reserve completed successfully for game {GameId}, player {PlayerId}", gameId, playerId);
+            return Json(ApiResponse<IGameBoard>.Ok(gameBoard));
         }
 
 
 
         [HttpPost]
         [Route("Game/Noble/{gameId:int}/{playerId:int}")]
-        public JsonResult Noble([FromBody] string ImageName, int gameId, int playerId)
-        {   
-            // Check to make sure the game is active
-            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+        [RequestSizeLimit(10240)] // 10KB max request size
+        public async Task<JsonResult> Noble(
+            [FromBody, Required, MinLength(1)] string ImageName,
+            [Range(1, int.MaxValue)] int gameId,
+            [Range(0, int.MaxValue)] int playerId)
+        {
+            if (!ModelState.IsValid)
             {
-                // Check to make sure the image isn't null
-                if (ImageName != null)
-                {
-                    INoble? Noble = null;
-
-                    // Find the noble on the gameboard
-                    foreach(INoble noble in gameBoard.Nobles)
-                    {
-                        if (noble.ImageName == ImageName)
-                        {
-                            Noble = noble;
-                            break;
-                        }
-                    }
-
-                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(Noble));
-
-                    if (completedTurn.Error != null)
-                    {
-                        return Json(completedTurn.Error);
-                    }
-                    else if (completedTurn.ContinueAction != null)
-                    {
-                        return Json(completedTurn.ContinueAction);
-                    }
-                }
-                return Json(gameBoard);
+                var errors = string.Join(", ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                _logger.LogWarning("Validation failed in Noble: {Errors}", errors);
+                return Json(ApiResponse<string>.Fail($"Validation failed: {errors}", 400));
             }
 
+            // Sanitize the image name to prevent path traversal
+            string? sanitizedImageName = StringSanitizer.SanitizeImageName(ImageName);
+            if (sanitizedImageName == null)
+            {
+                _logger.LogWarning("Invalid ImageName in Noble call: {ImageName}", ImageName);
+                return Json(ApiResponse<string>.Fail("Invalid image name format", 400));
+            }
 
-            return Json("");
+            _logger.LogDebug("Noble called for game {GameId}, player {PlayerId}, noble {ImageName}", gameId, playerId, sanitizedImageName);
+
+            IGameBoard? gameBoard = await _gameRepository.GetGameAsync(gameId);
+            if (gameBoard == null)
+            {
+                _logger.LogWarning("Game {GameId} not found in Noble", gameId);
+                return Json(ApiResponse<string>.Fail("Game not found", 404));
+            }
+
+            INoble? noble = _nobleLookup.FindNobleByImageName(gameBoard, sanitizedImageName);
+
+            ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(noble));
+
+            if (completedTurn.Error != null)
+            {
+                _logger.LogWarning("Noble error in game {GameId}: {Error}", gameId, completedTurn.Error.Message);
+                return Json(ApiResponse<IError>.Ok(completedTurn.Error));
+            }
+            else if (completedTurn.ContinueAction != null)
+            {
+                _logger.LogDebug("Noble in game {GameId} requires continue action", gameId);
+                return Json(ApiResponse<IContinueAction>.Ok(completedTurn.ContinueAction));
+            }
+
+            _logger.LogDebug("Noble completed successfully for game {GameId}, player {PlayerId}", gameId, playerId);
+            return Json(ApiResponse<IGameBoard>.Ok(gameBoard));
         }
 
 
         [HttpPost]
         [Route("Game/Return/{gameId:int}/{playerId:int}")]
-        public JsonResult Return([FromBody] ReturnRequest returnRequest, int gameId, int playerId)
+        [RequestSizeLimit(10240)] // 10KB max request size
+        public async Task<JsonResult> Return(
+            [FromBody, Required] ReturnRequest returnRequest,
+            [Range(1, int.MaxValue)] int gameId,
+            [Range(0, int.MaxValue)] int playerId)
         {
-            // Check to make sure the game is active
-            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+            if (!ModelState.IsValid)
             {
-                if (returnRequest != null)
-                {
-                    ICard? Card = null;
-                    if (returnRequest.ReservingCardImageName != null)
-                    {
-                        if (returnRequest.ReservingCardImageName[5] == '1')
-                        {
-                            foreach (ICard card in gameBoard.Level1Cards)
-                            {
-                                if (card.ImageName == returnRequest.ReservingCardImageName)
-                                {
-                                    Card = card;
-                                    break;
-                                }
-                            }
-                        }
-                        else if (returnRequest.ReservingCardImageName[5] == '2')
-                        {
-                            foreach (ICard card in gameBoard.Level2Cards)
-                            {
-                                if (card.ImageName == returnRequest.ReservingCardImageName)
-                                {
-                                    Card = card;
-                                    break;
-                                }
-                            }
-                        }
-                        else if (returnRequest.ReservingCardImageName[5] == '3')
-                        {
-                            foreach (ICard card in gameBoard.Level3Cards)
-                            {
-                                if (card.ImageName == returnRequest.ReservingCardImageName)
-                                {
-                                    Card = card;
-                                    break;
-                                }
-                            }
-                        }
-
-                    }
-
-                    ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(returnRequest.Tokens, Card));
-
-                    if (completedTurn.Error != null)
-                    {
-                        return Json(completedTurn.Error);
-                    }
-                    else if (completedTurn.ContinueAction != null)
-                    {
-                        return Json(completedTurn.ContinueAction);
-                    }
-                }
-
-
-                return Json(gameBoard);
+                var errors = string.Join(", ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                _logger.LogWarning("Validation failed in Return: {Errors}", errors);
+                return Json(ApiResponse<string>.Fail($"Validation failed: {errors}", 400));
             }
 
+            _logger.LogDebug("Return called for game {GameId}, player {PlayerId}", gameId, playerId);
 
-            return Json("");
+            IGameBoard? gameBoard = await _gameRepository.GetGameAsync(gameId);
+            if (gameBoard == null)
+            {
+                _logger.LogWarning("Game {GameId} not found in Return", gameId);
+                return Json(ApiResponse<string>.Fail("Game not found", 404));
+            }
+
+            ICard? card = null;
+            if (returnRequest.ReservingCardImageName != null)
+            {
+                // Sanitize the image name to prevent path traversal
+                string? sanitizedImageName = StringSanitizer.SanitizeImageName(returnRequest.ReservingCardImageName);
+                if (sanitizedImageName == null)
+                {
+                    _logger.LogWarning("Invalid ReservingCardImageName in Return call: {ImageName}", returnRequest.ReservingCardImageName);
+                    return Json(ApiResponse<string>.Fail("Invalid image name format", 400));
+                }
+                card = _cardLookup.FindCardByImageName(gameBoard, sanitizedImageName);
+            }
+
+            ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(returnRequest.Tokens, card));
+
+            if (completedTurn.Error != null)
+            {
+                _logger.LogWarning("Return error in game {GameId}: {Error}", gameId, completedTurn.Error.Message);
+                return Json(ApiResponse<IError>.Ok(completedTurn.Error));
+            }
+            else if (completedTurn.ContinueAction != null)
+            {
+                _logger.LogDebug("Return in game {GameId} requires continue action", gameId);
+                return Json(ApiResponse<IContinueAction>.Ok(completedTurn.ContinueAction));
+            }
+
+            _logger.LogDebug("Return completed successfully for game {GameId}, player {PlayerId}", gameId, playerId);
+            return Json(ApiResponse<IGameBoard>.Ok(gameBoard));
         }
 
         [HttpPost]
         [Route("Game/Pause/{gameId:int}/{playerId:int}")]
-        public JsonResult Pause(int gameId, int playerId)
+        public async Task<JsonResult> Pause(
+            [Range(1, int.MaxValue)] int gameId,
+            [Range(0, int.MaxValue)] int playerId)
         {
-            // Check to make sure the game is active
-            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+            if (!ModelState.IsValid)
             {
-                gameBoard.IsPaused = true;
+                var errors = string.Join(", ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                _logger.LogWarning("Validation failed in Pause: {Errors}", errors);
+                return Json(ApiResponse<string>.Fail($"Validation failed: {errors}", 400));
             }
 
-            return Json("");
+            _logger.LogDebug("Pause called for game {GameId}, player {PlayerId}", gameId, playerId);
+
+            IGameBoard? gameBoard = await _gameRepository.GetGameAsync(gameId);
+            if (gameBoard == null)
+            {
+                _logger.LogWarning("Game {GameId} not found in Pause", gameId);
+                return Json(ApiResponse<string>.Fail("Game not found", 404));
+            }
+
+            gameBoard.IsPaused = true;
+            _logger.LogInformation("Game {GameId} paused by player {PlayerId}", gameId, playerId);
+            return Json(ApiResponse<string>.Ok("Game paused"));
         }
 
         [HttpPost]
         [Route("Game/Resume/{gameId:int}/{playerId:int}")]
-        public JsonResult Resume(int gameId, int playerId)
+        public async Task<JsonResult> Resume(
+            [Range(1, int.MaxValue)] int gameId,
+            [Range(0, int.MaxValue)] int playerId)
         {
-            // Check to make sure the game is active
-            if (ActiveGames.TryGetValue(gameId, out IGameBoard? gameBoard))
+            if (!ModelState.IsValid)
             {
-                gameBoard.IsPaused = false;
+                var errors = string.Join(", ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                _logger.LogWarning("Validation failed in Resume: {Errors}", errors);
+                return Json(ApiResponse<string>.Fail($"Validation failed: {errors}", 400));
             }
 
-            return Json("");
+            _logger.LogDebug("Resume called for game {GameId}, player {PlayerId}", gameId, playerId);
+
+            IGameBoard? gameBoard = await _gameRepository.GetGameAsync(gameId);
+            if (gameBoard == null)
+            {
+                _logger.LogWarning("Game {GameId} not found in Resume", gameId);
+                return Json(ApiResponse<string>.Fail("Game not found", 404));
+            }
+
+            gameBoard.IsPaused = false;
+            _logger.LogInformation("Game {GameId} resumed by player {PlayerId}", gameId, playerId);
+            return Json(ApiResponse<string>.Ok("Game resumed"));
         }
 
         /// <summary>
@@ -444,75 +482,28 @@ namespace Splendor.Controllers
         /// <returns>Redericts to the index view</returns>
         [HttpGet]
         [Route("Game/Start")]
-        public IActionResult Start([FromQuery]int gameId)
+        public async Task<IActionResult> Start([FromQuery, Range(1, int.MaxValue)] int gameId)
         {
-            // Get the Game out of pending games
-            if (WaitingRoomController.PendingGames.TryGetValue(gameId, out IPotentialGame? gameInfo))
+            if (!ModelState.IsValid)
             {
-                // Create a list of the players
-                List<IPlayer> players = new List<IPlayer>();
-
-                // Populate the list with the player names
-                foreach (KeyValuePair<int, string> kvp in gameInfo.Players)
-                {
-                    players.Add(new Player(kvp.Value, kvp.Key));
-                }
-
-                // Shuffle the players
-                Random random = Random.Shared;
-                players = players.OrderBy(p => random.Next()).ToList();
-
-                // Create a new game
-                IGameBoard newGame = new GameBoard(players);
-
-                // Add the new game to active games
-                ActiveGames.Add(gameId, newGame);
-
-                // Remove the game from pending games
-                WaitingRoomController.PendingGames.Remove(gameId);
-
-                // Navigate to the game
-                ViewData["GameId"] = gameId;
-                ViewData["PlayerId"] = 0;
-
-
-
-
-
-
-                List<int> gamesToRemove = new List<int>();
-                foreach (KeyValuePair<int, IGameBoard> kvp in ActiveGames)
-                {
-                    if (kvp.Value != null && kvp.Value.LastTurn != null)
-                    {
-                        if (kvp.Value.LastTurn.TimeStamp < DateTime.UtcNow.Subtract(new TimeSpan(0, 30, 0)) && !kvp.Value.IsPaused)
-                        {
-                            gamesToRemove.Add(kvp.Key);
-                        }
-                    } 
-                    else if (kvp.Value != null)
-                    {
-                        if (kvp.Value.GameStartTimeStamp < DateTime.UtcNow.Subtract(new TimeSpan(0, 30, 0)) && !kvp.Value.IsPaused)
-                        {
-                            gamesToRemove.Add(kvp.Key);
-                        }
-                    }
-                }
-
-                foreach (int gameIdToRemove in gamesToRemove)
-                {
-                    ActiveGames.Remove(gameIdToRemove);
-                }
-
-
-
-
-
-
-
-                return Redirect("/Game/Index?gameId=" + gameId + "&playerId=0");
-
+                var errors = string.Join(", ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                _logger.LogWarning("Validation failed in Start: {Errors}", errors);
+                return View("Error");
             }
+
+            _logger.LogDebug("Start called for game {GameId}", gameId);
+
+            IGameBoard? newGame = await _gameActivation.ActivatePendingGameAsync(gameId);
+            if (newGame != null)
+            {
+                _logger.LogInformation("Game {GameId} started successfully", gameId);
+                await _gameCleanup.RemoveStaleGamesAsync();
+                return Redirect("/Game/Index?gameId=" + gameId + "&playerId=0");
+            }
+
+            _logger.LogWarning("Failed to start game {GameId}: activation returned null", gameId);
             return View("Error");
         }
 

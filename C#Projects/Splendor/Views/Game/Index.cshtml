@@ -32,11 +32,15 @@
             url: "/Game/State/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "GET",
             success: function (response) {
+                if (!response.success) {
+                    console.error("Error:", response.errorMessage);
+                    return;
+                }
                 // if the gameboard's version is different than the current version render the game board and notify!
-                if (response != version) {
+                if (response.data != version) {
                     renderGameBoard();
                 }
-                
+
             },
             error: function () {
                 alert("ERROR - Please try again.");
@@ -71,7 +75,13 @@
             data: JSON.stringify(TakingTokens),
             contentType: "application/json",
             dataType: 'json',
-            success: function (data) {
+            success: function (response) {
+                if (!response.success) {
+                    alert("ERROR - " + response.errorMessage);
+                    return;
+                }
+
+                var data = response.data;
                 // If there was an error/if the data is a error object -> alert what the error was
                 if (data.hasOwnProperty("errorCode")) {
                     alert("ERROR - " + data.message);
@@ -81,7 +91,7 @@
                 }
                 // Else if it was successful
                 else {
-                   
+
                     // Render the gameboard
                     renderGameBoard();
                 }
@@ -100,7 +110,13 @@
             data: JSON.stringify(ImageName),
             contentType: "application/json",
             dataType: 'json',
-            success: function (data) {
+            success: function (response) {
+                if (!response.success) {
+                    alert("ERROR - " + response.errorMessage);
+                    return;
+                }
+
+                var data = response.data;
                 // If the data has an error display that error
                 if (data.hasOwnProperty("errorCode")) {
                     alert("ERROR - " + data.message);
@@ -128,7 +144,13 @@
             data: JSON.stringify(ImageName),
             contentType: "application/json",
             dataType: 'json',
-            success: function (data) {
+            success: function (response) {
+                if (!response.success) {
+                    alert("ERROR - " + response.errorMessage);
+                    return;
+                }
+
+                var data = response.data;
                 // If the data has an error display that error
                 if (data.hasOwnProperty("errorCode")) {
                     alert("ERROR - " + data.message);
@@ -162,10 +184,16 @@
             $.ajax({
                 url: "/Game/Return/@ViewData["GameId"]/@ViewData["PlayerId"]",
                 type: "POST",
-                data: JSON.stringify(data), 
+                data: JSON.stringify(data),
                 contentType: "application/json",
                 dataType: 'json',
-                success: function (data) {
+                success: function (response) {
+                    if (!response.success) {
+                        alert("ERROR - " + response.errorMessage);
+                        return;
+                    }
+
+                    var data = response.data;
                     // If the data has an error display that error
                     if (data.hasOwnProperty("errorCode")) {
                         alert("ERROR - " + data.message);
@@ -194,7 +222,13 @@
             data: JSON.stringify(data),
             contentType: "application/json",
             dataType: 'json',
-            success: function (data) {
+            success: function (response) {
+                if (!response.success) {
+                    alert("ERROR - " + response.errorMessage);
+                    return;
+                }
+
+                var data = response.data;
                 // If the data has an error display that error
                 if (data.hasOwnProperty("errorCode")) {
                     alert("ERROR - " + data.message);
@@ -222,7 +256,13 @@
             data: JSON.stringify(ImageName),
             contentType: "application/json",
             dataType: 'json',
-            success: function (data) {
+            success: function (response) {
+                if (!response.success) {
+                    alert("ERROR - " + response.errorMessage);
+                    return;
+                }
+
+                var data = response.data;
                 // If the data has an error display that error
                 if (data.hasOwnProperty("errorCode")) {
                     alert("ERROR - " + data.message);
@@ -673,7 +713,7 @@
                 {
                     if (turn.Noble != null)
                     {
-                        DisplayTurn(Model.Turns[Model.Turns.IndexOf(turn) + 1]);
+                        DisplayTurn(Model.Turns[Model.Turns.ToList().IndexOf(turn) + 1]);
                     }
 
                     if (turn.ReservedCard != null)

@@ -33,10 +33,15 @@
             url: "/WaitingRoom/ListGamesState",
             type: "GET",
             success: function (response) {
+                if (!response.success) {
+                    console.error("Error:", response.errorMessage);
+                    return;
+                }
+
                 // Create a new list
                 let newList = "";
                 // add each game to the list
-                for (const game of response) {
+                for (const game of response.data) {
                     newList += `<tr style="width: 80%">
                             <td class="text-start mt-3">` + game.creatingPlayerName +`</td>
                             <td class="text-end mt-3"><input id="`+ game.id +`" type="submit" onclick="return enterRoom('`+ game.id +`');" class="btn-outline-purple btn" value="Join Game"></td>

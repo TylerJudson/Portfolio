@@ -23,7 +23,7 @@
         /// <summary>
         /// The price it takes to purchase a card
         /// </summary>
-        Dictionary<Token, int> Price { get; }
+        IReadOnlyDictionary<Token, int> Price { get; }
 
     }
 }

@@ -2,9 +2,11 @@
 {
     public class CardStack : ICardStack
     {
-        
+
         public uint Level { get; }
-        public List<ICard> Cards { get; }
+
+        private List<ICard> _cards;
+        public IReadOnlyList<ICard> Cards => _cards.AsReadOnly();
 
 
         /// <summary>
@@ -16,23 +18,23 @@
         public CardStack(uint level, uint count, List<ICard> cards)
         {
             Level = level;
-            Cards = cards;
+            _cards = cards;
         }
 
         public ICard? Draw()
         {
             ICard ret = null;
 
-            if (Cards.Count == 0)
+            if (_cards.Count == 0)
             {
                 return ret;
             }
 
             Random random = Random.Shared;
-            int randomNum = random.Next(Cards.Count);
+            int randomNum = random.Next(_cards.Count);
 
-            ret = Cards[randomNum];
-            Cards.RemoveAt(randomNum);
+            ret = _cards[randomNum];
+            _cards.RemoveAt(randomNum);
 
 
             return ret;

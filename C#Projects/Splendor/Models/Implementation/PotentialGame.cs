@@ -6,7 +6,8 @@
 
         public string CreatingPlayerName { get; }
 
-        public Dictionary<int, string> Players { get; }
+        private Dictionary<int, string> _players;
+        public IReadOnlyDictionary<int, string> Players => _players;
 
         public int MaxPlayers { get; } = 4;
 
@@ -21,8 +22,18 @@
         {
             Id = id;
             CreatingPlayerName = creator;
-            Players = new Dictionary<int, string>();
-            Players.Add(0, creator);
+            _players = new Dictionary<int, string>();
+            _players.Add(0, creator);
+        }
+
+        public void AddPlayer(int playerId, string playerName)
+        {
+            _players.Add(playerId, playerName);
+        }
+
+        public bool RemovePlayer(int playerId)
+        {
+            return _players.Remove(playerId);
         }
     }
 }

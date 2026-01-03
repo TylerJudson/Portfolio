@@ -1,8 +1,12 @@
-﻿namespace Splendor.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Splendor.Models
 {
     public class ReturnRequest
     {
-        public Dictionary<Token, int> Tokens { get; set; }
+        [Required]
+        public Dictionary<Token, int> Tokens { get; set; } = new Dictionary<Token, int>();
+
         public string? ReservingCardImageName { get; set; }
     }
 }

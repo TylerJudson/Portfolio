@@ -10,7 +10,9 @@
         public uint Level { get; }
         public Token Type { get; }
         public uint PrestigePoints { get; }
-        public Dictionary<Token, int> Price { get; }
+
+        private Dictionary<Token, int> _price;
+        public IReadOnlyDictionary<Token, int> Price => _price;
 
 
         /// <summary>
@@ -26,9 +28,9 @@
             Level = level;
             Type = type;
             PrestigePoints = prestigePoints;
-            Price = price;
+            _price = price;
             ImageName = imageName;
-            
+
         }
         public Card() { }
         public string Render()

@@ -9,7 +9,7 @@
         /// <summary>
         /// The criteria it takes to receive a noble
         /// </summary>
-        Dictionary<Token, int> Criteria { get; }
+        IReadOnlyDictionary<Token, int> Criteria { get; }
 
         /// <summary>
         /// The number of prestige points a noble contains

@@ -4,7 +4,10 @@
     {
         public IError? Error { get; }
         public IContinueAction? ContinueAction { get; }
-        public Dictionary<Token, int>? ConsumedTokens { get; }
+
+        private Dictionary<Token, int>? _consumedTokens;
+        public IReadOnlyDictionary<Token, int>? ConsumedTokens => _consumedTokens;
+
         public bool GameOver { get; } = false;
 
         /// <summary>
@@ -35,7 +38,7 @@
         /// <param name="consumedTokens">The tokens consumed during a given turn</param>
         public CompletedTurn(Dictionary<Token, int> consumedTokens)
         {
-            ConsumedTokens = consumedTokens;
+            _consumedTokens = consumedTokens;
         }
 
         /// <summary>

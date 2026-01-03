@@ -107,7 +107,7 @@ public class SmokeTests
         };
 
         // Act
-        var board = new GameBoard(players);
+        var board = new GameBoard(players, TestHelpers.CreateMockGameDataService());
 
         // Assert
         board.Should().NotBeNull();

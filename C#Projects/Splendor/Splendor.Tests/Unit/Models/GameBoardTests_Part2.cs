@@ -26,7 +26,8 @@ public class GameBoardTests_Part2
             .WithTokens(diamond: 3, sapphire: 3, emerald: 3)
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
 
         // Get one of the level 1 cards from the board
         var cardToPurchase = board.Level1Cards[0];
@@ -36,11 +37,11 @@ public class GameBoardTests_Part2
         // Reset tokens to ensure we have exactly what we need
         foreach (var token in player.Tokens.Keys.ToList())
         {
-            player.Tokens[token] = 0;
+            TestHelpers.SetPlayerTokens(player, token, 0);
         }
         foreach (var cost in cardToPurchase.Price)
         {
-            player.Tokens[cost.Key] = cost.Value;
+            TestHelpers.SetPlayerTokens(player, cost.Key, cost.Value);
         }
 
         var turn = TurnBuilder.PurchaseCard(cardToPurchase);
@@ -64,7 +65,8 @@ public class GameBoardTests_Part2
             .WithTokens(diamond: 5, sapphire: 5, emerald: 5, ruby: 5, onyx: 5)
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
 
         var cardToPurchase = board.Level2Cards[0];
         Assert.NotNull(cardToPurchase);
@@ -72,11 +74,11 @@ public class GameBoardTests_Part2
         // Give player enough tokens for this card
         foreach (var token in player.Tokens.Keys.ToList())
         {
-            player.Tokens[token] = 0;
+            TestHelpers.SetPlayerTokens(player, token, 0);
         }
         foreach (var cost in cardToPurchase.Price)
         {
-            player.Tokens[cost.Key] = cost.Value;
+            TestHelpers.SetPlayerTokens(player, cost.Key, cost.Value);
         }
 
         var turn = TurnBuilder.PurchaseCard(cardToPurchase);
@@ -100,7 +102,8 @@ public class GameBoardTests_Part2
             .WithTokens(diamond: 7, sapphire: 7, emerald: 7, ruby: 7, onyx: 7)
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
 
         var cardToPurchase = board.Level3Cards[0];
         Assert.NotNull(cardToPurchase);
@@ -108,11 +111,11 @@ public class GameBoardTests_Part2
         // Give player enough tokens for this card
         foreach (var token in player.Tokens.Keys.ToList())
         {
-            player.Tokens[token] = 0;
+            TestHelpers.SetPlayerTokens(player, token, 0);
         }
         foreach (var cost in cardToPurchase.Price)
         {
-            player.Tokens[cost.Key] = cost.Value;
+            TestHelpers.SetPlayerTokens(player, cost.Key, cost.Value);
         }
 
         var turn = TurnBuilder.PurchaseCard(cardToPurchase);
@@ -136,7 +139,8 @@ public class GameBoardTests_Part2
             .WithTokens(diamond: 3, sapphire: 2, emerald: 1)
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
 
         var cardToPurchase = board.Level1Cards[0];
         Assert.NotNull(cardToPurchase);
@@ -144,10 +148,10 @@ public class GameBoardTests_Part2
         // Set up player with specific tokens for this card
         foreach (var token in player.Tokens.Keys.ToList())
         {
-            player.Tokens[token] = 0;
+            TestHelpers.SetPlayerTokens(player, token, 0);
         }
-        player.Tokens[Token.Diamond] = 2;
-        player.Tokens[Token.Sapphire] = 2;
+        TestHelpers.SetPlayerTokens(player, Token.Diamond, 2);
+        TestHelpers.SetPlayerTokens(player, Token.Sapphire, 2);
 
         // Create a card that costs 2 diamond and 1 sapphire
         var cheapCard = new CardBuilder()
@@ -157,7 +161,7 @@ public class GameBoardTests_Part2
             .Build();
 
         // Replace the first card with our test card
-        board.Level1Cards[0] = cheapCard;
+        TestHelpers.SetBoardCard(board, 1, 0, cheapCard);
 
         var initialDiamondStack = board.TokenStacks[Token.Diamond];
         var initialSapphireStack = board.TokenStacks[Token.Sapphire];
@@ -186,12 +190,13 @@ public class GameBoardTests_Part2
             .WithReservedCard(reservedCard)
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
 
         // Give player enough tokens to purchase the reserved card
         foreach (var cost in reservedCard.Price)
         {
-            player.Tokens[cost.Key] = cost.Value;
+            TestHelpers.SetPlayerTokens(player, cost.Key, cost.Value);
         }
 
         var turn = TurnBuilder.PurchaseCard(reservedCard);
@@ -221,8 +226,9 @@ public class GameBoardTests_Part2
             .WithTokens(diamond: 2, gold: 1)
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
-        board.Level1Cards[0] = expensiveCard;
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
+        TestHelpers.SetBoardCard(board, 1, 0, expensiveCard);
 
         var initialGoldStack = board.TokenStacks[Token.Gold];
 
@@ -247,7 +253,8 @@ public class GameBoardTests_Part2
             .WithTokens(diamond: 5, sapphire: 5, emerald: 5)
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
 
         // Draw all cards from Level1 stack to empty it
         // We'll need to purchase multiple cards or use reflection to empty the stack
@@ -264,7 +271,7 @@ public class GameBoardTests_Part2
         {
             foreach (var cost in cardToPurchase.Price)
             {
-                player.Tokens[cost.Key] = cost.Value;
+                TestHelpers.SetPlayerTokens(player, cost.Key, cost.Value);
             }
 
             var turn = TurnBuilder.PurchaseCard(cardToPurchase);
@@ -288,7 +295,8 @@ public class GameBoardTests_Part2
             .WithTokens(diamond: 1) // Only 1 diamond, not enough for most cards
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
 
         // Create an expensive card
         var expensiveCard = new CardBuilder()
@@ -297,7 +305,7 @@ public class GameBoardTests_Part2
             .WithPrice(diamond: 5, sapphire: 3)
             .Build();
 
-        board.Level1Cards[0] = expensiveCard;
+        TestHelpers.SetBoardCard(board, 1, 0, expensiveCard);
 
         var turn = TurnBuilder.PurchaseCard(expensiveCard);
 
@@ -322,7 +330,8 @@ public class GameBoardTests_Part2
             .WithId(0)
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
 
         var cardToReserve = board.Level1Cards[1];
         Assert.NotNull(cardToReserve);
@@ -347,7 +356,8 @@ public class GameBoardTests_Part2
             .WithId(0)
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
 
         var initialGoldStack = board.TokenStacks[Token.Gold];
         var cardToReserve = board.Level1Cards[0];
@@ -373,10 +383,11 @@ public class GameBoardTests_Part2
             .WithId(0)
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
 
         // Empty the gold stack
-        board.TokenStacks[Token.Gold] = 0;
+        TestHelpers.SetBoardTokenStack(board, Token.Gold, 0);
 
         var cardToReserve = board.Level1Cards[0];
         Assert.NotNull(cardToReserve);
@@ -402,7 +413,8 @@ public class GameBoardTests_Part2
             .WithMaxReservedCards() // Sets player to have 3 reserved cards
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
 
         var cardToReserve = board.Level1Cards[0];
         Assert.NotNull(cardToReserve);
@@ -427,7 +439,8 @@ public class GameBoardTests_Part2
             .AtMaxTokens() // Sets player to 10 tokens
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
 
         var cardToReserve = board.Level1Cards[0];
         Assert.NotNull(cardToReserve);
@@ -475,11 +488,12 @@ public class GameBoardTests_Part2
             .WithTokens(diamond: 2) // Just need some tokens to take a turn
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
 
         // Replace one of the nobles with our test noble
-        board.Nobles.Clear();
-        board.Nobles.Add(noble);
+        TestHelpers.ClearBoardNobles(board);
+        TestHelpers.AddBoardNoble(board, noble);
 
         // Take a simple turn (take 1 token) which should trigger noble check
         var turn = new Turn(TokenHelper.One(Token.Diamond));
@@ -525,12 +539,13 @@ public class GameBoardTests_Part2
             .WithTokens(diamond: 1)
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
 
         // Replace nobles with our test nobles
-        board.Nobles.Clear();
-        board.Nobles.Add(noble1);
-        board.Nobles.Add(noble2);
+        TestHelpers.ClearBoardNobles(board);
+        TestHelpers.AddBoardNoble(board, noble1);
+        TestHelpers.AddBoardNoble(board, noble2);
 
         var turn = new Turn(TokenHelper.One(Token.Diamond));
 
@@ -566,9 +581,10 @@ public class GameBoardTests_Part2
             )
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
-        board.Nobles.Clear();
-        board.Nobles.Add(noble);
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
+        TestHelpers.ClearBoardNobles(board);
+        TestHelpers.AddBoardNoble(board, noble);
 
         var turn = TurnBuilder.AcquireNoble(noble);
 
@@ -603,9 +619,10 @@ public class GameBoardTests_Part2
             )
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
-        board.Nobles.Clear();
-        board.Nobles.Add(noble);
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
+        TestHelpers.ClearBoardNobles(board);
+        TestHelpers.AddBoardNoble(board, noble);
 
         var turn = TurnBuilder.AcquireNoble(noble);
 
@@ -633,9 +650,10 @@ public class GameBoardTests_Part2
             )
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
-        board.Nobles.Clear();
-        board.Nobles.Add(noble);
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
+        TestHelpers.ClearBoardNobles(board);
+        TestHelpers.AddBoardNoble(board, noble);
 
         var turn = TurnBuilder.AcquireNoble(noble);
 
@@ -676,8 +694,8 @@ public class GameBoardTests_Part2
         // (PlayerBuilder doesn't calculate prestige points from cards)
         typeof(Player).GetProperty("PrestigePoints")!.SetValue(player1, 10u);
 
-        var board = new GameBoard(new List<IPlayer> { player1, player2 });
-        board.Level3Cards[0] = highValueCard;
+        var board = new GameBoard(new List<IPlayer> { player1, player2 }, TestHelpers.CreateMockGameDataService());
+        TestHelpers.SetBoardCard(board, 3, 0, highValueCard);
 
         var turn = TurnBuilder.PurchaseCard(highValueCard);
 
@@ -708,7 +726,7 @@ public class GameBoardTests_Part2
             .WithId(1)
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player1, player2 });
+        var board = new GameBoard(new List<IPlayer> { player1, player2 }, TestHelpers.CreateMockGameDataService());
 
         // Manually set LastRound to true
         typeof(GameBoard).GetProperty("LastRound")!.SetValue(board, true);
@@ -736,7 +754,8 @@ public class GameBoardTests_Part2
             .WithId(0)
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player });
+        var dummyPlayer = new Player("Dummy", 1);
+        var board = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
 
         // Use reflection to set GameOver to true
         typeof(GameBoard).GetProperty("GameOver")!.SetValue(board, true);
@@ -772,7 +791,7 @@ public class GameBoardTests_Part2
             .WithId(2)
             .Build();
 
-        var board = new GameBoard(new List<IPlayer> { player1, player2, player3 });
+        var board = new GameBoard(new List<IPlayer> { player1, player2, player3 }, TestHelpers.CreateMockGameDataService());
 
         // Manually set LastRound to true and current player to player 1 (not last player)
         typeof(GameBoard).GetProperty("LastRound")!.SetValue(board, true);
@@ -798,7 +817,7 @@ public class GameBoardTests_Part2
         var player2 = new PlayerBuilder().WithName("Player2").WithId(1).Build();
         var player3 = new PlayerBuilder().WithName("Player3").WithId(2).Build();
 
-        var board = new GameBoard(new List<IPlayer> { player1, player2, player3 });
+        var board = new GameBoard(new List<IPlayer> { player1, player2, player3 }, TestHelpers.CreateMockGameDataService());
 
         board.CurrentPlayer.Should().Be(0, "game should start with player 0");
 

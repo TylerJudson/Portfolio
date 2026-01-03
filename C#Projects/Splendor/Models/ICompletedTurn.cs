@@ -15,7 +15,7 @@
         /// <summary>
         /// The tokens consumed during a given turn
         /// </summary>
-        Dictionary<Token, int>? ConsumedTokens { get; }
+        IReadOnlyDictionary<Token, int>? ConsumedTokens { get; }
 
         /// <summary>
         /// Whether or not the game is over

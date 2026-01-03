@@ -11,7 +11,7 @@
         /// <summary>
         /// The list of cards in the stack
         /// </summary>
-        List<ICard> Cards { get; }
+        IReadOnlyList<ICard> Cards { get; }
     
         /// <summary>
         /// Randomly returns a card in the stack

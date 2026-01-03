@@ -18,13 +18,19 @@
             url: "/WaitingRoom/State/@ViewData["GameId"]/@ViewData["PlayerId"]",
             type: "GET",
             success: function (response) {
+                if (!response.success) {
+                    console.error("Error:", response.errorMessage);
+                    return;
+                }
+
+                var data = response.data;
                 // If there is the property players and the waiting room game state
-                if (response.hasOwnProperty("players")) {   
-                    handleGameState(response);
+                if (data.hasOwnProperty("players")) {
+                    handleGameState(data);
                 // else the player has been removed from the game or the game has started
                 } else {
                     // If the player has been removed from the game
-                    if (response == "removed from game") {
+                    if (data == "removed from game") {
                         // Tell the player they have been removed from the game
                         alert("You have been removed from the game.");
 
@@ -103,8 +109,13 @@
             url: "/WaitingRoom/RemovePlayer/@ViewData["GameId"]/" + id,
             type: "GET",
             success: function (response) {
+                if (!response.success) {
+                    alert("ERROR - " + response.errorMessage);
+                    return;
+                }
+
                 // Handle the response
-                handleGameState(response);
+                handleGameState(response.data);
             },
             error: function () {
                 alert("ERROR - please try again.");

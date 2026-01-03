@@ -12,7 +12,7 @@ public class FakeCardStack : ICardStack
 
     public uint Level { get; }
 
-    public List<ICard> Cards => _cards.ToList();
+    public IReadOnlyList<ICard> Cards => _cards.ToList().AsReadOnly();
 
     public FakeCardStack(uint level)
     {

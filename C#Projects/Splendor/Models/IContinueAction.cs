@@ -15,6 +15,6 @@
         /// <summary>
         /// The Nobles the player can obtain
         /// </summary>
-        List<INoble> Nobles { get; }
+        IReadOnlyList<INoble> Nobles { get; }
     }
 }

@@ -1,0 +1,1058 @@
+{
+  "cards": {
+    "level1": [
+      {
+        "level": 1,
+        "type": "Diamond",
+        "prestigePoints": 0,
+        "price": {
+          "Sapphire": 1,
+          "Emerald": 1,
+          "Ruby": 1,
+          "Onyx": 1
+        },
+        "imageName": "Level1-D-0P-1S-1E-1R-1O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Diamond",
+        "prestigePoints": 0,
+        "price": {
+          "Sapphire": 1,
+          "Emerald": 2,
+          "Ruby": 1,
+          "Onyx": 1
+        },
+        "imageName": "Level1-D-0P-1S-2E-1R-1O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Diamond",
+        "prestigePoints": 0,
+        "price": {
+          "Ruby": 2,
+          "Onyx": 1
+        },
+        "imageName": "Level1-D-0P-2R-1O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Diamond",
+        "prestigePoints": 0,
+        "price": {
+          "Sapphire": 2,
+          "Emerald": 2,
+          "Onyx": 1
+        },
+        "imageName": "Level1-D-0P-2S-2E-1O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Diamond",
+        "prestigePoints": 0,
+        "price": {
+          "Sapphire": 2,
+          "Onyx": 2
+        },
+        "imageName": "Level1-D-0P-2S-2O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Diamond",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 3,
+          "Sapphire": 1,
+          "Onyx": 1
+        },
+        "imageName": "Level1-D-0P-3D-1S-1O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Diamond",
+        "prestigePoints": 0,
+        "price": {
+          "Sapphire": 3
+        },
+        "imageName": "Level1-D-0P-3S.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Diamond",
+        "prestigePoints": 1,
+        "price": {
+          "Emerald": 4
+        },
+        "imageName": "Level1-D-1P-4E.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Emerald",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 1,
+          "Sapphire": 1,
+          "Ruby": 1,
+          "Onyx": 1
+        },
+        "imageName": "Level1-E-0P-1D-1S-1R-1O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Emerald",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 1,
+          "Sapphire": 1,
+          "Ruby": 1,
+          "Onyx": 2
+        },
+        "imageName": "Level1-E-0P-1D-1S-1R-2O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Emerald",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 1,
+          "Sapphire": 3,
+          "Emerald": 1
+        },
+        "imageName": "Level1-E-0P-1D-3S-1E.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Emerald",
+        "prestigePoints": 0,
+        "price": {
+          "Sapphire": 1,
+          "Ruby": 2,
+          "Onyx": 2
+        },
+        "imageName": "Level1-E-0P-1S-2R-2O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Emerald",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 2,
+          "Sapphire": 1
+        },
+        "imageName": "Level1-E-0P-2D-1S.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Emerald",
+        "prestigePoints": 0,
+        "price": {
+          "Sapphire": 2,
+          "Ruby": 2
+        },
+        "imageName": "Level1-E-0P-2S-2R.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Emerald",
+        "prestigePoints": 0,
+        "price": {
+          "Ruby": 3
+        },
+        "imageName": "Level1-E-0P-3R.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Emerald",
+        "prestigePoints": 1,
+        "price": {
+          "Onyx": 4
+        },
+        "imageName": "Level1-E-1P-4O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Onyx",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 1,
+          "Sapphire": 1,
+          "Emerald": 1,
+          "Ruby": 1
+        },
+        "imageName": "Level1-O-0P-1D-1S-1E-1R.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Onyx",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 1,
+          "Sapphire": 2,
+          "Emerald": 1,
+          "Ruby": 1
+        },
+        "imageName": "Level1-O-0P-1D-2S-1E-1R.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Onyx",
+        "prestigePoints": 0,
+        "price": {
+          "Emerald": 1,
+          "Ruby": 3,
+          "Onyx": 1
+        },
+        "imageName": "Level1-O-0P-1E-3R-1O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Onyx",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 2,
+          "Emerald": 2
+        },
+        "imageName": "Level1-O-0P-2D-2E.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Onyx",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 2,
+          "Sapphire": 2,
+          "Ruby": 1
+        },
+        "imageName": "Level1-O-0P-2D-2S-1R.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Onyx",
+        "prestigePoints": 0,
+        "price": {
+          "Emerald": 2,
+          "Ruby": 1
+        },
+        "imageName": "Level1-O-0P-2E-1R.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Onyx",
+        "prestigePoints": 0,
+        "price": {
+          "Emerald": 3
+        },
+        "imageName": "Level1-O-0P-3E.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Onyx",
+        "prestigePoints": 1,
+        "price": {
+          "Sapphire": 4
+        },
+        "imageName": "Level1-O-1P-4S.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Ruby",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 1,
+          "Ruby": 1,
+          "Onyx": 3
+        },
+        "imageName": "Level1-R-0P-1D-1R-3O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Ruby",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 1,
+          "Sapphire": 1,
+          "Emerald": 1,
+          "Onyx": 1
+        },
+        "imageName": "Level1-R-0P-1D-1S-1E-1O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Ruby",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 2,
+          "Emerald": 1,
+          "Onyx": 2
+        },
+        "imageName": "Level1-R-0P-2D-1E-2O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Ruby",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 2,
+          "Sapphire": 1,
+          "Emerald": 1,
+          "Onyx": 1
+        },
+        "imageName": "Level1-R-0P-2D-1S-1E-1O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Ruby",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 2,
+          "Ruby": 2
+        },
+        "imageName": "Level1-R-0P-2D-2R.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Ruby",
+        "prestigePoints": 0,
+        "price": {
+          "Sapphire": 2,
+          "Emerald": 1
+        },
+        "imageName": "Level1-R-0P-2S-1E.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Ruby",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 3
+        },
+        "imageName": "Level1-R-0P-3D.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Ruby",
+        "prestigePoints": 1,
+        "price": {
+          "Diamond": 4
+        },
+        "imageName": "Level1-R-1P-4D.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Sapphire",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 1,
+          "Emerald": 1,
+          "Ruby": 1,
+          "Onyx": 1
+        },
+        "imageName": "Level1-S-0P-1D-1E-1R-1O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Sapphire",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 1,
+          "Emerald": 1,
+          "Ruby": 2,
+          "Onyx": 1
+        },
+        "imageName": "Level1-S-0P-1D-1E-2R-1O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Sapphire",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 1,
+          "Emerald": 2,
+          "Ruby": 2
+        },
+        "imageName": "Level1-S-0P-1D-2E-2R.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Sapphire",
+        "prestigePoints": 0,
+        "price": {
+          "Diamond": 1,
+          "Onyx": 2
+        },
+        "imageName": "Level1-S-0P-1D-2O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Sapphire",
+        "prestigePoints": 0,
+        "price": {
+          "Sapphire": 1,
+          "Emerald": 3,
+          "Ruby": 1
+        },
+        "imageName": "Level1-S-0P-1S-3E-1R.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Sapphire",
+        "prestigePoints": 0,
+        "price": {
+          "Emerald": 2,
+          "Onyx": 2
+        },
+        "imageName": "Level1-S-0P-2E-2O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Sapphire",
+        "prestigePoints": 0,
+        "price": {
+          "Onyx": 3
+        },
+        "imageName": "Level1-S-0P-3O.jpg"
+      },
+      {
+        "level": 1,
+        "type": "Sapphire",
+        "prestigePoints": 1,
+        "price": {
+          "Ruby": 4
+        },
+        "imageName": "Level1-S-1P-4R.jpg"
+      }
+    ],
+    "level2": [
+      {
+        "level": 2,
+        "type": "Diamond",
+        "prestigePoints": 1,
+        "price": {
+          "Diamond": 2,
+          "Sapphire": 3,
+          "Ruby": 3
+        },
+        "imageName": "Level2-D-1P-2D-3S-3R.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Diamond",
+        "prestigePoints": 1,
+        "price": {
+          "Emerald": 3,
+          "Ruby": 2,
+          "Onyx": 2
+        },
+        "imageName": "Level2-D-1P-3E-2R-2O.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Diamond",
+        "prestigePoints": 2,
+        "price": {
+          "Emerald": 1,
+          "Ruby": 4,
+          "Onyx": 2
+        },
+        "imageName": "Level2-D-2P-1E-4R-2O.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Diamond",
+        "prestigePoints": 2,
+        "price": {
+          "Ruby": 5
+        },
+        "imageName": "Level2-D-2P-5R.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Diamond",
+        "prestigePoints": 2,
+        "price": {
+          "Ruby": 5,
+          "Onyx": 3
+        },
+        "imageName": "Level2-D-2P-5R-3O.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Diamond",
+        "prestigePoints": 3,
+        "price": {
+          "Diamond": 6
+        },
+        "imageName": "Level2-D-3P-6D.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Emerald",
+        "prestigePoints": 1,
+        "price": {
+          "Diamond": 2,
+          "Sapphire": 3,
+          "Onyx": 2
+        },
+        "imageName": "Level2-E-1P-2D-3S-2O.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Emerald",
+        "prestigePoints": 1,
+        "price": {
+          "Diamond": 3,
+          "Emerald": 2,
+          "Ruby": 3
+        },
+        "imageName": "Level2-E-1P-3D-2E-3R.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Emerald",
+        "prestigePoints": 2,
+        "price": {
+          "Diamond": 4,
+          "Sapphire": 2,
+          "Onyx": 1
+        },
+        "imageName": "Level2-E-2P-4D-2S-1O.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Emerald",
+        "prestigePoints": 2,
+        "price": {
+          "Emerald": 5
+        },
+        "imageName": "Level2-E-2P-5E.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Emerald",
+        "prestigePoints": 2,
+        "price": {
+          "Sapphire": 5,
+          "Emerald": 3
+        },
+        "imageName": "Level2-E-2P-5S-3E.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Emerald",
+        "prestigePoints": 3,
+        "price": {
+          "Emerald": 6
+        },
+        "imageName": "Level2-E-3P-6E.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Onyx",
+        "prestigePoints": 1,
+        "price": {
+          "Diamond": 3,
+          "Sapphire": 2,
+          "Emerald": 2
+        },
+        "imageName": "Level2-O-1P-3D-2S-2E.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Onyx",
+        "prestigePoints": 1,
+        "price": {
+          "Diamond": 3,
+          "Emerald": 3,
+          "Onyx": 2
+        },
+        "imageName": "Level2-O-1P-3D-3E-2O.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Onyx",
+        "prestigePoints": 2,
+        "price": {
+          "Sapphire": 1,
+          "Emerald": 4,
+          "Ruby": 2
+        },
+        "imageName": "Level2-O-2P-1S-4E-2R.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Onyx",
+        "prestigePoints": 2,
+        "price": {
+          "Diamond": 5
+        },
+        "imageName": "Level2-O-2P-5D.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Onyx",
+        "prestigePoints": 2,
+        "price": {
+          "Emerald": 5,
+          "Ruby": 3
+        },
+        "imageName": "Level2-O-2P-5E-3R.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Onyx",
+        "prestigePoints": 3,
+        "price": {
+          "Onyx": 6
+        },
+        "imageName": "Level2-O-3P-6O.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Ruby",
+        "prestigePoints": 1,
+        "price": {
+          "Diamond": 2,
+          "Ruby": 2,
+          "Onyx": 3
+        },
+        "imageName": "Level2-R-1P-2D-2R-3O.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Ruby",
+        "prestigePoints": 1,
+        "price": {
+          "Sapphire": 3,
+          "Ruby": 2,
+          "Onyx": 3
+        },
+        "imageName": "Level2-R-1P-3S-2R-3O.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Ruby",
+        "prestigePoints": 2,
+        "price": {
+          "Diamond": 1,
+          "Sapphire": 4,
+          "Emerald": 2
+        },
+        "imageName": "Level2-R-2P-1D-4S-2E.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Ruby",
+        "prestigePoints": 2,
+        "price": {
+          "Diamond": 3,
+          "Onyx": 5
+        },
+        "imageName": "Level2-R-2P-3D-5O.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Ruby",
+        "prestigePoints": 2,
+        "price": {
+          "Onyx": 5
+        },
+        "imageName": "Level2-R-2P-5O.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Ruby",
+        "prestigePoints": 3,
+        "price": {
+          "Ruby": 6
+        },
+        "imageName": "Level2-R-3P-6R.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Sapphire",
+        "prestigePoints": 1,
+        "price": {
+          "Sapphire": 2,
+          "Emerald": 2,
+          "Ruby": 3
+        },
+        "imageName": "Level2-S-1P-2S-2E-3R.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Sapphire",
+        "prestigePoints": 1,
+        "price": {
+          "Sapphire": 2,
+          "Emerald": 3,
+          "Onyx": 3
+        },
+        "imageName": "Level2-S-1P-2S-3E-3O.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Sapphire",
+        "prestigePoints": 2,
+        "price": {
+          "Diamond": 2,
+          "Ruby": 1,
+          "Onyx": 4
+        },
+        "imageName": "Level2-S-2P-2D-1R-4O.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Sapphire",
+        "prestigePoints": 2,
+        "price": {
+          "Diamond": 5,
+          "Sapphire": 3
+        },
+        "imageName": "Level2-S-2P-5D-3S.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Sapphire",
+        "prestigePoints": 2,
+        "price": {
+          "Sapphire": 5
+        },
+        "imageName": "Level2-S-2P-5S.jpg"
+      },
+      {
+        "level": 2,
+        "type": "Sapphire",
+        "prestigePoints": 3,
+        "price": {
+          "Sapphire": 6
+        },
+        "imageName": "Level2-S-3P-6S.jpg"
+      }
+    ],
+    "level3": [
+      {
+        "level": 3,
+        "type": "Diamond",
+        "prestigePoints": 3,
+        "price": {
+          "Sapphire": 3,
+          "Emerald": 3,
+          "Ruby": 5,
+          "Onyx": 3
+        },
+        "imageName": "Level3-D-3P-3S-3E-5R-3O.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Diamond",
+        "prestigePoints": 4,
+        "price": {
+          "Diamond": 3,
+          "Ruby": 3,
+          "Onyx": 6
+        },
+        "imageName": "Level3-D-4P-3D-3R-6O.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Diamond",
+        "prestigePoints": 4,
+        "price": {
+          "Onyx": 7
+        },
+        "imageName": "Level3-D-4P-7O.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Diamond",
+        "prestigePoints": 5,
+        "price": {
+          "Diamond": 3,
+          "Onyx": 7
+        },
+        "imageName": "Level3-D-5P-3D-7O.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Emerald",
+        "prestigePoints": 3,
+        "price": {
+          "Diamond": 5,
+          "Sapphire": 3,
+          "Ruby": 3,
+          "Onyx": 3
+        },
+        "imageName": "Level3-E-3P-5D-3S-3R-3O.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Emerald",
+        "prestigePoints": 4,
+        "price": {
+          "Diamond": 3,
+          "Sapphire": 6,
+          "Emerald": 3
+        },
+        "imageName": "Level3-E-4P-3D-6S-3E.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Emerald",
+        "prestigePoints": 4,
+        "price": {
+          "Sapphire": 7
+        },
+        "imageName": "Level3-E-4P-7S.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Emerald",
+        "prestigePoints": 5,
+        "price": {
+          "Sapphire": 7,
+          "Emerald": 3
+        },
+        "imageName": "Level3-E-5P-7S-3E.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Onyx",
+        "prestigePoints": 3,
+        "price": {
+          "Diamond": 3,
+          "Sapphire": 3,
+          "Emerald": 5,
+          "Ruby": 3
+        },
+        "imageName": "Level3-O-3P-3D-3S-5E-3R.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Onyx",
+        "prestigePoints": 4,
+        "price": {
+          "Emerald": 3,
+          "Ruby": 6,
+          "Onyx": 3
+        },
+        "imageName": "Level3-O-4P-3E-6R-3O.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Onyx",
+        "prestigePoints": 4,
+        "price": {
+          "Ruby": 7
+        },
+        "imageName": "Level3-O-4P-7R.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Onyx",
+        "prestigePoints": 5,
+        "price": {
+          "Ruby": 7,
+          "Onyx": 3
+        },
+        "imageName": "Level3-O-5P-7R-3O.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Ruby",
+        "prestigePoints": 3,
+        "price": {
+          "Diamond": 3,
+          "Sapphire": 5,
+          "Emerald": 3,
+          "Onyx": 3
+        },
+        "imageName": "Level3-R-3P-3D-5S-3E-3O.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Ruby",
+        "prestigePoints": 4,
+        "price": {
+          "Sapphire": 3,
+          "Emerald": 6,
+          "Ruby": 3
+        },
+        "imageName": "Level3-R-4P-3S-6E-3R.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Ruby",
+        "prestigePoints": 4,
+        "price": {
+          "Emerald": 7
+        },
+        "imageName": "Level3-R-4P-7E.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Ruby",
+        "prestigePoints": 5,
+        "price": {
+          "Emerald": 7,
+          "Ruby": 3
+        },
+        "imageName": "Level3-R-5P-7E-3R.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Sapphire",
+        "prestigePoints": 3,
+        "price": {
+          "Diamond": 3,
+          "Emerald": 3,
+          "Ruby": 3,
+          "Onyx": 5
+        },
+        "imageName": "Level3-S-3P-3D-3E-3R-5O.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Sapphire",
+        "prestigePoints": 4,
+        "price": {
+          "Diamond": 6,
+          "Sapphire": 3,
+          "Onyx": 3
+        },
+        "imageName": "Level3-S-4P-6D-3S-3O.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Sapphire",
+        "prestigePoints": 4,
+        "price": {
+          "Diamond": 7
+        },
+        "imageName": "Level3-S-4P-7D.jpg"
+      },
+      {
+        "level": 3,
+        "type": "Sapphire",
+        "prestigePoints": 5,
+        "price": {
+          "Diamond": 7,
+          "Sapphire": 3
+        },
+        "imageName": "Level3-S-5P-7D-3S.jpg"
+      }
+    ]
+  },
+  "nobles": [
+    {
+      "criteria": {
+        "Emerald": 3,
+        "Sapphire": 3,
+        "Diamond": 3
+      },
+      "prestigePoints": 3,
+      "imageName": "Noble-3E-3S-3D.jpg"
+    },
+    {
+      "criteria": {
+        "Emerald": 3,
+        "Sapphire": 3,
+        "Ruby": 3
+      },
+      "prestigePoints": 3,
+      "imageName": "Noble-3E-3S-3R.jpg"
+    },
+    {
+      "criteria": {
+        "Onyx": 3,
+        "Ruby": 3,
+        "Diamond": 3
+      },
+      "prestigePoints": 3,
+      "imageName": "Noble-3O-3R-3D.jpg"
+    },
+    {
+      "criteria": {
+        "Onyx": 3,
+        "Ruby": 3,
+        "Emerald": 3
+      },
+      "prestigePoints": 3,
+      "imageName": "Noble-3O-3R-3E.jpg"
+    },
+    {
+      "criteria": {
+        "Onyx": 3,
+        "Sapphire": 3,
+        "Diamond": 3
+      },
+      "prestigePoints": 3,
+      "imageName": "Noble-3O-3S-3D.jpg"
+    },
+    {
+      "criteria": {
+        "Onyx": 4,
+        "Diamond": 4
+      },
+      "prestigePoints": 3,
+      "imageName": "Noble-4O-4D.jpg"
+    },
+    {
+      "criteria": {
+        "Onyx": 4,
+        "Ruby": 4
+      },
+      "prestigePoints": 3,
+      "imageName": "Noble-4O-4R.jpg"
+    },
+    {
+      "criteria": {
+        "Ruby": 4,
+        "Emerald": 4
+      },
+      "prestigePoints": 3,
+      "imageName": "Noble-4R-4E.jpg"
+    },
+    {
+      "criteria": {
+        "Sapphire": 4,
+        "Diamond": 4
+      },
+      "prestigePoints": 3,
+      "imageName": "Noble-4S-4D.jpg"
+    },
+    {
+      "criteria": {
+        "Sapphire": 4,
+        "Emerald": 4
+      },
+      "prestigePoints": 3,
+      "imageName": "Noble-4S-4E.jpg"
+    }
+  ],
+  "tokenConfig": {
+    "2": {
+      "Emerald": 4,
+      "Diamond": 4,
+      "Sapphire": 4,
+      "Onyx": 4,
+      "Ruby": 4,
+      "Gold": 5
+    },
+    "3": {
+      "Emerald": 5,
+      "Diamond": 5,
+      "Sapphire": 5,
+      "Onyx": 5,
+      "Ruby": 5,
+      "Gold": 5
+    },
+    "4": {
+      "Emerald": 7,
+      "Diamond": 7,
+      "Sapphire": 7,
+      "Onyx": 7,
+      "Ruby": 7,
+      "Gold": 5
+    }
+  }
+}

@@ -2,7 +2,8 @@
 {
     public class Turn : ITurn
     {
-        public Dictionary<Token, int>? TakenTokens { get; set; }
+        private Dictionary<Token, int>? _takenTokens;
+        public IReadOnlyDictionary<Token, int>? TakenTokens => _takenTokens;
 
         public ICard? Card { get; set; }
 
@@ -18,7 +19,7 @@
 
         public Turn(Dictionary<Token, int>? takenTokens, ICard? reservedCard=null)
         {
-            TakenTokens = takenTokens;
+            _takenTokens = takenTokens;
             ReservedCard = reservedCard;
         }
         public Turn(ICard card, bool isReserve=false)

@@ -5,7 +5,7 @@
         /// <summary>
         /// The tokens taken during a given turn. Has to be 1 of at most 3 different tokens or 2 of the same token
         /// </summary>
-        Dictionary<Token, int>? TakenTokens { get; }
+        IReadOnlyDictionary<Token, int>? TakenTokens { get; }
 
         /// <summary>
         /// The card purchased during a given turn

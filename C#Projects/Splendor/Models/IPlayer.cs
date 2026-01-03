@@ -15,27 +15,27 @@
         /// <summary>
         /// The amount of each token the player has
         /// </summary>
-        Dictionary<Token, int> Tokens { get; }
+        IReadOnlyDictionary<Token, int> Tokens { get; }
 
         /// <summary>
         /// The list of cards a player has
         /// </summary>
-        List<ICard> Cards { get; }
+        IReadOnlyList<ICard> Cards { get; }
 
         /// <summary>
-        /// The number of each card type/token the player has 
+        /// The number of each card type/token the player has
         /// </summary>
-        Dictionary<Token, int> CardTokens { get; }
+        IReadOnlyDictionary<Token, int> CardTokens { get; }
 
         /// <summary>
         /// The list of nobles a player has
         /// </summary>
-        List<INoble> Nobles { get; }
+        IReadOnlyList<INoble> Nobles { get; }
 
         /// <summary>
         /// The list of cards a player has on reserve
         /// </summary>
-        List<ICard> ReservedCards { get; }
+        IReadOnlyList<ICard> ReservedCards { get; }
 
         /// <summary>
         /// The number of prestie points a player has

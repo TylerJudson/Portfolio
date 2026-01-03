@@ -21,7 +21,7 @@
         /// <summary>
         /// The Turns executed by the gameboard
         /// </summary>
-        List<ITurn> Turns { get; }
+        IReadOnlyList<ITurn> Turns { get; }
         /// <summary>
         /// The stack of cards for level 1
         /// </summary>
@@ -40,32 +40,32 @@
         /// <summary>
         /// The current level 1 cards that are on the board
         /// </summary>
-        ICard?[] Level1Cards { get; }
+        IReadOnlyList<ICard?> Level1Cards { get; }
 
         /// <summary>
         /// The current level 2 cards that are on the board
         /// </summary>
-        ICard?[] Level2Cards { get; }
+        IReadOnlyList<ICard?> Level2Cards { get; }
 
         /// <summary>
         /// The current level 3 cards that are on the board
         /// </summary>
-        ICard?[] Level3Cards { get; }
+        IReadOnlyList<ICard?> Level3Cards { get; }
 
         /// <summary>
         /// The players that are playing the game
         /// </summary>
-        List <IPlayer> Players { get; }
+        IReadOnlyList<IPlayer> Players { get; }
 
         /// <summary>
         /// The number of tokens in each stack
         /// </summary>
-        Dictionary<Token, int> TokenStacks { get; }
+        IReadOnlyDictionary<Token, int> TokenStacks { get; }
 
         /// <summary>
         /// The current Nobles that are on the board
         /// </summary>
-        List<INoble> Nobles { get; }
+        IReadOnlyList<INoble> Nobles { get; }
 
         /// <summary>
         /// The index of the player who's turn it currently is

@@ -4,7 +4,9 @@
     {
         public string Message { get; }
         public int ActionCode { get; }
-        public List<INoble>? Nobles { get; }
+
+        private List<INoble>? _nobles;
+        public IReadOnlyList<INoble> Nobles => _nobles?.AsReadOnly() ?? new List<INoble>().AsReadOnly();
 
         /// <summary>
         /// Initalizes ContinueAction
@@ -25,7 +27,7 @@
         {
             Message = message;
             ActionCode = actionCode;
-            Nobles = nobles;
+            _nobles = nobles;
         }
     }
 }
