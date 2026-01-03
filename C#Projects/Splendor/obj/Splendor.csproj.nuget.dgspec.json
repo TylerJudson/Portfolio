@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Tyler\\Tyler Judson\\Source\\Repos\\Portfolio\\C#Projects\\Splendor\\Splendor.csproj": {}
+    "/Users/tylerjudson/Source/Portfolio/Portfolio/C#Projects/Splendor/Splendor.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Tyler\\Tyler Judson\\Source\\Repos\\Portfolio\\C#Projects\\Splendor\\Splendor.csproj": {
+    "/Users/tylerjudson/Source/Portfolio/Portfolio/C#Projects/Splendor/Splendor.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Tyler\\Tyler Judson\\Source\\Repos\\Portfolio\\C#Projects\\Splendor\\Splendor.csproj",
+        "projectUniqueName": "/Users/tylerjudson/Source/Portfolio/Portfolio/C#Projects/Splendor/Splendor.csproj",
         "projectName": "Splendor",
-        "projectPath": "C:\\Users\\Tyler\\Tyler Judson\\Source\\Repos\\Portfolio\\C#Projects\\Splendor\\Splendor.csproj",
-        "packagesPath": "C:\\Users\\Tyler\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Tyler\\Tyler Judson\\Source\\Repos\\Portfolio\\C#Projects\\Splendor\\obj\\",
+        "projectPath": "/Users/tylerjudson/Source/Portfolio/Portfolio/C#Projects/Splendor/Splendor.csproj",
+        "packagesPath": "/Users/tylerjudson/.nuget/packages/",
+        "outputPath": "/Users/tylerjudson/Source/Portfolio/Portfolio/C#Projects/Splendor/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Tyler\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/tylerjudson/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -63,7 +61,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.202\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/opt/homebrew/Cellar/dotnet@6/6.0.136_1/libexec/sdk/6.0.136/RuntimeIdentifierGraph.json"
         }
       }
     }
