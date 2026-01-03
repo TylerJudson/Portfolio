@@ -459,7 +459,7 @@ namespace Splendor.Controllers
                 }
 
                 // Shuffle the players
-                Random random = new Random();
+                Random random = Random.Shared;
                 players = players.OrderBy(p => random.Next()).ToList();
 
                 // Create a new game

@@ -468,7 +468,7 @@
                 new Noble(new Dictionary<Token, int>() { { Token.Sapphire, 4}, {Token.Emerald, 4 } }, "Noble-4S-4E.jpg")
             };
 
-            Random random = new Random();
+            Random random = Random.Shared;
             List<INoble> ret = new List<INoble>();
 
             // Choose random nobles for all the players + 1

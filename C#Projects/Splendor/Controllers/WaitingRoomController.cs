@@ -48,7 +48,7 @@ namespace Splendor.Controllers
         [HttpGet]
         public IActionResult NewGameInfo([FromQuery] string playerName)
         {
-            Random random = new Random();
+            Random random = Random.Shared;
             int potentialGameId = -1;
             lock (this)
             {

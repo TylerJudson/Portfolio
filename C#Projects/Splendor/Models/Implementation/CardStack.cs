@@ -28,7 +28,7 @@
                 return ret;
             }
 
-            Random random = new Random();
+            Random random = Random.Shared;
             int randomNum = random.Next(Cards.Count);
 
             ret = Cards[randomNum];
