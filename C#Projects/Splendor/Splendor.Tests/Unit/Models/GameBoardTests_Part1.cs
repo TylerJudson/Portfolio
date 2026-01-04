@@ -676,7 +676,8 @@ public class GameBoardTests_Part1
 
         // Assert
         AssertionHelpers.AssertTurnRequiresContinueAction(result, 0);
-        result.ContinueAction!.Message.Should().Contain("get rid of", "player should be prompted to return tokens");
+        result.ContinueAction!.Message.Should().Contain("return", "player should be prompted to return tokens");
+        result.ContinueAction!.Message.Should().Contain("token", "message should mention tokens");
     }
 
     #endregion

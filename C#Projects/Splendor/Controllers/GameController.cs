@@ -75,7 +75,7 @@ namespace Splendor.Controllers
             }
 
             _logger.LogWarning("Game {GameId} not found for player {PlayerId}", gameId, playerId);
-            return Redirect("~/ ");
+            return Redirect("~/");
         }
 
 
@@ -165,10 +165,14 @@ namespace Splendor.Controllers
                 else if (completedTurn.ContinueAction != null)
                 {
                     _logger.LogDebug("Turn in game {GameId} requires continue action", gameId);
+                    // Save state even with continue action
+                    await _gameRepository.UpdateGameAsync(gameId, gameBoard);
                     return Json(ApiResponse<IContinueAction>.Ok(completedTurn.ContinueAction));
                 }
             }
 
+            // Persist the updated game state
+            await _gameRepository.UpdateGameAsync(gameId, gameBoard);
             _logger.LogDebug("Turn completed successfully for game {GameId}, player {PlayerId}", gameId, playerId);
             return Json(ApiResponse<IGameBoard>.Ok(gameBoard));
         }
@@ -237,9 +241,13 @@ namespace Splendor.Controllers
             else if (completedTurn.ContinueAction != null)
             {
                 _logger.LogDebug("Purchase in game {GameId} requires continue action", gameId);
+                // Save state even with continue action
+                await _gameRepository.UpdateGameAsync(gameId, gameBoard);
                 return Json(ApiResponse<IContinueAction>.Ok(completedTurn.ContinueAction));
             }
 
+            // Persist the updated game state
+            await _gameRepository.UpdateGameAsync(gameId, gameBoard);
             _logger.LogDebug("Purchase completed successfully for game {GameId}, player {PlayerId}", gameId, playerId);
             return Json(ApiResponse<IGameBoard>.Ok(gameBoard));
         }
@@ -298,9 +306,13 @@ namespace Splendor.Controllers
             else if (completedTurn.ContinueAction != null)
             {
                 _logger.LogDebug("Reserve in game {GameId} requires continue action", gameId);
+                // Save state even with continue action
+                await _gameRepository.UpdateGameAsync(gameId, gameBoard);
                 return Json(ApiResponse<IContinueAction>.Ok(completedTurn.ContinueAction));
             }
 
+            // Persist the updated game state
+            await _gameRepository.UpdateGameAsync(gameId, gameBoard);
             _logger.LogDebug("Reserve completed successfully for game {GameId}, player {PlayerId}", gameId, playerId);
             return Json(ApiResponse<IGameBoard>.Ok(gameBoard));
         }
@@ -343,6 +355,14 @@ namespace Splendor.Controllers
 
             INoble? noble = _nobleLookup.FindNobleByImageName(gameBoard, sanitizedImageName);
 
+            if (noble == null)
+            {
+                _logger.LogWarning("Noble not found: {ImageName}. Available nobles: {Nobles}",
+                    sanitizedImageName,
+                    string.Join(", ", gameBoard.Nobles.Select(n => n.ImageName)));
+                return Json(ApiResponse<IError>.Ok(new Models.Implementation.Error("Noble not found on the board", 10)));
+            }
+
             ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(noble));
 
             if (completedTurn.Error != null)
@@ -353,9 +373,13 @@ namespace Splendor.Controllers
             else if (completedTurn.ContinueAction != null)
             {
                 _logger.LogDebug("Noble in game {GameId} requires continue action", gameId);
+                // Save state even with continue action
+                await _gameRepository.UpdateGameAsync(gameId, gameBoard);
                 return Json(ApiResponse<IContinueAction>.Ok(completedTurn.ContinueAction));
             }
 
+            // Persist the updated game state
+            await _gameRepository.UpdateGameAsync(gameId, gameBoard);
             _logger.LogDebug("Noble completed successfully for game {GameId}, player {PlayerId}", gameId, playerId);
             return Json(ApiResponse<IGameBoard>.Ok(gameBoard));
         }
@@ -397,7 +421,14 @@ namespace Splendor.Controllers
                     _logger.LogWarning("Invalid ReservingCardImageName in Return call: {ImageName}", returnRequest.ReservingCardImageName);
                     return Json(ApiResponse<string>.Fail("Invalid image name format", 400));
                 }
+                // First try to find the card on the board
                 card = _cardLookup.FindCardByImageName(gameBoard, sanitizedImageName);
+                // If not found on board, it may have been reserved - check player's reserved cards
+                if (card == null)
+                {
+                    IPlayer currentPlayer = gameBoard.Players[gameBoard.CurrentPlayer];
+                    card = _cardLookup.FindReservedCardByImageName(currentPlayer, sanitizedImageName);
+                }
             }
 
             ICompletedTurn completedTurn = gameBoard.ExecuteTurn(new Turn(returnRequest.Tokens, card));
@@ -410,9 +441,13 @@ namespace Splendor.Controllers
             else if (completedTurn.ContinueAction != null)
             {
                 _logger.LogDebug("Return in game {GameId} requires continue action", gameId);
+                // Save state even with continue action
+                await _gameRepository.UpdateGameAsync(gameId, gameBoard);
                 return Json(ApiResponse<IContinueAction>.Ok(completedTurn.ContinueAction));
             }
 
+            // Persist the updated game state
+            await _gameRepository.UpdateGameAsync(gameId, gameBoard);
             _logger.LogDebug("Return completed successfully for game {GameId}, player {PlayerId}", gameId, playerId);
             return Json(ApiResponse<IGameBoard>.Ok(gameBoard));
         }
@@ -442,6 +477,8 @@ namespace Splendor.Controllers
             }
 
             gameBoard.IsPaused = true;
+            // Persist the updated game state
+            await _gameRepository.UpdateGameAsync(gameId, gameBoard);
             _logger.LogInformation("Game {GameId} paused by player {PlayerId}", gameId, playerId);
             return Json(ApiResponse<string>.Ok("Game paused"));
         }
@@ -471,8 +508,60 @@ namespace Splendor.Controllers
             }
 
             gameBoard.IsPaused = false;
+            // Persist the updated game state
+            await _gameRepository.UpdateGameAsync(gameId, gameBoard);
             _logger.LogInformation("Game {GameId} resumed by player {PlayerId}", gameId, playerId);
             return Json(ApiResponse<string>.Ok("Game resumed"));
+        }
+
+        [HttpPost]
+        [Route("Game/CancelTurn/{gameId:int}/{playerId:int}")]
+        public async Task<JsonResult> CancelTurn(
+            [Range(1, int.MaxValue)] int gameId,
+            [Range(0, int.MaxValue)] int playerId)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = string.Join(", ", ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage));
+                _logger.LogWarning("Validation failed in CancelTurn: {Errors}", errors);
+                return Json(ApiResponse<string>.Fail($"Validation failed: {errors}", 400));
+            }
+
+            _logger.LogDebug("CancelTurn called for game {GameId}, player {PlayerId}", gameId, playerId);
+
+            IGameBoard? gameBoard = await _gameRepository.GetGameAsync(gameId);
+            if (gameBoard == null)
+            {
+                _logger.LogWarning("Game {GameId} not found in CancelTurn", gameId);
+                return Json(ApiResponse<string>.Fail("Game not found", 404));
+            }
+
+            // Verify the current player is the one cancelling
+            if (gameBoard.Players[gameBoard.CurrentPlayer].Id != playerId)
+            {
+                _logger.LogWarning("Player {PlayerId} attempted to cancel turn but it's player {CurrentPlayer}'s turn in game {GameId}",
+                    playerId, gameBoard.Players[gameBoard.CurrentPlayer].Id, gameId);
+                return Json(ApiResponse<string>.Fail("It's not your turn", 403));
+            }
+
+            // Log the current state for debugging
+            _logger.LogWarning("CancelTurn debug - LastTurn exists: {LastTurnExists}, ContinueAction exists: {ContinueActionExists}",
+                gameBoard.LastTurn != null,
+                gameBoard.LastTurn?.ContinueAction != null);
+
+            bool success = gameBoard.CancelPendingTurn();
+            if (!success)
+            {
+                _logger.LogWarning("No pending turn to cancel for game {GameId}, player {PlayerId}", gameId, playerId);
+                return Json(ApiResponse<string>.Fail("No pending action to cancel", 400));
+            }
+
+            // Persist the updated game state
+            await _gameRepository.UpdateGameAsync(gameId, gameBoard);
+            _logger.LogInformation("Turn cancelled successfully for game {GameId}, player {PlayerId}", gameId, playerId);
+            return Json(ApiResponse<IGameBoard>.Ok(gameBoard));
         }
 
         /// <summary>

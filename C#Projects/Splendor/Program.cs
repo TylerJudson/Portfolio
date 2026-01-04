@@ -36,8 +36,8 @@ builder.Services.AddScoped<Splendor.Services.Lookup.IPlayerLookupService, Splend
 
 // Register game management services
 builder.Services.AddScoped<Splendor.Services.Game.IGameActivationService, Splendor.Services.Game.GameActivationService>();
-builder.Services.AddSingleton<Splendor.Services.Game.IGameCleanupService, Splendor.Services.Game.GameCleanupService>();
-builder.Services.AddSingleton<Splendor.Services.Game.IGameIdGenerator, Splendor.Services.Game.GameIdGenerator>();
+builder.Services.AddScoped<Splendor.Services.Game.IGameCleanupService, Splendor.Services.Game.GameCleanupService>();
+builder.Services.AddScoped<Splendor.Services.Game.IGameIdGenerator, Splendor.Services.Game.GameIdGenerator>();
 builder.Services.AddScoped<Splendor.Services.Game.IPlayerIdAssignmentService, Splendor.Services.Game.PlayerIdAssignmentService>();
 
 // Configure rate limiting to prevent abuse

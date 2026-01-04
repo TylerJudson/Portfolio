@@ -18,6 +18,12 @@
         ICard? ReservedCard { get; }
 
         /// <summary>
+        /// The deck level to reserve from (for blind reservation from deck)
+        /// 0 = not reserving from deck, 1-3 = level to reserve from
+        /// </summary>
+        uint ReserveDeckLevel { get; }
+
+        /// <summary>
         /// The noble achevied during a given turn
         /// </summary>
         INoble? Noble { get; }

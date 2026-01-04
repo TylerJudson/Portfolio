@@ -450,12 +450,13 @@ public class GameBoardTests_Part2
         // Act
         var result = board.ExecuteTurn(turn);
 
-        // Assert - Continue action code 2 means "return tokens for reserved card"
-        // Note: The player must discard tokens BEFORE the card is actually reserved
-        // This is why we check for the continue action, but the card won't be in
-        // reserved cards until the player returns tokens and completes the action
+        // Assert - Continue action code 0 means "return tokens"
+        // Note: The card IS reserved and gold IS given, then continue action is returned
+        // The player must then return 1 token in a subsequent turn to complete the action
         AssertionHelpers.AssertTurnRequiresTokenReturnForReserve(result);
-        player.ReservedCards.Should().BeEmpty("card should not be reserved until player returns tokens");
+        player.ReservedCards.Should().Contain(cardToReserve, "card should be reserved even when gold causes overflow");
+        player.NumberOfTokens().Should().Be(11, "should have 10 + 1 gold");
+        player.Tokens[Token.Gold].Should().Be(1, "should have received gold token");
     }
 
     #endregion

@@ -99,7 +99,7 @@ namespace Splendor.Serialization
                 return ProcessCardPurchase(turn);
             }
 
-            if (turn.ReservedCard != null)
+            if (turn.ReservedCard != null || turn.ReserveDeckLevel > 0)
             {
                 return ProcessCardReservation(turn);
             }
@@ -212,15 +212,54 @@ namespace Splendor.Serialization
 
         private ICompletedTurn ProcessCardReservation(ITurn turn)
         {
-            // Only execute player turn if we haven't already (when taking tokens at the same time)
-            if (turn.TakenTokens == null)
+            ICard? cardToReserve = null;
+
+            // Handle blind deck reservation
+            if (turn.ReserveDeckLevel > 0)
             {
-                ICompletedTurn playersCompletedTurn = _players[CurrentPlayer].ExecuteTurn(turn, _tokenStacks[Token.Gold] > 0);
+                // Draw from the specified deck
+                ICard? drawnCard = turn.ReserveDeckLevel switch
+                {
+                    1 => CardStackLevel1.Draw(),
+                    2 => CardStackLevel2.Draw(),
+                    3 => CardStackLevel3.Draw(),
+                    _ => null
+                };
+
+                if (drawnCard == null)
+                {
+                    return new CompletedTurn(new Error("Cannot reserve from empty deck", 9));
+                }
+
+                cardToReserve = drawnCard;
+
+                // Create a temporary turn with the drawn card for player execution
+                var tempTurn = new Turn(drawnCard, isReserve: true);
+                ICompletedTurn playersCompletedTurn = _players[CurrentPlayer].ExecuteTurn(tempTurn, _tokenStacks[Token.Gold] > 0);
 
                 if (playersCompletedTurn.Error != null || playersCompletedTurn.ContinueAction != null)
                 {
                     return playersCompletedTurn;
                 }
+            }
+            else
+            {
+                // Normal reservation from visible cards
+                cardToReserve = turn.ReservedCard;
+
+                // Only execute player turn if we haven't already (when taking tokens at the same time)
+                if (turn.TakenTokens == null)
+                {
+                    ICompletedTurn playersCompletedTurn = _players[CurrentPlayer].ExecuteTurn(turn, _tokenStacks[Token.Gold] > 0);
+
+                    if (playersCompletedTurn.Error != null || playersCompletedTurn.ContinueAction != null)
+                    {
+                        return playersCompletedTurn;
+                    }
+                }
+
+                // Replace the reserved card from the shop
+                ReplaceCardFromStack(turn.ReservedCard!);
             }
 
             // Give gold token if available
@@ -228,9 +267,6 @@ namespace Splendor.Serialization
             {
                 _tokenStacks[Token.Gold]--;
             }
-
-            // Replace the reserved card from the shop
-            ReplaceCardFromStack(turn.ReservedCard!);
 
             return FinalizeTurn(turn);
         }
@@ -332,6 +368,97 @@ namespace Splendor.Serialization
                     _level3Cards[Array.IndexOf(_level3Cards, card)] = CardStackLevel3.Draw();
                     break;
             }
+        }
+
+        public IPlayer? GetWinner()
+        {
+            // Only return a winner if the game is over
+            if (!GameOver)
+            {
+                return null;
+            }
+
+            // Find player(s) with highest prestige
+            uint maxPrestige = _players.Max(p => p.PrestigePoints);
+            var topPlayers = _players.Where(p => p.PrestigePoints == maxPrestige).ToList();
+
+            // If only one player has the max prestige, they win
+            if (topPlayers.Count == 1)
+            {
+                return topPlayers[0];
+            }
+
+            // Tie-breaker: player with fewest development cards wins
+            return topPlayers.OrderBy(p => p.Cards.Count).First();
+        }
+
+        public bool CancelPendingTurn()
+        {
+            // Check if there's a pending continue action to cancel
+            if (LastTurn?.ContinueAction == null)
+            {
+                return false;
+            }
+
+            IPlayer currentPlayer = _players[CurrentPlayer];
+
+            // If this was a card reservation, we need to reverse the state changes
+            if (LastTurn.ReservedCard != null || LastTurn.ReserveDeckLevel > 0)
+            {
+                // Find the reserved card - it should be the last one added
+                ICard? reservedCard = currentPlayer.ReservedCards.LastOrDefault();
+
+                if (reservedCard != null)
+                {
+                    // Remove the card from player's reserved cards
+                    currentPlayer.RemoveReservedCard(reservedCard);
+
+                    // Return gold token to board (if player received one)
+                    currentPlayer.RemoveTokens(Token.Gold, 1);
+                    _tokenStacks[Token.Gold]++;
+
+                    // Put the card back on the board in an empty slot at its level
+                    RestoreCardToBoard(reservedCard);
+                }
+            }
+
+            // Remove the turn from the list
+            if (_turns.Count > 0 && _turns[0] == LastTurn)
+            {
+                _turns.RemoveAt(0);
+            }
+
+            // Update LastTurn to previous turn (or null if no turns left)
+            LastTurn = _turns.Count > 0 ? _turns[0] : null;
+
+            // Increment version so clients refresh
+            Version++;
+
+            return true;
+        }
+
+        private void RestoreCardToBoard(ICard card)
+        {
+            ICard?[] levelCards = card.Level switch
+            {
+                1 => _level1Cards,
+                2 => _level2Cards,
+                3 => _level3Cards,
+                _ => _level1Cards
+            };
+
+            // Find an empty slot to put the card back
+            for (int i = 0; i < levelCards.Length; i++)
+            {
+                if (levelCards[i] == null)
+                {
+                    levelCards[i] = card;
+                    return;
+                }
+            }
+
+            // If no empty slot, replace the first card
+            levelCards[0] = card;
         }
     }
 
@@ -609,6 +736,16 @@ namespace Splendor.Serialization
             }
             return ret;
         }
+
+        public void RemoveTokens(Token type, int count)
+        {
+            _tokens[type] = Math.Max(0, _tokens[type] - count);
+        }
+
+        public void RemoveReservedCard(ICard card)
+        {
+            _reservedCards.Remove(card);
+        }
     }
 
     /// <summary>
@@ -620,6 +757,7 @@ namespace Splendor.Serialization
         public IReadOnlyDictionary<Token, int>? TakenTokens => _takenTokens;
         public ICard? Card { get; set; }
         public ICard? ReservedCard { get; set; }
+        public uint ReserveDeckLevel { get; set; }
         public INoble? Noble { get; set; }
         public IContinueAction? ContinueAction { get; set; }
         public string? PlayerName { get; set; }
@@ -629,6 +767,7 @@ namespace Splendor.Serialization
             Dictionary<Token, int>? takenTokens,
             ICard? card,
             ICard? reservedCard,
+            uint reserveDeckLevel,
             INoble? noble,
             IContinueAction? continueAction,
             string? playerName,
@@ -637,6 +776,7 @@ namespace Splendor.Serialization
             _takenTokens = takenTokens;
             Card = card;
             ReservedCard = reservedCard;
+            ReserveDeckLevel = reserveDeckLevel;
             Noble = noble;
             ContinueAction = continueAction;
             PlayerName = playerName;

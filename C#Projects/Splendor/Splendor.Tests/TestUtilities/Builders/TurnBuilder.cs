@@ -175,4 +175,12 @@ public class TurnBuilder
             { token, 3 }
         });
     }
+
+    /// <summary>
+    /// Creates a turn reserving a card from the deck (blind reservation).
+    /// </summary>
+    public static Turn ReserveFromDeck(uint level)
+    {
+        return new Turn(level);
+    }
 }

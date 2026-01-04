@@ -90,6 +90,25 @@
                 return new CompletedTurn(new Error("The game has ended", 8));
             }
 
+            // Validate that only ONE action type is specified (cannot combine actions)
+            // Note: Token returns (all negative values) don't count as an action since they complete a previous action
+            int actionCount = 0;
+
+            // Only count token taking as an action if there are POSITIVE tokens (taking, not just returning)
+            if (turn.TakenTokens != null && turn.TakenTokens.Any(kvp => kvp.Value > 0))
+            {
+                actionCount++;
+            }
+
+            if (turn.Card != null) actionCount++;
+            if (turn.ReservedCard != null || turn.ReserveDeckLevel > 0) actionCount++;
+            if (turn.Noble != null) actionCount++;
+
+            if (actionCount > 1)
+            {
+                return new CompletedTurn(new Error("Cannot perform multiple actions in one turn", 11));
+            }
+
             // Determine which type of turn this is and delegate to appropriate handler
             if (turn.TakenTokens != null)
             {
@@ -101,7 +120,7 @@
                 return ProcessCardPurchase(turn);
             }
 
-            if (turn.ReservedCard != null)
+            if (turn.ReservedCard != null || turn.ReserveDeckLevel > 0)
             {
                 return ProcessCardReservation(turn);
             }
@@ -126,20 +145,26 @@
                 }
             }
 
+            // Check that there's at least some token activity (taking or returning, not all zeros)
+            if (positiveTakenTokens.Count == 0 && !turn.TakenTokens.Any(kvp => kvp.Value < 0))
+            {
+                return new CompletedTurn(new Error("You must specify tokens to take or return", 11));
+            }
+
             if (positiveTakenTokens.Count > GameConstants.MaxTokenTypes)
             {
                 return new CompletedTurn(new Error("You can't take more than 3 types of token", 4));
             }
 
-            if (turn.TakenTokens.ContainsKey(Token.Gold))
+            if (positiveTakenTokens.ContainsKey(Token.Gold))
             {
                 return new CompletedTurn(new Error("You can't take gold tokens", 6));
             }
 
-            // Validate based on number of token types taken
-            if (turn.TakenTokens.Count > 1)
+            // Validate based on number of token types taken (only count positive values)
+            if (positiveTakenTokens.Count > 1)
             {
-                foreach (KeyValuePair<Token, int> kvp in turn.TakenTokens)
+                foreach (KeyValuePair<Token, int> kvp in positiveTakenTokens)
                 {
                     if (_tokenStacks[kvp.Key] < kvp.Value)
                     {
@@ -153,7 +178,7 @@
             }
             else
             {
-                foreach (KeyValuePair<Token, int> kvp in turn.TakenTokens)
+                foreach (KeyValuePair<Token, int> kvp in positiveTakenTokens)
                 {
                     if (kvp.Value > 2)
                     {
@@ -170,8 +195,19 @@
             // Execute the turn for the player
             ICompletedTurn playersCompletedTurn = _players[CurrentPlayer].ExecuteTurn(turn, _tokenStacks[Token.Gold] > 0);
 
-            if (playersCompletedTurn.Error != null || playersCompletedTurn.ContinueAction != null)
+            if (playersCompletedTurn.Error != null)
             {
+                return playersCompletedTurn;
+            }
+
+            if (playersCompletedTurn.ContinueAction != null)
+            {
+                // Increment version so frontend knows to refresh state
+                Version++;
+                turn.PlayerName = _players[CurrentPlayer].Name;
+                _turns.Insert(0, turn);
+                LastTurn = turn;
+                LastTurn.ContinueAction = playersCompletedTurn.ContinueAction;
                 return playersCompletedTurn;
             }
 
@@ -188,6 +224,23 @@
         {
             // Check if the card was in reserved cards BEFORE executing the turn
             bool wasReservedCard = _players[CurrentPlayer].ReservedCards.Contains(turn.Card!);
+
+            // If not a reserved card, validate it's on the board
+            if (!wasReservedCard)
+            {
+                bool cardOnBoard = turn.Card!.Level switch
+                {
+                    1 => _level1Cards.Contains(turn.Card),
+                    2 => _level2Cards.Contains(turn.Card),
+                    3 => _level3Cards.Contains(turn.Card),
+                    _ => false
+                };
+
+                if (!cardOnBoard)
+                {
+                    return new CompletedTurn(new Error("Card is not available for purchase", 11));
+                }
+            }
 
             // Execute the turn for the player
             ICompletedTurn playersCompletedTurn = _players[CurrentPlayer].ExecuteTurn(turn, _tokenStacks[Token.Gold] > 0);
@@ -217,25 +270,89 @@
 
         private ICompletedTurn ProcessCardReservation(ITurn turn)
         {
-            // Only execute player turn if we haven't already (when taking tokens at the same time)
-            if (turn.TakenTokens == null)
-            {
-                ICompletedTurn playersCompletedTurn = _players[CurrentPlayer].ExecuteTurn(turn, _tokenStacks[Token.Gold] > 0);
+            ICard? cardToReserve = null;
+            ICompletedTurn? playersCompletedTurn = null;
 
-                if (playersCompletedTurn.Error != null || playersCompletedTurn.ContinueAction != null)
+            // Handle blind deck reservation
+            if (turn.ReserveDeckLevel > 0)
+            {
+                // Draw from the specified deck
+                ICard? drawnCard = turn.ReserveDeckLevel switch
+                {
+                    1 => CardStackLevel1.Draw(),
+                    2 => CardStackLevel2.Draw(),
+                    3 => CardStackLevel3.Draw(),
+                    _ => null
+                };
+
+                if (drawnCard == null)
+                {
+                    return new CompletedTurn(new Error("Cannot reserve from empty deck", 9));
+                }
+
+                cardToReserve = drawnCard;
+
+                // Create a temporary turn with the drawn card for player execution
+                var tempTurn = new Turn(drawnCard, isReserve: true);
+                playersCompletedTurn = _players[CurrentPlayer].ExecuteTurn(tempTurn, _tokenStacks[Token.Gold] > 0);
+
+                // Return immediately if there's an error
+                if (playersCompletedTurn.Error != null)
                 {
                     return playersCompletedTurn;
                 }
             }
+            else
+            {
+                // Normal reservation from visible cards
+                cardToReserve = turn.ReservedCard;
 
-            // Give gold token if available
+                // Validate the card is on the board
+                bool cardOnBoard = turn.ReservedCard!.Level switch
+                {
+                    1 => _level1Cards.Contains(turn.ReservedCard),
+                    2 => _level2Cards.Contains(turn.ReservedCard),
+                    3 => _level3Cards.Contains(turn.ReservedCard),
+                    _ => false
+                };
+
+                if (!cardOnBoard)
+                {
+                    return new CompletedTurn(new Error("Card is not available for reservation", 11));
+                }
+
+                // Only execute player turn if we haven't already (when taking tokens at the same time)
+                if (turn.TakenTokens == null)
+                {
+                    playersCompletedTurn = _players[CurrentPlayer].ExecuteTurn(turn, _tokenStacks[Token.Gold] > 0);
+
+                    // Return immediately if there's an error
+                    if (playersCompletedTurn.Error != null)
+                    {
+                        return playersCompletedTurn;
+                    }
+                }
+
+                // Replace the reserved card from the shop
+                ReplaceCardFromStack(turn.ReservedCard!);
+            }
+
+            // Remove gold token from board if available (even if continue action is needed)
             if (_tokenStacks[Token.Gold] > 0)
             {
                 _tokenStacks[Token.Gold]--;
             }
 
-            // Replace the reserved card from the shop
-            ReplaceCardFromStack(turn.ReservedCard!);
+            // If continue action is needed (player must return tokens), increment version but don't advance turn
+            if (playersCompletedTurn?.ContinueAction != null)
+            {
+                Version++;
+                turn.PlayerName = _players[CurrentPlayer].Name;
+                _turns.Insert(0, turn);
+                LastTurn = turn;
+                LastTurn.ContinueAction = playersCompletedTurn.ContinueAction;
+                return playersCompletedTurn;
+            }
 
             return FinalizeTurn(turn);
         }
@@ -339,6 +456,101 @@
             }
         }
 
+        public IPlayer? GetWinner()
+        {
+            // Only return a winner if the game is over
+            if (!GameOver)
+            {
+                return null;
+            }
+
+            // Find player(s) with highest prestige
+            uint maxPrestige = _players.Max(p => p.PrestigePoints);
+            var topPlayers = _players.Where(p => p.PrestigePoints == maxPrestige).ToList();
+
+            // If only one player has the max prestige, they win
+            if (topPlayers.Count == 1)
+            {
+                return topPlayers[0];
+            }
+
+            // Tie-breaker: player with fewest development cards wins
+            return topPlayers.OrderBy(p => p.Cards.Count).First();
+        }
+
+        public bool CancelPendingTurn()
+        {
+            // Check if there's a pending continue action to cancel
+            if (LastTurn?.ContinueAction == null)
+            {
+                return false;
+            }
+
+            IPlayer currentPlayer = _players[CurrentPlayer];
+
+            // If this was a card reservation, we need to reverse the state changes
+            if (LastTurn.ReservedCard != null || LastTurn.ReserveDeckLevel > 0)
+            {
+                // Find the reserved card - it should be the last one added
+                ICard? reservedCard = currentPlayer.ReservedCards.LastOrDefault();
+
+                if (reservedCard != null)
+                {
+                    // Remove the card from player's reserved cards
+                    currentPlayer.RemoveReservedCard(reservedCard);
+
+                    // Return gold token to board (if player received one)
+                    // Check if gold was given by looking at whether board had gold when reservation happened
+                    // The gold was taken from board in ProcessCardReservation, so we return it
+                    currentPlayer.RemoveTokens(Token.Gold, 1);
+                    _tokenStacks[Token.Gold]++;
+
+                    // Put the card back on the board in an empty slot at its level
+                    RestoreCardToBoard(reservedCard);
+                }
+            }
+
+            // Token taking: No state to reverse - tokens weren't added to player yet
+            // (Player.TakeTokens returns ContinueAction BEFORE adding tokens)
+
+            // Remove the turn from the list
+            if (_turns.Count > 0 && _turns[0] == LastTurn)
+            {
+                _turns.RemoveAt(0);
+            }
+
+            // Update LastTurn to previous turn (or null if no turns left)
+            LastTurn = _turns.Count > 0 ? _turns[0] : null;
+
+            // Increment version so clients refresh
+            Version++;
+
+            return true;
+        }
+
+        private void RestoreCardToBoard(ICard card)
+        {
+            ICard?[] levelCards = card.Level switch
+            {
+                1 => _level1Cards,
+                2 => _level2Cards,
+                3 => _level3Cards,
+                _ => _level1Cards
+            };
+
+            // Find an empty slot to put the card back
+            for (int i = 0; i < levelCards.Length; i++)
+            {
+                if (levelCards[i] == null)
+                {
+                    levelCards[i] = card;
+                    return;
+                }
+            }
+
+            // If no empty slot, replace the first card (shouldn't happen normally)
+            levelCards[0] = card;
+        }
 
     }
 }

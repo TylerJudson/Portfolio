@@ -26,6 +26,9 @@ let PlayerTokens = {
     Gold:     document.getElementById("PlayerGoldTokenValue").innerHTML
 }
 
+// The merged view of PlayerTokens + TakingTokens shown during token return
+let DisplayTokens = {};
+
 
 // Wether or not another screen is visible
 let OtherScreen = false;
@@ -374,7 +377,9 @@ function TokenClick(token) {
 
 function SetReturningTokens() {
     document.getElementById("EmeraldReturningTokenValue").innerHTML = ReturningTokens.Emerald == undefined ? 0 : ReturningTokens.Emerald;
-    document.getElementById("PlayerEmeraldTokenValue").innerHTML = PlayerTokens.Emerald;
+    // Show DisplayTokens - ReturningTokens (the tokens player will have after returning)
+    let emeraldDisplay = (DisplayTokens.Emerald || 0) - (ReturningTokens.Emerald || 0);
+    document.getElementById("PlayerEmeraldTokenValue").innerHTML = emeraldDisplay;
     if (ReturningTokens.Emerald == 0) {
         document.getElementById("EmeraldReturningToken").style.opacity = 0;
         document.getElementById("EmeraldReturningToken").style.cursor = "default";
@@ -382,7 +387,7 @@ function SetReturningTokens() {
     }
 
     document.getElementById("SapphireReturningTokenValue").innerHTML = ReturningTokens.Sapphire == undefined ? 0 : ReturningTokens.Sapphire;
-    document.getElementById("PlayerSapphireTokenValue").innerHTML = PlayerTokens.Sapphire;
+    document.getElementById("PlayerSapphireTokenValue").innerHTML = (DisplayTokens.Sapphire || 0) - (ReturningTokens.Sapphire || 0);
     if (ReturningTokens.Sapphire == 0) {
         document.getElementById("SapphireReturningToken").style.opacity = 0;
         document.getElementById("SapphireReturningToken").style.cursor = "default";
@@ -390,7 +395,7 @@ function SetReturningTokens() {
     }
 
     document.getElementById("RubyReturningTokenValue").innerHTML = ReturningTokens.Ruby == undefined ? 0 : ReturningTokens.Ruby;
-    document.getElementById("PlayerRubyTokenValue").innerHTML = PlayerTokens.Ruby;
+    document.getElementById("PlayerRubyTokenValue").innerHTML = (DisplayTokens.Ruby || 0) - (ReturningTokens.Ruby || 0);
     if (ReturningTokens.Ruby == 0) {
         document.getElementById("RubyReturningToken").style.opacity = 0;
         document.getElementById("RubyReturningToken").style.cursor = "default";
@@ -398,7 +403,7 @@ function SetReturningTokens() {
     }
 
     document.getElementById("DiamondReturningTokenValue").innerHTML = ReturningTokens.Diamond == undefined ? 0 : ReturningTokens.Diamond;
-    document.getElementById("PlayerDiamondTokenValue").innerHTML = PlayerTokens.Diamond;
+    document.getElementById("PlayerDiamondTokenValue").innerHTML = (DisplayTokens.Diamond || 0) - (ReturningTokens.Diamond || 0);
     if (ReturningTokens.Diamond == 0) {
         document.getElementById("DiamondReturningToken").style.opacity = 0;
         document.getElementById("DiamondReturningToken").style.cursor = "default";
@@ -406,7 +411,7 @@ function SetReturningTokens() {
     }
 
     document.getElementById("OnyxReturningTokenValue").innerHTML = ReturningTokens.Onyx == undefined ? 0 : ReturningTokens.Onyx;
-    document.getElementById("PlayerOnyxTokenValue").innerHTML = PlayerTokens.Onyx;
+    document.getElementById("PlayerOnyxTokenValue").innerHTML = (DisplayTokens.Onyx || 0) - (ReturningTokens.Onyx || 0);
     if (ReturningTokens.Onyx == 0) {
         document.getElementById("OnyxReturningToken").style.opacity = 0;
         document.getElementById("OnyxReturningToken").style.cursor = "default";
@@ -414,7 +419,7 @@ function SetReturningTokens() {
     }
 
     document.getElementById("GoldReturningTokenValue").innerHTML = ReturningTokens.Gold == undefined ? 0 : ReturningTokens.Gold;
-    document.getElementById("PlayerGoldTokenValue").innerHTML = PlayerTokens.Gold;
+    document.getElementById("PlayerGoldTokenValue").innerHTML = (DisplayTokens.Gold || 0) - (ReturningTokens.Gold || 0);
     if (ReturningTokens.Gold == 0) {
         document.getElementById("GoldReturningToken").style.opacity = 0;
         document.getElementById("GoldReturningToken").style.cursor = "default";
@@ -423,58 +428,59 @@ function SetReturningTokens() {
 }
 
 function ReturnTokenClick(token, tokensToReturn) {
-
-    // If we click on the returning tokens
+    // If we click on the returning tokens (to un-select them)
     switch (token) {
         case "ReturningEmerald":
             if (ReturningTokens.Emerald > 0) {
-                PlayerTokens.Emerald++;
                 ReturningTokens.Emerald--;
             }
             break;
         case "ReturningSapphire":
             if (ReturningTokens.Sapphire > 0) {
-                PlayerTokens.Sapphire++;
                 ReturningTokens.Sapphire--;
             }
             break;
         case "ReturningRuby":
             if (ReturningTokens.Ruby > 0) {
-                PlayerTokens.Ruby++;
                 ReturningTokens.Ruby--;
             }
             break;
         case "ReturningDiamond":
             if (ReturningTokens.Diamond > 0) {
-                PlayerTokens.Diamond++;
                 ReturningTokens.Diamond--;
             }
             break;
         case "ReturningOnyx":
             if (ReturningTokens.Onyx > 0) {
-                PlayerTokens.Onyx++;
                 ReturningTokens.Onyx--;
             }
             break;
         case "ReturningGold":
             if (ReturningTokens.Gold > 0) {
-                PlayerTokens.Gold++;
                 ReturningTokens.Gold--;
             }
             break;
     }
 
-    if (tokensToReturn <= CountTokens(ReturningTokens)) {
+    // Stop accepting more token selections once we've selected enough to return
+    if (CountTokens(ReturningTokens) >= tokensToReturn) {
+        SetReturningTokens();
         return;
     }
 
 
-    // If we click on the tokens
+    // If we click on the player's tokens (to select them for return)
+    // Check if there are tokens available to return (DisplayTokens - already selected ReturningTokens)
+    let availableEmerald = (DisplayTokens.Emerald || 0) - (ReturningTokens.Emerald || 0);
+    let availableSapphire = (DisplayTokens.Sapphire || 0) - (ReturningTokens.Sapphire || 0);
+    let availableRuby = (DisplayTokens.Ruby || 0) - (ReturningTokens.Ruby || 0);
+    let availableDiamond = (DisplayTokens.Diamond || 0) - (ReturningTokens.Diamond || 0);
+    let availableOnyx = (DisplayTokens.Onyx || 0) - (ReturningTokens.Onyx || 0);
+    let availableGold = (DisplayTokens.Gold || 0) - (ReturningTokens.Gold || 0);
+
     switch (token) {
         case "Emerald":
-            if (PlayerTokens.Emerald > 0) {
-
-                PlayerTokens.Emerald--;
+            if (availableEmerald > 0) {
                 document.getElementById("EmeraldReturningToken").style.opacity = 7.5;
                 document.getElementById("EmeraldReturningToken").style.cursor = "pointer";
 
@@ -487,9 +493,7 @@ function ReturnTokenClick(token, tokensToReturn) {
             break;
 
         case "Sapphire":
-            if (PlayerTokens.Sapphire > 0) {
-
-                PlayerTokens.Sapphire--;
+            if (availableSapphire > 0) {
                 document.getElementById("SapphireReturningToken").style.opacity = 7.5;
                 document.getElementById("SapphireReturningToken").style.cursor = "pointer";
 
@@ -502,9 +506,7 @@ function ReturnTokenClick(token, tokensToReturn) {
             break;
 
         case "Ruby":
-            if (PlayerTokens.Ruby > 0) {
-
-                PlayerTokens.Ruby--;
+            if (availableRuby > 0) {
                 document.getElementById("RubyReturningToken").style.opacity = 7.5;
                 document.getElementById("RubyReturningToken").style.cursor = "pointer";
 
@@ -517,9 +519,7 @@ function ReturnTokenClick(token, tokensToReturn) {
             break;
 
         case "Diamond":
-            if (PlayerTokens.Diamond > 0) {
-
-                PlayerTokens.Diamond--;
+            if (availableDiamond > 0) {
                 document.getElementById("DiamondReturningToken").style.opacity = 7.5;
                 document.getElementById("DiamondReturningToken").style.cursor = "pointer";
 
@@ -532,9 +532,7 @@ function ReturnTokenClick(token, tokensToReturn) {
             break;
 
         case "Onyx":
-            if (PlayerTokens.Onyx > 0) {
-
-                PlayerTokens.Onyx--;
+            if (availableOnyx > 0) {
                 document.getElementById("OnyxReturningToken").style.opacity = 7.5;
                 document.getElementById("OnyxReturningToken").style.cursor = "pointer";
 
@@ -546,9 +544,7 @@ function ReturnTokenClick(token, tokensToReturn) {
             }
             break;
         case "Gold":
-            if (PlayerTokens.Gold > 0) {
-
-                PlayerTokens.Gold--;
+            if (availableGold > 0) {
                 document.getElementById("GoldReturningToken").style.opacity = 7.5;
                 document.getElementById("GoldReturningToken").style.cursor = "pointer";
 
@@ -559,15 +555,15 @@ function ReturnTokenClick(token, tokensToReturn) {
                 }
             }
             break;
-
-
     }
-
 
     SetReturningTokens();
 
+    // Enable return button once we've selected exactly the right number of tokens
+    let totalReturned = CountTokens(ReturningTokens);
+    let totalAfterReturn = CountTokens(DisplayTokens) - totalReturned;
 
-    if (CountTokens(PlayerTokens) + CountTokens(TakingTokens) <= 10) {
+    if (totalAfterReturn <= 10 && totalReturned >= tokensToReturn) {
         document.getElementById("ReturnButton").disabled = false;
     } else {
         document.getElementById("ReturnButton").disabled = true;

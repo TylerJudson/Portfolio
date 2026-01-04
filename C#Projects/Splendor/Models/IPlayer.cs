@@ -75,5 +75,18 @@
         /// </summary>
         /// <returns>The cummulative number of tokens the player has</returns>
         public int NumberOfTokens();
+
+        /// <summary>
+        /// Removes tokens from the player (for turn cancellation)
+        /// </summary>
+        /// <param name="type">The token type to remove</param>
+        /// <param name="count">The number of tokens to remove</param>
+        public void RemoveTokens(Token type, int count);
+
+        /// <summary>
+        /// Removes a reserved card from the player (for turn cancellation)
+        /// </summary>
+        /// <param name="card">The card to remove from reserved cards</param>
+        public void RemoveReservedCard(ICard card);
     }
 }

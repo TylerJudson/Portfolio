@@ -93,5 +93,18 @@
         /// </summary>
         public bool IsPaused { get; set; }
 
+        /// <summary>
+        /// Gets the winner of the game (null if game is not over)
+        /// Winner is determined by highest prestige points, with tie-breaker being fewest development cards
+        /// </summary>
+        IPlayer? GetWinner();
+
+        /// <summary>
+        /// Cancels the pending continue action for the current player.
+        /// Reverses any state changes made by the incomplete turn.
+        /// </summary>
+        /// <returns>True if cancellation was successful, false if no pending action</returns>
+        bool CancelPendingTurn();
+
     }
 }

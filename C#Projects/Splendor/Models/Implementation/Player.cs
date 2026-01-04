@@ -69,35 +69,69 @@
         {
             Dictionary<Token, int> consumedTokens = new Dictionary<Token, int>();
 
-            // Calculate the sum of tokens being taken
+            // Calculate the sum of tokens being taken/returned
             int sum = 0;
             foreach (int token in takenTokens.Values)
             {
                 sum += token;
             }
 
-            // Check if taking tokens would exceed the limit
-            if (NumberOfTokens() + sum > MaxTokens)
+            // Different logic for TAKING vs RETURNING tokens
+            bool isTaking = sum > 0;
+            bool isReturning = sum < 0;
+
+            if (isTaking)
             {
-                return new CompletedTurn(new ContinueAction("Please choose tokens to get rid of", 0), consumedTokens);
+                // For TAKING tokens: Check limit BEFORE adding tokens
+                if (NumberOfTokens() + sum > MaxTokens)
+                {
+                    int tokensToReturn = (NumberOfTokens() + sum) - MaxTokens;
+                    return new CompletedTurn(new ContinueAction($"You must return {tokensToReturn} token{(tokensToReturn > 1 ? "s" : "")}", 0), consumedTokens);
+                }
             }
 
-            // Validate that player has enough tokens when returning tokens
-            foreach (KeyValuePair<Token, int> kvp in takenTokens)
+            if (isReturning)
             {
-                if (kvp.Value < 0)
+                // For RETURNING tokens: Validate player has enough BEFORE removing
+                foreach (KeyValuePair<Token, int> kvp in takenTokens)
                 {
-                    if (_tokens[kvp.Key] < -kvp.Value)
+                    if (kvp.Value < 0)
                     {
-                        return new CompletedTurn(new Error("You don't have enough tokens to return", 7));
+                        if (_tokens[kvp.Key] < -kvp.Value)
+                        {
+                            return new CompletedTurn(new Error("You don't have enough tokens to return", 7));
+                        }
                     }
                 }
             }
 
-            // Add the acquired tokens to the player's tokens
+            // Apply the token changes
             foreach (KeyValuePair<Token, int> kvp in takenTokens)
             {
                 _tokens[kvp.Key] += kvp.Value;
+            }
+
+            if (isReturning)
+            {
+                // For RETURNING: Check if player STILL exceeds limit after returning
+                int finalTokenCount = NumberOfTokens();
+                if (finalTokenCount > MaxTokens)
+                {
+                    int tokensToReturn = finalTokenCount - MaxTokens;
+                    return new CompletedTurn(new ContinueAction($"You must return {tokensToReturn} token{(tokensToReturn > 1 ? "s" : "")}", 0), consumedTokens);
+                }
+            }
+
+            // Validate final token count doesn't exceed maximum (for taking tokens case)
+            int totalTokens = NumberOfTokens();
+            if (totalTokens > MaxTokens)
+            {
+                // Rollback the token changes
+                foreach (KeyValuePair<Token, int> kvp in takenTokens)
+                {
+                    _tokens[kvp.Key] -= kvp.Value;
+                }
+                return new CompletedTurn(new Error($"You must return enough tokens to have exactly {MaxTokens}. You would have {totalTokens}.", 7));
             }
 
             return new CompletedTurn(consumedTokens);
@@ -167,12 +201,6 @@
                 return new CompletedTurn(new Error("You can only have 3 reserved cards at a time", 3));
             }
 
-            // Check if taking a gold token would exceed the token limit
-            if (NumberOfTokens() + 1 > MaxTokens)
-            {
-                return new CompletedTurn(new ContinueAction("Please choose tokens to get rid of", 2), consumedTokens);
-            }
-
             // Add the card to reserved cards
             _reservedCards.Add(card);
 
@@ -182,10 +210,11 @@
                 _tokens[Token.Gold] += 1;
             }
 
-            // Check again after adding gold token
+            // Check if player now exceeds token limit (after adding card and gold)
             if (NumberOfTokens() > MaxTokens)
             {
-                return new CompletedTurn(new ContinueAction("Please choose tokens to get rid of", 0), consumedTokens);
+                int tokensToReturn = NumberOfTokens() - MaxTokens;
+                return new CompletedTurn(new ContinueAction($"You must return {tokensToReturn} token{(tokensToReturn > 1 ? "s" : "")}", 0), consumedTokens);
             }
 
             return new CompletedTurn(consumedTokens);
@@ -283,6 +312,16 @@
                 ret += count;
             }
             return ret;
+        }
+
+        public void RemoveTokens(Token type, int count)
+        {
+            _tokens[type] = Math.Max(0, _tokens[type] - count);
+        }
+
+        public void RemoveReservedCard(ICard card)
+        {
+            _reservedCards.Remove(card);
         }
     }
 }

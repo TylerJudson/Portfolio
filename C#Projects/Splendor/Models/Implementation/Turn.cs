@@ -9,6 +9,8 @@
 
         public ICard? ReservedCard { get; set; }
 
+        public uint ReserveDeckLevel { get; set; }
+
         public INoble? Noble { get; set; }
 
         public IContinueAction? ContinueAction { get; set; }
@@ -36,6 +38,11 @@
         public Turn(INoble noble)
         {
             Noble = noble;
+        }
+
+        public Turn(uint reserveDeckLevel)
+        {
+            ReserveDeckLevel = reserveDeckLevel;
         }
 
     }

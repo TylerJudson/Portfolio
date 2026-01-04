@@ -142,7 +142,8 @@ namespace Splendor.Services.Data
                 throw new ArgumentException($"Token configuration not found for {playerCount} players. Valid values are 2, 3, or 4.");
             }
 
-            return gameData.TokenConfig[playerCount.ToString()];
+            // Return a copy to prevent games from sharing the same dictionary instance
+            return new Dictionary<Token, int>(gameData.TokenConfig[playerCount.ToString()]);
         }
 
         #region DTOs for JSON Deserialization

@@ -604,9 +604,10 @@ public class PlayerTests
         var result = player.ExecuteTurn(turn, canGetGold: true);
 
         // Assert
-        AssertionHelpers.AssertTurnRequiresContinueAction(result, 2);
-        // Card should NOT be added when token limit would be exceeded
-        player.ReservedCards.Should().BeEmpty();
+        AssertionHelpers.AssertTurnRequiresContinueAction(result, 0);
+        // Card and gold ARE added, then continue action is returned
+        player.ReservedCards.Should().Contain(card, "card should be reserved even when gold causes overflow");
+        player.NumberOfTokens().Should().Be(11, "should have 10 + 1 gold");
     }
 
     #endregion
@@ -716,6 +717,94 @@ public class PlayerTests
         AssertionHelpers.AssertTurnSucceeded(result);
         player.PrestigePoints.Should().Be(initialPrestige + 3);
         player.Nobles.Should().Contain(noble);
+    }
+
+    #endregion
+
+    #region Token Return Validation Tests (New - for bug fix)
+
+    [Fact]
+    public void ExecuteTurn_TakeAndReturnTokens_ExactlyAtLimit_Succeeds()
+    {
+        // Arrange - player has 9 tokens
+        var player = new PlayerBuilder()
+            .WithTokens(diamond: 2, sapphire: 2, emerald: 2, ruby: 2, onyx: 1, gold: 0)
+            .Build();
+
+        // Create a turn that takes 2 diamonds (+2) and returns 1 sapphire (-1) = net +1 token
+        var turn = new Turn(new Dictionary<Token, int>
+        {
+            { Token.Diamond, 2 },
+            { Token.Sapphire, -1 },
+            { Token.Emerald, 0 },
+            { Token.Ruby, 0 },
+            { Token.Onyx, 0 },
+            { Token.Gold, 0 }
+        });
+
+        // Act
+        var result = player.ExecuteTurn(turn, canGetGold: false);
+
+        // Assert
+        AssertionHelpers.AssertTurnSucceeded(result);
+        player.NumberOfTokens().Should().Be(10); // 9 + 2 - 1 = 10
+        player.Tokens[Token.Diamond].Should().Be(4); // 2 + 2 = 4
+        player.Tokens[Token.Sapphire].Should().Be(1); // 2 - 1 = 1
+    }
+
+    [Fact]
+    public void ExecuteTurn_TakeThreeAndReturnOne_ExactlyAtLimit_Succeeds()
+    {
+        // Arrange - player has 8 tokens
+        var player = new PlayerBuilder()
+            .WithTokens(diamond: 2, sapphire: 2, emerald: 2, ruby: 2, onyx: 0, gold: 0)
+            .Build();
+
+        // Take 3 different tokens (+3) and return 1 token (-1) = net +2 tokens
+        var turn = new Turn(new Dictionary<Token, int>
+        {
+            { Token.Diamond, 1 },
+            { Token.Sapphire, 1 },
+            { Token.Emerald, 1 },
+            { Token.Ruby, -1 },
+            { Token.Onyx, 0 },
+            { Token.Gold, 0 }
+        });
+
+        // Act
+        var result = player.ExecuteTurn(turn, canGetGold: false);
+
+        // Assert
+        AssertionHelpers.AssertTurnSucceeded(result);
+        player.NumberOfTokens().Should().Be(10); // 8 + 3 - 1 = 10
+        player.Tokens[Token.Ruby].Should().Be(1); // 2 - 1 = 1
+    }
+
+    [Fact]
+    public void ExecuteTurn_TwoTokensOver_ReturnExactlyTwo_Succeeds()
+    {
+        // Arrange - player has 10 tokens
+        var player = new PlayerBuilder()
+            .AtMaxTokens() // 10 tokens
+            .Build();
+
+        // Take 2 tokens (+2) and return 2 tokens (-2) = net 0
+        var turn = new Turn(new Dictionary<Token, int>
+        {
+            { Token.Diamond, 2 },
+            { Token.Sapphire, -1 },
+            { Token.Emerald, -1 },
+            { Token.Ruby, 0 },
+            { Token.Onyx, 0 },
+            { Token.Gold, 0 }
+        });
+
+        // Act
+        var result = player.ExecuteTurn(turn, canGetGold: false);
+
+        // Assert
+        AssertionHelpers.AssertTurnSucceeded(result);
+        player.NumberOfTokens().Should().Be(10); // 10 + 2 - 2 = 10
     }
 
     #endregion

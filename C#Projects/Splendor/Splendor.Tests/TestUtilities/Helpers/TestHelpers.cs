@@ -310,6 +310,19 @@ namespace Splendor.Tests.TestUtilities.Helpers
             var cardsField = typeof(Player).GetField("_cards", BindingFlags.NonPublic | BindingFlags.Instance);
             var cardsList = cardsField?.GetValue(playerImpl) as List<ICard>;
             cardsList?.Add(card);
+
+            // Also update prestige points and card tokens
+            var prestigeProperty = typeof(Player).GetProperty("PrestigePoints");
+            var currentPrestige = (uint)(prestigeProperty?.GetValue(playerImpl) ?? 0u);
+            prestigeProperty?.SetValue(playerImpl, currentPrestige + card.PrestigePoints);
+
+            // Update card tokens (bonuses)
+            var cardTokensField = typeof(Player).GetField("_cardTokens", BindingFlags.NonPublic | BindingFlags.Instance);
+            var cardTokensDict = cardTokensField?.GetValue(playerImpl) as Dictionary<Token, int>;
+            if (cardTokensDict != null && cardTokensDict.ContainsKey(card.Type))
+            {
+                cardTokensDict[card.Type]++;
+            }
         }
 
         /// <summary>
@@ -323,6 +336,11 @@ namespace Splendor.Tests.TestUtilities.Helpers
             var noblesField = typeof(Player).GetField("_nobles", BindingFlags.NonPublic | BindingFlags.Instance);
             var noblesList = noblesField?.GetValue(playerImpl) as List<INoble>;
             noblesList?.Add(noble);
+
+            // Also update prestige points
+            var prestigeProperty = typeof(Player).GetProperty("PrestigePoints");
+            var currentPrestige = (uint)(prestigeProperty?.GetValue(playerImpl) ?? 0u);
+            prestigeProperty?.SetValue(playerImpl, currentPrestige + noble.PrestigePoints);
         }
 
         /// <summary>

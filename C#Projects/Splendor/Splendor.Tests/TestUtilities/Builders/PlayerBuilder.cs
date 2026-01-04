@@ -146,6 +146,8 @@ public class PlayerBuilder
             var cardsList = cardsField?.GetValue(player) as List<ICard>;
             var cardTokensField = playerType.GetField("_cardTokens", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var cardTokensDict = cardTokensField?.GetValue(player) as Dictionary<Token, int>;
+            var prestigeProperty = playerType.GetProperty("PrestigePoints");
+            var currentPrestige = (uint)(prestigeProperty?.GetValue(player) ?? 0u);
 
             foreach (var card in _cards)
             {
@@ -154,7 +156,11 @@ public class PlayerBuilder
                 {
                     cardTokensDict[card.Type] += 1;
                 }
+                currentPrestige += card.PrestigePoints;
             }
+
+            // Update prestige points
+            prestigeProperty?.SetValue(player, currentPrestige);
         }
 
         // Apply reserved cards
@@ -173,10 +179,17 @@ public class PlayerBuilder
         {
             var noblesField = playerType.GetField("_nobles", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             var noblesList = noblesField?.GetValue(player) as List<INoble>;
+            var prestigeProperty = playerType.GetProperty("PrestigePoints");
+            var currentPrestige = (uint)(prestigeProperty?.GetValue(player) ?? 0u);
+
             foreach (var noble in _nobles)
             {
                 noblesList?.Add(noble);
+                currentPrestige += noble.PrestigePoints;
             }
+
+            // Update prestige points
+            prestigeProperty?.SetValue(player, currentPrestige);
         }
 
         return player;

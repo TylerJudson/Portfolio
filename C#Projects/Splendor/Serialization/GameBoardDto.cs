@@ -66,6 +66,7 @@ namespace Splendor.Serialization
         public Dictionary<Token, int>? TakenTokens { get; set; }
         public CardDto? Card { get; set; }
         public CardDto? ReservedCard { get; set; }
+        public uint ReserveDeckLevel { get; set; }
         public NobleDto? Noble { get; set; }
         public ContinueActionDto? ContinueAction { get; set; }
         public string? PlayerName { get; set; }

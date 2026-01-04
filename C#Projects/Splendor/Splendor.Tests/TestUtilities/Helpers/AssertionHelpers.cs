@@ -60,11 +60,11 @@ public static class AssertionHelpers
     }
 
     /// <summary>
-    /// Asserts that a completed turn requires returning tokens for reserved card (action code 2).
+    /// Asserts that a completed turn requires returning tokens for reserved card (action code 0).
     /// </summary>
     public static void AssertTurnRequiresTokenReturnForReserve(ICompletedTurn completedTurn)
     {
-        AssertTurnRequiresContinueAction(completedTurn, 2);
+        AssertTurnRequiresContinueAction(completedTurn, 0);
     }
 
     /// <summary>
