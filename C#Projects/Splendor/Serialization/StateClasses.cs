@@ -124,20 +124,26 @@ namespace Splendor.Serialization
                 }
             }
 
+            // Check that there's at least some token activity (taking or returning, not all zeros)
+            if (positiveTakenTokens.Count == 0 && !turn.TakenTokens.Any(kvp => kvp.Value < 0))
+            {
+                return new CompletedTurn(new Error("You must specify tokens to take or return", 11));
+            }
+
             if (positiveTakenTokens.Count > GameConstants.MaxTokenTypes)
             {
                 return new CompletedTurn(new Error("You can't take more than 3 types of token", 4));
             }
 
-            if (turn.TakenTokens.ContainsKey(Token.Gold))
+            if (positiveTakenTokens.ContainsKey(Token.Gold))
             {
                 return new CompletedTurn(new Error("You can't take gold tokens", 6));
             }
 
-            // Validate based on number of token types taken
-            if (turn.TakenTokens.Count > 1)
+            // Validate based on number of token types taken (only count positive values)
+            if (positiveTakenTokens.Count > 1)
             {
-                foreach (KeyValuePair<Token, int> kvp in turn.TakenTokens)
+                foreach (KeyValuePair<Token, int> kvp in positiveTakenTokens)
                 {
                     if (_tokenStacks[kvp.Key] < kvp.Value)
                     {
@@ -151,7 +157,7 @@ namespace Splendor.Serialization
             }
             else
             {
-                foreach (KeyValuePair<Token, int> kvp in turn.TakenTokens)
+                foreach (KeyValuePair<Token, int> kvp in positiveTakenTokens)
                 {
                     if (kvp.Value > 2)
                     {
@@ -168,8 +174,18 @@ namespace Splendor.Serialization
             // Execute the turn for the player
             ICompletedTurn playersCompletedTurn = _players[CurrentPlayer].ExecuteTurn(turn, _tokenStacks[Token.Gold] > 0);
 
-            if (playersCompletedTurn.Error != null || playersCompletedTurn.ContinueAction != null)
+            if (playersCompletedTurn.Error != null)
             {
+                return playersCompletedTurn;
+            }
+
+            if (playersCompletedTurn.ContinueAction != null)
+            {
+                Version++;
+                turn.PlayerName = _players[CurrentPlayer].Name;
+                _turns.Insert(0, turn);
+                LastTurn = turn;
+                LastTurn.ContinueAction = playersCompletedTurn.ContinueAction;
                 return playersCompletedTurn;
             }
 
@@ -213,6 +229,7 @@ namespace Splendor.Serialization
         private ICompletedTurn ProcessCardReservation(ITurn turn)
         {
             ICard? cardToReserve = null;
+            ICompletedTurn? playersCompletedTurn = null;
 
             // Handle blind deck reservation
             if (turn.ReserveDeckLevel > 0)
@@ -235,9 +252,9 @@ namespace Splendor.Serialization
 
                 // Create a temporary turn with the drawn card for player execution
                 var tempTurn = new Turn(drawnCard, isReserve: true);
-                ICompletedTurn playersCompletedTurn = _players[CurrentPlayer].ExecuteTurn(tempTurn, _tokenStacks[Token.Gold] > 0);
+                playersCompletedTurn = _players[CurrentPlayer].ExecuteTurn(tempTurn, _tokenStacks[Token.Gold] > 0);
 
-                if (playersCompletedTurn.Error != null || playersCompletedTurn.ContinueAction != null)
+                if (playersCompletedTurn.Error != null)
                 {
                     return playersCompletedTurn;
                 }
@@ -250,9 +267,9 @@ namespace Splendor.Serialization
                 // Only execute player turn if we haven't already (when taking tokens at the same time)
                 if (turn.TakenTokens == null)
                 {
-                    ICompletedTurn playersCompletedTurn = _players[CurrentPlayer].ExecuteTurn(turn, _tokenStacks[Token.Gold] > 0);
+                    playersCompletedTurn = _players[CurrentPlayer].ExecuteTurn(turn, _tokenStacks[Token.Gold] > 0);
 
-                    if (playersCompletedTurn.Error != null || playersCompletedTurn.ContinueAction != null)
+                    if (playersCompletedTurn.Error != null)
                     {
                         return playersCompletedTurn;
                     }
@@ -266,6 +283,17 @@ namespace Splendor.Serialization
             if (_tokenStacks[Token.Gold] > 0)
             {
                 _tokenStacks[Token.Gold]--;
+            }
+
+            // If continue action is needed (player must return tokens), increment version but don't advance turn
+            if (playersCompletedTurn?.ContinueAction != null)
+            {
+                Version++;
+                turn.PlayerName = _players[CurrentPlayer].Name;
+                _turns.Insert(0, turn);
+                LastTurn = turn;
+                LastTurn.ContinueAction = playersCompletedTurn.ContinueAction;
+                return playersCompletedTurn;
             }
 
             return FinalizeTurn(turn);
@@ -632,12 +660,6 @@ namespace Splendor.Serialization
                 return new CompletedTurn(new Error("You can only have 3 reserved cards at a time", 3));
             }
 
-            // Check if taking a gold token would exceed the token limit
-            if (NumberOfTokens() + 1 > MaxTokens)
-            {
-                return new CompletedTurn(new ContinueAction("Please choose tokens to get rid of", 2), consumedTokens);
-            }
-
             // Add the card to reserved cards
             _reservedCards.Add(card);
 
@@ -647,10 +669,11 @@ namespace Splendor.Serialization
                 _tokens[Token.Gold] += 1;
             }
 
-            // Check again after adding gold token
+            // Check if player now exceeds token limit (after adding card and gold)
             if (NumberOfTokens() > MaxTokens)
             {
-                return new CompletedTurn(new ContinueAction("Please choose tokens to get rid of", 0), consumedTokens);
+                int tokensToReturn = NumberOfTokens() - MaxTokens;
+                return new CompletedTurn(new ContinueAction($"You must return {tokensToReturn} token{(tokensToReturn > 1 ? "s" : "")}", 0), consumedTokens);
             }
 
             return new CompletedTurn(consumedTokens);
