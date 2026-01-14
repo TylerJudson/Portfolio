@@ -218,6 +218,147 @@ function updateTokenEmptyState(tokenName) {
     }
 }
 
+// Token type abbreviation map for parsing card image names
+const TokenTypeMap = { D: 'Diamond', S: 'Sapphire', E: 'Emerald', R: 'Ruby', O: 'Onyx' };
+
+/**
+ * Parse card price from image name
+ * Format: Level1-D-0P-1S-2E-1R-1O.jpg
+ * @param {string} imageName - The card's image name
+ * @returns {Object} Price object with token counts
+ */
+function parseCardPrice(imageName) {
+    const prices = { Diamond: 0, Sapphire: 0, Emerald: 0, Ruby: 0, Onyx: 0 };
+    // Extract everything after the prestige points marker (e.g., "0P-")
+    const priceSection = imageName.replace(/Level\d-[A-Z]-\d+P-?/, '').replace('.jpg', '');
+    if (!priceSection) return prices;
+
+    const matches = priceSection.match(/(\d)([DSEOR])/g) || [];
+    matches.forEach(match => {
+        const count = parseInt(match[0]);
+        const type = TokenTypeMap[match[1]];
+        if (type) prices[type] = count;
+    });
+    return prices;
+}
+
+/**
+ * Check if player can afford a card WITHOUT using gold tokens
+ * @param {Object} cardPrice - The card's price { Diamond: 2, Ruby: 3, ... }
+ * @param {Object} playerTokens - Player's current tokens
+ * @param {Object} playerBonuses - Player's card bonuses
+ * @param {Object} additionalTokens - Tokens being taken (TakingTokens)
+ * @returns {boolean}
+ */
+function canAffordCardWithoutGold(cardPrice, playerTokens, playerBonuses, additionalTokens) {
+    const tokenTypes = ['Diamond', 'Sapphire', 'Emerald', 'Ruby', 'Onyx'];
+
+    for (const type of tokenTypes) {
+        const cost = cardPrice[type] || 0;
+        const bonus = playerBonuses[type] || 0;
+        const owned = parseInt(playerTokens[type] || 0) + parseInt(additionalTokens[type] || 0);
+
+        // Effective cost after applying card bonuses
+        const effectiveCost = Math.max(0, cost - bonus);
+
+        if (owned < effectiveCost) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * Check if player can afford a card using gold as wildcards
+ * @param {Object} cardPrice - The card's price
+ * @param {Object} playerTokens - Player's current tokens
+ * @param {Object} playerBonuses - Player's card bonuses
+ * @param {Object} additionalTokens - Tokens being taken
+ * @returns {boolean}
+ */
+function canAffordCardWithGold(cardPrice, playerTokens, playerBonuses, additionalTokens) {
+    const tokenTypes = ['Diamond', 'Sapphire', 'Emerald', 'Ruby', 'Onyx'];
+    let goldNeeded = 0;
+    const availableGold = parseInt(playerTokens.Gold || 0) + parseInt(additionalTokens.Gold || 0);
+
+    for (const type of tokenTypes) {
+        const cost = cardPrice[type] || 0;
+        const bonus = playerBonuses[type] || 0;
+        const owned = parseInt(playerTokens[type] || 0) + parseInt(additionalTokens[type] || 0);
+
+        const effectiveCost = Math.max(0, cost - bonus);
+        const shortfall = Math.max(0, effectiveCost - owned);
+        goldNeeded += shortfall;
+    }
+
+    return goldNeeded <= availableGold;
+}
+
+/**
+ * Determine the highlight class for a card based on affordability
+ * Priority: Green (purchasable now) > Purple (purchasable after selection) > Yellow (needs gold) > Gray
+ * @param {string} imageName - The card's image name
+ * @returns {string} CSS class name
+ */
+function getCardHighlightClass(imageName) {
+    const cardPrice = parseCardPrice(imageName);
+    const hasSelectedTokens = CountTokens(TakingTokens) > 0;
+
+    // Use ViewingPlayerTokens (the player viewing the page) instead of PlayerTokens
+    // (which contains current turn player's tokens from the DOM)
+
+    // 1. Green: Can buy now without gold
+    if (canAffordCardWithoutGold(cardPrice, ViewingPlayerTokens, PlayerCardBonuses, {})) {
+        return 'card--purchasable';
+    }
+
+    // 2. Purple: Can buy after taking selected tokens (without gold)
+    if (hasSelectedTokens && canAffordCardWithoutGold(cardPrice, ViewingPlayerTokens, PlayerCardBonuses, TakingTokens)) {
+        return 'card--purchasable-potential';
+    }
+
+    // 3. Yellow: Can buy with gold (now OR after taking tokens)
+    if (canAffordCardWithGold(cardPrice, ViewingPlayerTokens, PlayerCardBonuses, {})) {
+        return 'card--purchasable-gold';
+    }
+    if (hasSelectedTokens && canAffordCardWithGold(cardPrice, ViewingPlayerTokens, PlayerCardBonuses, TakingTokens)) {
+        return 'card--purchasable-gold';
+    }
+
+    // 4. Gray: Cannot afford
+    return 'card--unavailable';
+}
+
+/**
+ * Update all card highlights based on current token selection
+ */
+function updateCardHighlights() {
+    // Shop cards - update all
+    const shopCards = document.querySelectorAll('.shop-cards-table img.card');
+
+    // Reserved cards - only current player's (ID starts with PlayerId-Reserved:)
+    const reservedCards = document.querySelectorAll('.player-reserved-grid img.card');
+    const myReservedCards = Array.from(reservedCards).filter(img =>
+        img.id && img.id.startsWith(PlayerId + '-Reserved:')
+    );
+
+    [...shopCards, ...myReservedCards].forEach(img => {
+        // For reserved cards, extract image name from ID (format: PlayerId-Reserved:ImageName)
+        const imageName = img.id && img.id.includes('-Reserved:')
+            ? img.id.split('-Reserved:')[1]
+            : (img.alt || img.id);
+        if (!imageName || !imageName.startsWith('Level')) return;
+
+        // Remove all highlight classes
+        img.classList.remove('card--purchasable', 'card--purchasable-potential',
+                             'card--purchasable-gold', 'card--unavailable');
+
+        // Add the appropriate class
+        const highlightClass = getCardHighlightClass(imageName);
+        img.classList.add(highlightClass);
+    });
+}
+
 function SetTokens() {
     document.getElementById("EmeraldTakingTokenValue").innerHTML = TakingTokens.Emerald == undefined ? 0 : TakingTokens.Emerald;
     document.getElementById("EmeraldTokenValue").innerHTML = Tokens.Emerald;
@@ -266,6 +407,9 @@ function SetTokens() {
 
     document.getElementById("GoldTokenValue").innerHTML = Tokens.Gold;
     updateTokenEmptyState('Gold');
+
+    // Update card highlights based on new token selection
+    updateCardHighlights();
 }
 
 // Initialize empty state on page load

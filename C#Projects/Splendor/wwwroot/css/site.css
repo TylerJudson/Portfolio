@@ -883,6 +883,32 @@ input[type=text]:focus,
     opacity: 0.75 !important;
 }
 
+/* Card purchasable after token selection - Purple glow */
+.card--purchasable-potential,
+.game-card--purchasable-potential {
+    border-color: #9333ea !important;
+    opacity: 1 !important;
+    box-shadow:
+        0 0 0 2px #9333ea,
+        0 0 20px rgba(147, 51, 234, 0.4),
+        0 0 40px rgba(147, 51, 234, 0.15);
+    animation: potentialPulse 2s ease-in-out infinite;
+    -webkit-transform: translate3d(0, -2px, 0);
+    transform: translate3d(0, -2px, 0);
+    z-index: 4;
+}
+
+.card--purchasable-potential:hover,
+.game-card--purchasable-potential:hover {
+    animation: none;
+    box-shadow:
+        0 0 0 3px #9333ea,
+        0 0 30px rgba(147, 51, 234, 0.5),
+        0 0 50px rgba(147, 51, 234, 0.25);
+    -webkit-transform: translate3d(0, -6px, 0) scale(1.03);
+    transform: translate3d(0, -6px, 0) scale(1.03);
+}
+
 .card--selected,
 .game-card--selected {
     border-color: var(--purple);
@@ -923,6 +949,22 @@ input[type=text]:focus,
             0 0 0 3px var(--warning),
             0 0 25px var(--glow-gold),
             0 0 40px rgba(234, 179, 8, 0.2);
+    }
+}
+
+/* Potential purchasable pulse animation - purple glow */
+@keyframes potentialPulse {
+    0%, 100% {
+        box-shadow:
+            0 0 0 2px #9333ea,
+            0 0 20px rgba(147, 51, 234, 0.4),
+            0 0 40px rgba(147, 51, 234, 0.15);
+    }
+    50% {
+        box-shadow:
+            0 0 0 3px #a855f7,
+            0 0 30px rgba(168, 85, 247, 0.5),
+            0 0 50px rgba(168, 85, 247, 0.25);
     }
 }
 

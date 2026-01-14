@@ -462,6 +462,29 @@
                     break;
                 }
             }
+
+            <script type="text/javascript">
+                // Viewing player's ID for filtering reserved cards
+                var PlayerId = @Model.Players[playerOrdinal].Id;
+                // Viewing player's tokens for dynamic card highlight calculation
+                var ViewingPlayerTokens = {
+                    Emerald: @Model.Players[playerOrdinal].Tokens[Token.Emerald],
+                    Sapphire: @Model.Players[playerOrdinal].Tokens[Token.Sapphire],
+                    Ruby: @Model.Players[playerOrdinal].Tokens[Token.Ruby],
+                    Diamond: @Model.Players[playerOrdinal].Tokens[Token.Diamond],
+                    Onyx: @Model.Players[playerOrdinal].Tokens[Token.Onyx],
+                    Gold: @Model.Players[playerOrdinal].Tokens[Token.Gold]
+                };
+                // Viewing player's card bonuses for dynamic card highlight calculation
+                var PlayerCardBonuses = {
+                    Emerald: @Model.Players[playerOrdinal].CardTokens[Token.Emerald],
+                    Sapphire: @Model.Players[playerOrdinal].CardTokens[Token.Sapphire],
+                    Ruby: @Model.Players[playerOrdinal].CardTokens[Token.Ruby],
+                    Diamond: @Model.Players[playerOrdinal].CardTokens[Token.Diamond],
+                    Onyx: @Model.Players[playerOrdinal].CardTokens[Token.Onyx]
+                };
+            </script>
+
             @while (count < Model.Players.Count)
             {
                 playerCardId = count.ToString() + "-card";
