@@ -513,7 +513,7 @@
 
                
 
-                <section id="@playerCardId" class="player-card @(i == Model.CurrentPlayer && !Model.GameOver ? "player-card--active" : "") @(Model.Players[i].PrestigePoints >= 15 && Model.Players[i].PrestigePoints == mostPoints ? "player-card--winner" : "")">
+                <section id="@playerCardId" class="player-card @(i == 0 ? "player-card--starter" : "") @(i == Model.CurrentPlayer && !Model.GameOver ? "player-card--active" : "") @(Model.Players[i].PrestigePoints >= 15 && Model.Players[i].PrestigePoints == mostPoints ? "player-card--winner" : "")">
                     <!-- Player Header -->
                     <div class="player-header">
                         <span class="player-name">@Model.Players[i].Name</span>
