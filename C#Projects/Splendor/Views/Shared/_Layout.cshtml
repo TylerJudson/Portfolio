@@ -36,6 +36,9 @@
         </main>
     </div>
 
+    @* Overlay section - renders at body level for proper fullscreen positioning *@
+    @await RenderSectionAsync("Overlays", required: false)
+
     @*<footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2021 - WebApplication1 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>

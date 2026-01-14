@@ -94,7 +94,8 @@ namespace Splendor.Controllers
                     .SelectMany(v => v.Errors)
                     .Select(e => e.ErrorMessage));
                 _logger.LogWarning("Validation failed in NewGameInfo: {Errors}", errors);
-                return View("Error");
+                TempData["message"] = "Please enter a valid name.";
+                return RedirectToAction("NewGame");
             }
 
             // Sanitize player name to prevent XSS
@@ -102,7 +103,8 @@ namespace Splendor.Controllers
             if (sanitizedPlayerName == null)
             {
                 _logger.LogWarning("Invalid player name in NewGameInfo: {PlayerName}", playerName);
-                return View("Error");
+                TempData["message"] = "Invalid name. Please use only letters, numbers, and spaces.";
+                return RedirectToAction("NewGame");
             }
 
             _logger.LogDebug("NewGameInfo called with player name: {PlayerName}", sanitizedPlayerName);

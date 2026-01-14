@@ -1,19 +1,44 @@
-﻿@{
+@{
     ViewData["Title"] = "Splendor";
-
 }
 
-<div class="text-center container mt-3  
-            mt-xl-5">
-    <h1 class="col-12 splendorHeading" >Splendor</h1>
+<div class="home-container">
+    <!-- Decorative Background Elements -->
+    <div class="home-bg-decoration">
+        <div class="home-bg-orb home-bg-orb--1"></div>
+        <div class="home-bg-orb home-bg-orb--2"></div>
+        <div class="home-bg-orb home-bg-orb--3"></div>
+    </div>
 
-    <div id="HomeButtons" class="mt-7 mx-auto 
-                                    mt-xl-5">
-        <a class="col-12 mt-10 btn btn-outline-purple
-                        col-lg-4 mt-lg-9 mx-lg-5
-                        mt-xl-7" asp-controller="WaitingRoom" asp-action="NewGame">New Game</a>
-        <a class="col-12 mt-3 btn btn-outline-darkPurple
-                        col-lg-4 mt-lg-9 mx-lg-5
-                        mt-xl-7" asp-controller="WaitingRoom" asp-action="ListGames">Join Game</a>
+    <div class="home-content animate-fade-in-up">
+        <!-- Logo/Title -->
+        <div class="home-logo">
+            <h1 class="home-title heading-display">Splendor</h1>
+            <p class="home-subtitle">A game of gem trading and prestige</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="home-actions">
+            <a class="btn btn-purple btn-xl home-btn animate-fade-in-up stagger-1"
+               asp-controller="WaitingRoom" asp-action="NewGame">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="16"/>
+                    <line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+                New Game
+            </a>
+
+            <a class="btn btn-outline-purple btn-xl home-btn animate-fade-in-up stagger-2"
+               asp-controller="WaitingRoom" asp-action="ListGames">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                Join Game
+            </a>
+        </div>
     </div>
 </div>

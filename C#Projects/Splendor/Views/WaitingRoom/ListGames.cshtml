@@ -1,10 +1,8 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @model List<Splendor.Models.IPotentialGame>
 @{
     ViewData["Title"] = "Join Game";
 }
+
 <script>
     // Enters into a waiting room with the gameId
     function enterRoom(gameId) {
@@ -12,8 +10,7 @@
         var form = document.getElementById('player-info');
 
         // Validate the form
-        if (!form.elements["playerName"].checkValidity())
-        {
+        if (!form.elements["playerName"].checkValidity()) {
             form.elements["playerName"].reportValidity();
             return false;
         }
@@ -23,10 +20,9 @@
         return true;
     }
 
-
     // Pull once to start
     setTimeout(pull, 1000);
-    
+
     // Pull to get new list game state
     function pull() {
         $.ajax({
@@ -42,11 +38,23 @@
                 let newList = "";
                 // add each game to the list
                 for (const game of response.data) {
-                    newList += `<tr style="width: 80%">
-                            <td class="text-start mt-3">` + game.creatingPlayerName +`</td>
-                            <td class="text-end mt-3"><input id="`+ game.id +`" type="submit" onclick="return enterRoom('`+ game.id +`');" class="btn-outline-purple btn" value="Join Game"></td>
-                        </tr>`;
+                    newList += `<div class="lobby-player animate-slide-in-left">
+                        <div class="lobby-player__name">
+                            <span class="lobby-player__indicator"></span>
+                            ${game.creatingPlayerName}'s Game
+                        </div>
+                        <button type="submit" onclick="return enterRoom('${game.id}');" class="btn btn-sm btn-purple">Join</button>
+                    </div>`;
                 }
+
+                // If no games available
+                if (response.data.length === 0) {
+                    newList = `<div class="text-center text-muted" style="padding: var(--space-xl);">
+                        <p>No games available</p>
+                        <p class="text-secondary" style="font-size: var(--text-sm);">Create a new game or enter a Game ID</p>
+                    </div>`;
+                }
+
                 // set the available games to the new list
                 document.getElementById("availableGames").innerHTML = newList;
             },
@@ -60,72 +68,105 @@
     }
 </script>
 
+<div class="lobby-container" style="max-width: 900px;">
+    <div class="lobby-header">
+        <h1 class="lobby-welcome heading-display">Join Game</h1>
+        <p class="lobby-status" style="animation: none;">Find a game to join</p>
+    </div>
 
-
-
-<div>
-
-    <h1 class="text-center display-1 mt-3">Join Game</h1>
-    <div class="mx-auto mt-7" style="max-width: 75rem;">
-        <form id="player-info" action="/WaitingRoom/EnterGame">
-
-
-            <div style="width: 80%;" class="mx-auto">
-                <label class="fs-3" for="playerName">Please enter your Name: </label>
+    <form id="player-info" action="/WaitingRoom/EnterGame">
+        <!-- Player Name Input -->
+        <div class="auth-card animate-fade-in-up" style="max-width: 100%; margin-bottom: var(--space-xl);">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="playerName">Your Name</label>
+                <input class="form-input"
+                       type="text"
+                       id="playerName"
+                       name="playerName"
+                       maxlength="20"
+                       autocomplete="off"
+                       required
+                       autofocus
+                       placeholder="Enter your name">
             </div>
-            <div class="text-center">
-                <input class="mx-auto" type="text" id="playerName" name="playerName" maxlength="20" autocomplete="off" required autofocus>
-            </div>
+        </div>
 
-            <div class="mx-auto mt-5 container row p-0">
-                <!-- Available Games -->
-                    <div class="col-12 p-0
-                                col-lg-6 mt-lg-3" >
-                        <h5 class="mx-auto fs-3" style="width: 80%">Available Games To Join</h5>
-                        <table id="availableGames" class="mx-auto" style="width: 80%">
+        <div class="row" style="display: grid; grid-template-columns: 1fr; gap: var(--space-xl);">
+            <!-- Available Games -->
+            <div class="lobby-players animate-fade-in-up stagger-1" style="grid-column: 1;">
+                <h3 class="lobby-players__title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--space-sm); vertical-align: middle;">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    Available Games
+                </h3>
+                <div id="availableGames">
+                    @if (Model.Count == 0)
+                    {
+                        <div class="text-center text-muted" style="padding: var(--space-xl);">
+                            <p>No games available</p>
+                            <p class="text-secondary" style="font-size: var(--text-sm);">Create a new game or enter a Game ID</p>
+                        </div>
+                    }
+                    else
+                    {
                         @for (int i = 0; i < Model.Count; i++)
                         {
-                            <tr style="width: 80%">
-                                <td class="text-start mt-3">@Model[i].CreatingPlayerName</td>
-                                <td class="text-end mt-3"><input id="@Model[i].Id" type="submit" onclick="return enterRoom('@Model[i].Id');" class="btn-outline-purple btn" value="Join Game"></td>
-                            </tr>
+                            <div class="lobby-player animate-slide-in-left">
+                                <div class="lobby-player__name">
+                                    <span class="lobby-player__indicator"></span>
+                                    @Model[i].CreatingPlayerName's Game
+                                </div>
+                                <button type="submit" onclick="return enterRoom('@Model[i].Id');" class="btn btn-sm btn-purple">Join</button>
+                            </div>
                         }
-                        </table>
-                    </div>
-
-                <!-- Enter Game Id -->
-                    <div class="col-12 mt-7 p-0
-                                col-lg-6 mt-lg-3">
-                        <div class="mx-auto" style="width: 80%">
-                            <label class="fs-3" for="gameId">Enter Game Id: </label>
-                        </div>
-                        <div class="text-center">
-                            <input class="mx-auto" type="text" id="gameId" name="gameId" maxlength="20" autocomplete="off" required>
-                        </div>
-                        <div class="text-end mx-auto mt-3" style="width: 80%">
-                            <input class="btn-outline-purple btn" style="width: 40%; max-width: 20rem;" type="submit" value="Join Game">
-                       </div>
-                    </div>
+                    }
+                </div>
             </div>
-            
-        </form>
-        
+
+            <!-- Enter Game Id -->
+            <div class="lobby-players animate-fade-in-up stagger-2" style="grid-column: 1;">
+                <h3 class="lobby-players__title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--space-sm); vertical-align: middle;">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    Join by Game ID
+                </h3>
+                <div style="padding: var(--space-md);">
+                    <div class="form-group">
+                        <label class="form-label" for="gameId" style="font-size: var(--text-base);">Game ID</label>
+                        <input class="form-input"
+                               type="text"
+                               id="gameId"
+                               name="gameId"
+                               maxlength="20"
+                               autocomplete="off"
+                               placeholder="Enter game ID">
+                    </div>
+                    <button type="submit" class="btn btn-outline-purple" style="width: 100%;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                        Join Game
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div style="text-align: center; margin-top: var(--space-xl);">
+        <a href="/" class="auth-back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to Home
+        </a>
     </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 @if (TempData["message"] != null)
 {
@@ -133,3 +174,17 @@
         alert('@TempData["message"]')
     </script>
 }
+
+<style>
+    @@media (min-width: 768px) {
+        .row {
+            grid-template-columns: 1fr 1fr !important;
+        }
+        .row > div:first-child {
+            grid-column: 1 !important;
+        }
+        .row > div:last-child {
+            grid-column: 2 !important;
+        }
+    }
+</style>

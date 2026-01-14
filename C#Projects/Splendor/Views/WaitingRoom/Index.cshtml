@@ -1,6 +1,3 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @model Splendor.Models.IPotentialGame
 @{
     ViewData["Title"] = "Waiting Room";
@@ -8,10 +5,9 @@
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script type="text/javascript">
-
     // Pull once to start
     setTimeout(pull, 1000);
-    
+
     // Pull for new waiting room information
     function pull() {
         $.ajax({
@@ -34,11 +30,11 @@
                         // Tell the player they have been removed from the game
                         alert("You have been removed from the game.");
 
-                        // Rederict the player to the listgames view
+                        // Redirect the player to the listgames view
                         location.href = "/WaitingRoom/ListGames";
                         return;
                     }
-                    // Rederect the player to the game board
+                    // Redirect the player to the game board
                     location.href = '/Game/Index?gameId=@ViewData["GameId"]&playerId=@ViewData["PlayerId"]';
                 }
             },
@@ -53,55 +49,47 @@
 
     // Handle the response from the game state
     function handleGameState(response) {
-            // Get the current players
-            let currentPlayers = response.players;
+        // Get the current players
+        let currentPlayers = response.players;
 
-            // create a new list of the current players
-            let newList = "";   
-            
-            // Whether or not the player is the creator
-            let IsCreator = @ViewData["IsCreator"];
+        // create a new list of the current players
+        let newList = "";
 
-            // For each key in the current players
-            for (const key in currentPlayers) {
-                // If they are the player add a remove button by their name
-                if (IsCreator) {
-                   // Don't create a remove button by the creator's name
-                    if (key == 0) {
-                        newList += `<tr>
-                                        <td class="me-5"></td>
-                                        <td><p class="m-0">- ` + currentPlayers[key] + `</p> </td>
-                                    </tr>`;
+        // Whether or not the player is the creator
+        let IsCreator = @ViewData["IsCreator"];
 
-                    // Add a remove button by the player's name
-                    } else {
-                        newList += `<tr>
-                                        <td><a onclick="remove(`+ key + `);" class="me-5 btn-outline-darkPurple btn">Remove</a></td>
-                                        <td><p class="m-0">- ` + currentPlayers[key] + `</p> </td>
-                                    </tr>`;
-                    }
-                // List the player's name
-                } else {
-                    newList += `<tr>
-                                    <td><p class="m-0">- ` + currentPlayers[key] + `</p> </td>
-                                </tr>`;
-                }
+        // For each key in the current players
+        for (const key in currentPlayers) {
+            const isHost = key == 0;
+            const playerClass = isHost ? 'lobby-player lobby-player--creator' : 'lobby-player';
+
+            if (IsCreator && !isHost) {
+                newList += `<div class="${playerClass} animate-slide-in-left">
+                    <div class="lobby-player__name">
+                        <span class="lobby-player__indicator"></span>
+                        ${currentPlayers[key]}
+                    </div>
+                    <button onclick="remove(${key});" class="btn btn-sm btn-outline-darkPurple">Remove</button>
+                </div>`;
+            } else {
+                newList += `<div class="${playerClass} animate-slide-in-left">
+                    <div class="lobby-player__name">
+                        <span class="lobby-player__indicator"></span>
+                        ${currentPlayers[key]}
+                    </div>
+                </div>`;
             }
-            // add the list to the table
-            document.getElementById("currentPlayers").innerHTML = "<table>" + newList + "</table>";
+        }
+        // add the list to the container
+        document.getElementById("currentPlayers").innerHTML = newList;
 
-            // Check to make sure we have enough, but not too many players
-
-            // If the number of players is greater than 2 but less than 4 undisable the button
-            if (2 <= Object.keys(currentPlayers).length && Object.keys(currentPlayers).length <= 4 && IsCreator) {
-                document.getElementById("startGameButton").disabled = false;
-            } else if (IsCreator) {
-                document.getElementById("startGameButton").disabled = true;
-            }
+        // Check to make sure we have enough, but not too many players
+        if (2 <= Object.keys(currentPlayers).length && Object.keys(currentPlayers).length <= 4 && IsCreator) {
+            document.getElementById("startGameButton").disabled = false;
+        } else if (IsCreator) {
+            document.getElementById("startGameButton").disabled = true;
+        }
     }
-
-
-
 
     // Remove a player from the game
     function remove(id) {
@@ -122,54 +110,89 @@
             }
         });
     }
+
+    // Copy game ID to clipboard
+    function copyGameId() {
+        const gameId = '@Model.Id';
+        navigator.clipboard.writeText(gameId).then(() => {
+            // Show success feedback
+            const button = document.getElementById('copyButton');
+            const originalHTML = button.innerHTML;
+            button.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+            </svg>`;
+            button.classList.add('copy-success');
+
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+                button.classList.remove('copy-success');
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+            alert('Failed to copy game ID');
+        });
+    }
 </script>
 
-
-
-
-<div class="mt-5">
-    <h1 class="welcomeHeading text-center display-1" style="font-weight: 500;">Welcome @Model.Players[(int) ViewData["PlayerId"]]</h1>
-    <h1 class="mt-5 text-center display-4">Waiting For Players...</h1>
-    <h4 class="text-center text-purple fw-light">Game Id: @Model.Id</h4>
-
-    <h3 class="mt-5 mx-auto" style="width: 80%">Current Players:</h3>
-    <div id="currentPlayers" class="mt-2 mx-auto" style="width: 80%">
-        <table>
-        @foreach (int key in Model.Players.Keys)
-        {
-            <tr>
-                @if ( ViewData["IsCreator"] == "true")
-                {
-                    @if (key == 0) 
-                    {
-                         <td class="me-5"></td>
-                    }
-                    else 
-                    {
-                         <td><a onclick="remove(@key)" class="me-5 btn-outline-darkPurple btn">Remove</a></td>
-                    }
-                }
-                <td><p class="m-0">- @Model.Players[key] </p> </td>
-            </tr>
-        }
-        </table>
+<div class="lobby-container">
+    <div class="lobby-header">
+        <h1 class="lobby-welcome heading-display">Welcome @Model.Players[(int)ViewData["PlayerId"]]</h1>
+        <p class="lobby-status">Waiting for players...</p>
+        <div class="lobby-game-id-container">
+            <span class="lobby-game-id">Game ID: @Model.Id</span>
+            <button id="copyButton" onclick="copyGameId()" class="btn-copy" title="Copy game ID">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+            </button>
+        </div>
     </div>
 
-    @if( ViewData["IsCreator"] == "true" )
+    <div class="lobby-players animate-fade-in-up">
+        <h3 class="lobby-players__title">Current Players</h3>
+        <div id="currentPlayers">
+            @foreach (int key in Model.Players.Keys)
+            {
+                var isHost = key == 0;
+                var playerClass = isHost ? "lobby-player lobby-player--creator" : "lobby-player";
+
+                <div class="@playerClass animate-slide-in-left">
+                    <div class="lobby-player__name">
+                        <span class="lobby-player__indicator"></span>
+                        @Model.Players[key]
+                    </div>
+                    @if (ViewData["IsCreator"]?.ToString() == "true" && !isHost)
+                    {
+                        <button onclick="remove(@key)" class="btn btn-sm btn-outline-darkPurple">Remove</button>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (ViewData["IsCreator"]?.ToString() == "true")
     {
-        <form action="/Game/Start" class="mx-auto mt-5" style="width: 80%">
-            <input type="hidden" id="gameId" name="gameId" value='@ViewData["GameId"]'/>
-            @if (@Model.Players.Count >= 2)
+        <form action="/Game/Start" class="lobby-actions">
+            <input type="hidden" id="gameId" name="gameId" value='@ViewData["GameId"]' />
+            @if (Model.Players.Count >= 2)
             {
-                <input id="startGameButton" class="btn btn-outline-purple" type="submit" value="Start Game">
+                <button id="startGameButton" class="btn btn-purple btn-lg" type="submit">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    Start Game
+                </button>
             }
-            else 
+            else
             {
-                <input id="startGameButton" disabled class="btn btn-outline-purple" type="submit" value="Start Game">
+                <button id="startGameButton" disabled class="btn btn-purple btn-lg" type="submit">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    Start Game
+                </button>
             }
-            
         </form>
     }
 </div>
-
-

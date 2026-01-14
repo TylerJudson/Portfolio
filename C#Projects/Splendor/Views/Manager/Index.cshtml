@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Manager";
 }
 
@@ -6,57 +6,113 @@
 
 @if (Model != null)
 {
-    <h1 class="text-center splendorHeading mt-3">Manager</h1>
-    <div class="mx-auto mt-7 container row" style="max-width: 75rem;">
-        <!-- Pending Games -->
-            <div class="col-12 p-0
-                        col-lg-6 mt-lg-3" >
-                <h5 class="mx-auto fs-3" style="width: 80%">Pending Games</h5>
+    <div class="lobby-container" style="max-width: 1000px;">
+        <div class="lobby-header">
+            <h1 class="lobby-welcome heading-display">Manager</h1>
+            <p class="lobby-status" style="animation: none;">Game Administration</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr; gap: var(--space-xl);">
+            <!-- Pending Games -->
+            <div class="lobby-players animate-fade-in-up stagger-1">
+                <h3 class="lobby-players__title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--space-sm); vertical-align: middle;">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    Pending Games
+                    <span style="font-size: var(--text-sm); color: var(--text-muted); font-weight: 400; margin-left: var(--space-sm);">
+                        (@Model.PendingGames.Count)
+                    </span>
+                </h3>
                 @if (Model.PendingGames.Count > 0)
                 {
-                    <table id="pendingGames" class="mx-auto" style="width: 80%">
                     @foreach (int Id in Model.PendingGames.Keys)
                     {
-                        <tr style="width: 80%">
-                            <td class="text-start mt-3 ps-3 ps-lg-5">@Id</td>
-                            <td class="text-end mt-3"><a class="btn-outline-purple btn" asp-controller="Manager" asp-action="DeletePendingGame" asp-route-id="@Id">Delete</a></td>
-                        </tr>
+                        <div class="lobby-player animate-slide-in-left">
+                            <div class="lobby-player__name">
+                                <span class="lobby-player__indicator" style="background: var(--warning);"></span>
+                                Game #@Id
+                            </div>
+                            <a class="btn btn-sm btn-outline-darkPurple" asp-controller="Manager" asp-action="DeletePendingGame" asp-route-id="@Id">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                                Delete
+                            </a>
+                        </div>
                     }
-                    </table>
                 }
-                else 
+                else
                 {
-                    <p class="mx-auto ps-5" style="width: 80%">None</p>
+                    <div class="text-center" style="padding: var(--space-xl); color: var(--text-muted);">
+                        <p>No pending games</p>
+                    </div>
                 }
             </div>
 
-        <!-- Active Games -->
-            <div class="col-12 p-0
-                        col-lg-6 mt-lg-3" >
-                <h5 class="mx-auto fs-3" style="width: 80%">Active Games</h5>
+            <!-- Active Games -->
+            <div class="lobby-players animate-fade-in-up stagger-2">
+                <h3 class="lobby-players__title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: var(--space-sm); vertical-align: middle;">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    Active Games
+                    <span style="font-size: var(--text-sm); color: var(--text-muted); font-weight: 400; margin-left: var(--space-sm);">
+                        (@Model.ActiveGames.Count)
+                    </span>
+                </h3>
                 @if (Model.ActiveGames.Count > 0)
                 {
-                    <table id="activeGames" class="mx-auto" style="width: 80%">
                     @foreach (int Id in Model.ActiveGames.Keys)
                     {
-                        <tr style="width: 80%">
-                            @{
-                                string Paused = "";
-                                if (Model.ActiveGames[Id].IsPaused)
+                        var isPaused = Model.ActiveGames[Id].IsPaused;
+                        <div class="lobby-player animate-slide-in-left">
+                            <div class="lobby-player__name">
+                                <span class="lobby-player__indicator" style="background: @(isPaused ? "var(--warning)" : "var(--success)");"></span>
+                                Game #@Id
+                                @if (isPaused)
                                 {
-                                    Paused = "(paused)";
+                                    <span style="font-size: var(--text-xs); color: var(--warning); background: var(--warning-bg); padding: 2px 8px; border-radius: var(--radius-full); margin-left: var(--space-sm);">
+                                        Paused
+                                    </span>
                                 }
-                            }
-                            <td class="text-start mt-3 ps-3 ps-lg-5">@Id @Paused</td>
-                            <td class="text-end mt-3"><a class="btn-outline-purple btn" asp-controller="Manager" asp-action="DeleteActiveGame" asp-route-id="@Id">Delete</a></td>
-                        </tr>
+                            </div>
+                            <a class="btn btn-sm btn-outline-darkPurple" asp-controller="Manager" asp-action="DeleteActiveGame" asp-route-id="@Id">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                                Delete
+                            </a>
+                        </div>
                     }
-                    </table>
                 }
-                else 
+                else
                 {
-                    <p class="mx-auto ps-5" style="width: 80%">None</p>
+                    <div class="text-center" style="padding: var(--space-xl); color: var(--text-muted);">
+                        <p>No active games</p>
+                    </div>
                 }
             </div>
+        </div>
+
+        <div style="text-align: center; margin-top: var(--space-2xl);">
+            <a href="/" class="auth-back-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Home
+            </a>
+        </div>
     </div>
 }
+
+<style>
+    @@media (min-width: 768px) {
+        .lobby-container > div:nth-child(2) {
+            grid-template-columns: 1fr 1fr !important;
+        }
+    }
+</style>

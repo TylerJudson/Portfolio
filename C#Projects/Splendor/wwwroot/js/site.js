@@ -35,6 +35,17 @@ let OtherScreen = false;
 
 let ReservedCard = "";
 
+// Template for the taking tokens row (used in Return Tokens screen)
+let takingTokensRow = `
+    <tr>
+        <td id="EmeraldTakingToken" class="takingToken" style="opacity: 0;"><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Emerald.png" alt="EmeraldToken"/><h1 id="EmeraldTakingTokenValue">0</h1></td>
+        <td id="SapphireTakingToken" class="takingToken" style="opacity: 0;"><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Sapphire.png" alt="SapphireToken"/><h1 id="SapphireTakingTokenValue">0</h1></td>
+        <td id="RubyTakingToken" class="takingToken" style="opacity: 0;"><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Ruby.png" alt="RubyToken"/><h1 id="RubyTakingTokenValue">0</h1></td>
+        <td id="DiamondTakingToken" class="takingToken" style="opacity: 0;"><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Diamond.png" alt="DiamondToken"/><h1 id="DiamondTakingTokenValue">0</h1></td>
+        <td id="OnyxTakingToken" class="takingToken" style="opacity: 0;"><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Onyx.png" alt="OnyxToken"/><h1 id="OnyxTakingTokenValue">0</h1></td>
+        <td id="GoldTakingToken" class="takingToken" style="opacity: 0;"><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Gold.png" alt="GoldToken"/><h1 id="GoldTakingTokenValue">0</h1></td>
+    </tr>`;
+
 // When the user scrolls the page
 window.onscroll = function () { OnScroll() };
 
@@ -62,14 +73,15 @@ function OnScroll() {
 function ToggleScreen(screenID) {
     var x = document.getElementById(screenID);
     if (x.style.display == "none") {
-        x.style.display = "block";
+        // Use flex for game-overlay screens to maintain centering, block for others
+        x.style.display = x.classList.contains("game-overlay") ? "flex" : "block";
         OtherScreen = true;
     } else {
         x.style.display = "none";
         OtherScreen = false;
     }
     OnScroll();
-    
+
 }
 
 function merge(obj1, obj2) {
@@ -194,9 +206,22 @@ function getPurchaseReserveButton(IsCurrentPlayer, purchaseable, HaveGold, Image
     return ret;
 }
 
+// Helper to update empty state on a token cell
+function updateTokenEmptyState(tokenName) {
+    let cell = document.querySelector(`td.token[onclick*="'${tokenName}'"]`);
+    if (cell) {
+        if (Tokens[tokenName] <= 0) {
+            cell.classList.add('token--empty');
+        } else {
+            cell.classList.remove('token--empty');
+        }
+    }
+}
+
 function SetTokens() {
     document.getElementById("EmeraldTakingTokenValue").innerHTML = TakingTokens.Emerald == undefined ? 0 : TakingTokens.Emerald;
     document.getElementById("EmeraldTokenValue").innerHTML = Tokens.Emerald;
+    updateTokenEmptyState('Emerald');
     if (TakingTokens.Emerald == 0) {
         document.getElementById("EmeraldTakingToken").style.opacity = 0;
         document.getElementById("EmeraldTakingToken").style.cursor = "default";
@@ -205,6 +230,7 @@ function SetTokens() {
 
     document.getElementById("SapphireTakingTokenValue").innerHTML = TakingTokens.Sapphire == undefined ? 0 : TakingTokens.Sapphire;
     document.getElementById("SapphireTokenValue").innerHTML = Tokens.Sapphire;
+    updateTokenEmptyState('Sapphire');
     if (TakingTokens.Sapphire == 0) {
         document.getElementById("SapphireTakingToken").style.opacity = 0;
         document.getElementById("SapphireTakingToken").style.cursor = "default";
@@ -213,6 +239,7 @@ function SetTokens() {
 
     document.getElementById("RubyTakingTokenValue").innerHTML = TakingTokens.Ruby == undefined ? 0 : TakingTokens.Ruby;
     document.getElementById("RubyTokenValue").innerHTML = Tokens.Ruby;
+    updateTokenEmptyState('Ruby');
     if (TakingTokens.Ruby == 0) {
         document.getElementById("RubyTakingToken").style.opacity = 0;
         document.getElementById("RubyTakingToken").style.cursor = "default";
@@ -221,6 +248,7 @@ function SetTokens() {
 
     document.getElementById("DiamondTakingTokenValue").innerHTML = TakingTokens.Diamond == undefined ? 0 : TakingTokens.Diamond;
     document.getElementById("DiamondTokenValue").innerHTML = Tokens.Diamond;
+    updateTokenEmptyState('Diamond');
     if (TakingTokens.Diamond == 0) {
         document.getElementById("DiamondTakingToken").style.opacity = 0;
         document.getElementById("DiamondTakingToken").style.cursor = "default";
@@ -229,6 +257,7 @@ function SetTokens() {
 
     document.getElementById("OnyxTakingTokenValue").innerHTML = TakingTokens.Onyx == undefined ? 0 : TakingTokens.Onyx;
     document.getElementById("OnyxTokenValue").innerHTML = Tokens.Onyx;
+    updateTokenEmptyState('Onyx');
     if (TakingTokens.Onyx == 0) {
         document.getElementById("OnyxTakingToken").style.opacity = 0;
         document.getElementById("OnyxTakingToken").style.cursor = "default";
@@ -236,6 +265,21 @@ function SetTokens() {
     }
 
     document.getElementById("GoldTokenValue").innerHTML = Tokens.Gold;
+    updateTokenEmptyState('Gold');
+}
+
+// Initialize empty state on page load
+function initTokenEmptyStates() {
+    ['Emerald', 'Sapphire', 'Ruby', 'Diamond', 'Onyx', 'Gold'].forEach(tokenName => {
+        updateTokenEmptyState(tokenName);
+    });
+}
+
+// Run on DOM ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTokenEmptyStates);
+} else {
+    initTokenEmptyStates();
 }
 
 function TokenClick(token) {
@@ -375,11 +419,24 @@ function TokenClick(token) {
 
 }
 
+// Helper to update empty state on player token cell in return screen
+function updatePlayerTokenEmptyState(tokenName, displayValue) {
+    let cell = document.getElementById('Player' + tokenName + 'Token');
+    if (cell) {
+        if (displayValue <= 0) {
+            cell.classList.add('token--empty');
+        } else {
+            cell.classList.remove('token--empty');
+        }
+    }
+}
+
 function SetReturningTokens() {
     document.getElementById("EmeraldReturningTokenValue").innerHTML = ReturningTokens.Emerald == undefined ? 0 : ReturningTokens.Emerald;
     // Show DisplayTokens - ReturningTokens (the tokens player will have after returning)
     let emeraldDisplay = (DisplayTokens.Emerald || 0) - (ReturningTokens.Emerald || 0);
     document.getElementById("PlayerEmeraldTokenValue").innerHTML = emeraldDisplay;
+    updatePlayerTokenEmptyState('Emerald', emeraldDisplay);
     if (ReturningTokens.Emerald == 0) {
         document.getElementById("EmeraldReturningToken").style.opacity = 0;
         document.getElementById("EmeraldReturningToken").style.cursor = "default";
@@ -387,7 +444,9 @@ function SetReturningTokens() {
     }
 
     document.getElementById("SapphireReturningTokenValue").innerHTML = ReturningTokens.Sapphire == undefined ? 0 : ReturningTokens.Sapphire;
-    document.getElementById("PlayerSapphireTokenValue").innerHTML = (DisplayTokens.Sapphire || 0) - (ReturningTokens.Sapphire || 0);
+    let sapphireDisplay = (DisplayTokens.Sapphire || 0) - (ReturningTokens.Sapphire || 0);
+    document.getElementById("PlayerSapphireTokenValue").innerHTML = sapphireDisplay;
+    updatePlayerTokenEmptyState('Sapphire', sapphireDisplay);
     if (ReturningTokens.Sapphire == 0) {
         document.getElementById("SapphireReturningToken").style.opacity = 0;
         document.getElementById("SapphireReturningToken").style.cursor = "default";
@@ -395,7 +454,9 @@ function SetReturningTokens() {
     }
 
     document.getElementById("RubyReturningTokenValue").innerHTML = ReturningTokens.Ruby == undefined ? 0 : ReturningTokens.Ruby;
-    document.getElementById("PlayerRubyTokenValue").innerHTML = (DisplayTokens.Ruby || 0) - (ReturningTokens.Ruby || 0);
+    let rubyDisplay = (DisplayTokens.Ruby || 0) - (ReturningTokens.Ruby || 0);
+    document.getElementById("PlayerRubyTokenValue").innerHTML = rubyDisplay;
+    updatePlayerTokenEmptyState('Ruby', rubyDisplay);
     if (ReturningTokens.Ruby == 0) {
         document.getElementById("RubyReturningToken").style.opacity = 0;
         document.getElementById("RubyReturningToken").style.cursor = "default";
@@ -403,7 +464,9 @@ function SetReturningTokens() {
     }
 
     document.getElementById("DiamondReturningTokenValue").innerHTML = ReturningTokens.Diamond == undefined ? 0 : ReturningTokens.Diamond;
-    document.getElementById("PlayerDiamondTokenValue").innerHTML = (DisplayTokens.Diamond || 0) - (ReturningTokens.Diamond || 0);
+    let diamondDisplay = (DisplayTokens.Diamond || 0) - (ReturningTokens.Diamond || 0);
+    document.getElementById("PlayerDiamondTokenValue").innerHTML = diamondDisplay;
+    updatePlayerTokenEmptyState('Diamond', diamondDisplay);
     if (ReturningTokens.Diamond == 0) {
         document.getElementById("DiamondReturningToken").style.opacity = 0;
         document.getElementById("DiamondReturningToken").style.cursor = "default";
@@ -411,7 +474,9 @@ function SetReturningTokens() {
     }
 
     document.getElementById("OnyxReturningTokenValue").innerHTML = ReturningTokens.Onyx == undefined ? 0 : ReturningTokens.Onyx;
-    document.getElementById("PlayerOnyxTokenValue").innerHTML = (DisplayTokens.Onyx || 0) - (ReturningTokens.Onyx || 0);
+    let onyxDisplay = (DisplayTokens.Onyx || 0) - (ReturningTokens.Onyx || 0);
+    document.getElementById("PlayerOnyxTokenValue").innerHTML = onyxDisplay;
+    updatePlayerTokenEmptyState('Onyx', onyxDisplay);
     if (ReturningTokens.Onyx == 0) {
         document.getElementById("OnyxReturningToken").style.opacity = 0;
         document.getElementById("OnyxReturningToken").style.cursor = "default";
@@ -419,7 +484,9 @@ function SetReturningTokens() {
     }
 
     document.getElementById("GoldReturningTokenValue").innerHTML = ReturningTokens.Gold == undefined ? 0 : ReturningTokens.Gold;
-    document.getElementById("PlayerGoldTokenValue").innerHTML = (DisplayTokens.Gold || 0) - (ReturningTokens.Gold || 0);
+    let goldDisplay = (DisplayTokens.Gold || 0) - (ReturningTokens.Gold || 0);
+    document.getElementById("PlayerGoldTokenValue").innerHTML = goldDisplay;
+    updatePlayerTokenEmptyState('Gold', goldDisplay);
     if (ReturningTokens.Gold == 0) {
         document.getElementById("GoldReturningToken").style.opacity = 0;
         document.getElementById("GoldReturningToken").style.cursor = "default";

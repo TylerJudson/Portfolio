@@ -11,9 +11,8 @@
 
     bool IsCurrentPlayer = Model.Players[Model.CurrentPlayer].Id == (int)ViewData["PlayerId"];
 }
-<body style="margin-bottom: 10rem;">
 
-
+<div style="margin-bottom: 10rem;">
 
 <!-- Communicating with the server -->
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -431,15 +430,12 @@
 
 
 <!-- Options button -->
-    <nav class="navbar">   
-        <div class="mx-3 btn" onclick='ToggleScreen("OptionsScreen")' > 
-            @for (int j = 0; j < 3; j++)
-            {
-                <svg width="0.8rem" height="1rem">
-                    <circle cx="50%" cy="50%" r="5" fill="gray"/>
-                </svg>
-            }
-            </div>
+    <nav class="navbar">
+        <div class="options-trigger" onclick='ToggleScreen("OptionsScreen")' >
+            <span class="options-trigger__dot"></span>
+            <span class="options-trigger__dot"></span>
+            <span class="options-trigger__dot"></span>
+        </div>
     </nav>
 
 <section class="container row mx-auto p-2 maxContainer">
@@ -494,135 +490,120 @@
 
                
 
-                <section id="@playerCardId" class="container row rounded-3 mt-3 mx-auto pb-1 px-0" style="border: 2px solid @borderColor;">
-                    <div class="col-12 container
-                                col-md-6
-                                col-lg-12
-                                playerStatsContainer">
-                        <h3 class="row ms-3">@Model.Players[i].Name</h3>
-                        <table class="mb-1">
-                            <!--Total of Tokens + Cards-->
-                                <tr>
-                                    <th></th>
-                                    @{
-                                        Dictionary<Token, string> Colors = new Dictionary<Token, string>() { { Token.Emerald, "green" }, { Token.Sapphire, "rgb(0,0,200)" }, { Token.Ruby, "rgb(200,0,0)" }, { Token.Diamond, "lightgray" }, { Token.Onyx, "rgb(100,60,20)" } };
-                                    }
-                                        @foreach(KeyValuePair<Token, string> kvp in Colors)
-                                        {
-                                            <th>
-                                                <svg class="playerStats">
-                                                    <text id='@Model.Players[i].Id-Total:@kvp.Key' x="50%" y="50%" text-anchor="middle" fill=@kvp.Value stroke="black" font-size="2rem" stroke-width="1px" dy=".35em" style="opacity: @(Model.Players[i].Tokens[kvp.Key] + Model.Players[i].CardTokens[kvp.Key] == 0 ? 0 : 100);">@(Model.Players[i].Tokens[kvp.Key] + Model.Players[i].CardTokens[kvp.Key])</text>
-                                                </svg>
-                                            </th>
-                                        }
-
-                                        <th>
-                                            <svg class="playerStats">
-                                                    <text id="@Model.Players[i].Id-Total:Gold" x="50%" y="50%" text-anchor="middle" fill="rgb(225,193,37)" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em" style="opacity: @(Model.Players[i].Tokens[Token.Gold] == 0 ? 0 : 100);">@Model.Players[i].Tokens[Token.Gold]</text>
-                                            </svg>
-                                        </th>
-                                </tr>
-
-                            <!--Total Tokens-->
-                                <tr>
-                                    <td>
-                                        <svg class="playerStats">
-                                            <text id="@Model.Players[i].Id-TokenTotal" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em" style="opacity: @(Model.Players[i].NumberOfTokens() == 0 ? 0 : 100);">@Model.Players[i].NumberOfTokens()</text>
-                                        </svg>
-                                    </td>
-                                    @foreach(KeyValuePair<Token, string> kvp in Colors)
-                                    {
-                                        <td>
-                                            <svg class="playerStats">
-                                                <circle cx="50%" cy="50%" r="20" fill=@kvp.Value />
-                                                <text id="@Model.Players[i].Id-Token:@kvp.Key" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em" style="opacity: @(Model.Players[i].Tokens[kvp.Key] == 0 ? 0 : 100);">@Model.Players[i].Tokens[kvp.Key]</text>
-                                            </svg>
-                                        </td>
-                                    }
-
-                                    <td>
-                                        <svg class="playerStats">
-                                            <circle cx="50%" cy="50%" r="20" fill="rgb(225,193,37)" />
-                                            <text id="@Model.Players[i].Id-Token:Gold" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em" style="opacity: @(Model.Players[i].Tokens[Token.Gold] == 0 ? 0 : 100);">@Model.Players[i].Tokens[Token.Gold]</text>
-                                        </svg>
-                                    </td>
-                                </tr>
-
-                            <!--Total Cards and Prestige Points-->
-                                <tr>
-                                    <td>
-                                        <svg class="playerStats">
-                                            <text id="@Model.Players[i].Id-PrestigePoints" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em" style="opacity: @(Model.Players[i].PrestigePoints == 0 ? 0 : 100)" >@Model.Players[i].PrestigePoints</text>
-                                        </svg>
-                                    </td>
-                                    @foreach(KeyValuePair<Token, string> kvp in Colors)
-                                    {
-                                        <td>
-                                            <svg class="playerStats">
-                                                <rect x="10%" rx="10" ry="10" width="2.4rem" height="3rem" fill=@kvp.Value />
-                                                <text id="@Model.Players[i].Id-Card:@kvp.Key" x="50%" y="50%" text-anchor="middle" fill="gray" stroke="black" font-size="2rem" stroke-width="1px" dy=".35em" style="opacity: @(Model.Players[i].CardTokens[kvp.Key] == 0 ? 0 : 100);">@Model.Players[i].CardTokens[kvp.Key]</text>
-                                            </svg>
-                                        </td>
-                                    }
-                                </tr>
-                        </table>
+                <section id="@playerCardId" class="player-card @(i == Model.CurrentPlayer && !Model.GameOver ? "player-card--active" : "") @(Model.Players[i].PrestigePoints >= 15 && Model.Players[i].PrestigePoints == mostPoints ? "player-card--winner" : "")">
+                    <!-- Player Header -->
+                    <div class="player-header">
+                        <span class="player-name">@Model.Players[i].Name</span>
+                        <div class="player-prestige">
+                            <svg class="prestige-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                            </svg>
+                            <span class="prestige-value" id="@Model.Players[i].Id-PrestigeDisplay">@Model.Players[i].PrestigePoints</span>
+                        </div>
                     </div>
 
-                    <!-- Resereved Cards -->
-                        <div id="ReservedCards" class="col-12 container position-relative
-                                    col-md-6 ps-md-5 pe-md-0
-                                    col-lg-12 p-lg-0
-                                    playerStatsContainer">
-                            <div class="row m-0" style="position: relative; top: 50%; transform: translateY(-50%);">
-                                @if (Model.Players[i].ReservedCards.Count > 0)
+                    <!-- Player Content: Tokens + Reserved Cards side by side -->
+                    <div class="player-content">
+                        <!-- Tokens & Bonuses Section -->
+                        <div class="player-tokens-section">
+                            <!-- Total Token Count (left side summary) -->
+                            <div class="token-summary">
+                                <span class="token-summary-value" id="@Model.Players[i].Id-TokenTotal">@Model.Players[i].NumberOfTokens()</span>
+                                <span class="token-summary-label">Tokens</span>
+                            </div>
+
+                            <!-- Token Grid -->
+                            <div class="token-grid">
+                                @{
+                                    var gemTypes = new[] { Token.Emerald, Token.Sapphire, Token.Ruby, Token.Diamond, Token.Onyx };
+                                }
+                                @foreach (var gem in gemTypes)
                                 {
-                                    string BorderColor_r = "gray";
-                                    string Opacity_r = "80%";
-                                    bool Purchaseable_r = false;
-                                    foreach (ICard card in Model.Players[i].ReservedCards)
+                                    var tokenCount = Model.Players[i].Tokens[gem];
+                                    var cardCount = Model.Players[i].CardTokens[gem];
+                                    var totalCount = tokenCount + cardCount;
+                                    var gemClass = gem.ToString().ToLower();
+
+                                    <div class="token-column @(totalCount == 0 ? "token-column--empty" : "")">
+                                        <!-- Total (purchasing power) -->
+                                        <span class="token-total @(totalCount == 0 ? "token-total--empty" : "")" id="@Model.Players[i].Id-Total:@gem">@totalCount</span>
+
+                                        <!-- Token chip -->
+                                        <div class="token-chip token-chip--@gemClass @(tokenCount == 0 ? "token-chip--empty" : "")">
+                                            <span class="token-chip-value" id="@Model.Players[i].Id-Token:@gem">@tokenCount</span>
+                                        </div>
+
+                                        <!-- Card bonus chip -->
+                                        <div class="card-chip card-chip--@gemClass @(cardCount == 0 ? "card-chip--empty" : "")">
+                                            <span class="card-chip-value" id="@Model.Players[i].Id-Card:@gem">@cardCount</span>
+                                        </div>
+                                    </div>
+                                }
+
+                                <!-- Gold tokens (separate - no cards) -->
+                                @{
+                                    var goldCount = Model.Players[i].Tokens[Token.Gold];
+                                }
+                                <div class="token-column token-column--gold @(goldCount == 0 ? "token-column--empty" : "")">
+                                    <span class="token-total token-total--gold @(goldCount == 0 ? "token-total--empty" : "")" id="@Model.Players[i].Id-Total:Gold">@goldCount</span>
+                                    <div class="token-chip token-chip--gold @(goldCount == 0 ? "token-chip--empty" : "")">
+                                        <span class="token-chip-value" id="@Model.Players[i].Id-Token:Gold">@goldCount</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hidden prestige for JS compatibility -->
+                            <span id="@Model.Players[i].Id-PrestigePoints" style="display:none;">@Model.Players[i].PrestigePoints</span>
+                        </div>
+
+                        <!-- Reserved Cards Section (only shown if has reserved cards) -->
+                        @if (Model.Players[i].ReservedCards.Count > 0)
+                        {
+                            <div class="player-reserved-section">
+                                <div id="ReservedCards" class="player-reserved-grid">
+                                    @{
+                                        bool Purchaseable_r = false;
+                                        string CardStateClass_r = "";
+                                    }
+                                    @foreach (ICard card in Model.Players[i].ReservedCards)
                                     {
                                         if (playerOrdinal == i && Model.Players[playerOrdinal].CanPurchaseCard(card))
                                         {
-                                            BorderColor_r = "green";
-                                            Opacity_r = "100%";
+                                            CardStateClass_r = "card--purchasable";
                                             Purchaseable_r = true;
-
                                         }
                                         else if (playerOrdinal == i && Model.Players[playerOrdinal].CanPurchaseCardWithGold(card))
                                         {
-                                            BorderColor_r = "yellow";
-                                            Opacity_r = "80%";
+                                            CardStateClass_r = "card--purchasable-gold";
                                             Purchaseable_r = true;
-
                                         }
                                         else
                                         {
-                                            BorderColor_r = "gray";
-                                            Opacity_r = "80%";
+                                            CardStateClass_r = "card--unavailable";
                                             Purchaseable_r = false;
-
                                         }
-                                        <div class="col-4
-                                                    col-sm-3
-                                                    col-md-4
-                                                    ">
-                                            <img id="@Model.Players[i].Id-Reserved:@card.ImageName" class="col-12 p-0 card cursorHover" style="border-color: @BorderColor_r; opacity: @Opacity_r;" maxwidth="33%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/@card.ImageName" alt=@card.ImageName onclick='ReserveCardScreen("@card.ImageName", @Purchaseable_r)'/>
+                                        <div class="player-reserved-card">
+                                            <img id="@Model.Players[i].Id-Reserved:@card.ImageName" class="card cursorHover @CardStateClass_r" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/@card.ImageName" alt=@card.ImageName onclick='ReserveCardScreen("@card.ImageName", @Purchaseable_r)'/>
                                         </div>
                                     }
-                                }
+                                </div>
                             </div>
-                        </div>
+                        }
+                    </div>
                 </section>
             }
         </section> 
 
     <!-- Shop -->
         <section id="Shop" class="col-12 m-0 p-2
-                        col-lg-6"> 
+                        col-lg-6 shop-wrapper">
 
             <!-- Tokens -->
-                <section class="container mx-auto p-0 mb-5" width="100%">
-                        <table class="mx-auto" width="100%">
+                <section class="shop-token-pool">
+                    <div class="shop-section-header">
+                        <span class="shop-section-label">Gem Tokens</span>
+                    </div>
+                    <table class="mx-auto shop-token-table" width="100%">
                             <tr>
                                 <td id="EmeraldTakingToken"  class="takingToken" onclick="TokenClick('TakingEmerald')"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="EmeraldTakingTokenValue">0</h1></td>
                                 <td id="SapphireTakingToken" class="takingToken" onclick="TokenClick('TakingSapphire')" ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Sapphire.png" alt="SapphireToken" /><h1 id="SapphireTakingTokenValue">0</h1></td>
@@ -643,23 +624,29 @@
                 </section>
 
             <!-- Cards and Nobles -->
-                <section class="container mx-auto p-1 border-purple rounded-3 border-5">
+                <section class="shop-card-display">
+                    <div class="shop-section-header">
+                        <span class="shop-section-label">Development Cards</span>
+                    </div>
 
-                        <table class="mx-auto">
+                    <div class="shop-nobles-section">
+                        <span class="shop-subsection-label">Nobles</span>
+                        <table class="mx-auto shop-nobles-table">
                             <tr>
                                 @foreach (INoble noble in Model.Nobles)
                                 {
-                                    <td><img id="@noble.ImageName" class="card cursorHover" style="width: 100%; opacity: 80%; max-width: 8rem;" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/@noble.ImageName" alt="@noble.ImageName" onclick='NobleScreen("@noble.ImageName")' /></td>
+                                    <td><img id="@noble.ImageName" class="noble cursorHover" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/@noble.ImageName" alt="@noble.ImageName" onclick='NobleScreen("@noble.ImageName")' /></td>
                                 }
                             </tr>
                         </table>
+                    </div>
 
-                        <table class="mx-auto">
-                            <tr>
+                    <div class="shop-cards-section">
+                        <table class="mx-auto shop-cards-table">
+                            <tr class="shop-card-row shop-card-row--level3">
                                 @{
-                                    string BorderColor = "gray";
-                                    string Opacity = "80%";
                                     bool Purchaseable = false;
+                                    string CardStateClass = "";
                                 }
                                 @foreach (ICard? card in Model.Level3Cards)
                                 {
@@ -669,30 +656,25 @@
                                     }
                                     if(Model.Players[playerOrdinal].CanPurchaseCard(card))
                                     {
-                                        BorderColor = "green";
-                                        Opacity = "100%";
+                                        CardStateClass = "card--purchasable";
                                         Purchaseable = true;
-
                                     }
                                     else if (Model.Players[playerOrdinal].CanPurchaseCardWithGold(card))
                                     {
-                                        BorderColor = "yellow";
-                                        Opacity = "80%";
+                                        CardStateClass = "card--purchasable-gold";
                                         Purchaseable = true;
                                     }
                                     else
                                     {
-                                        BorderColor = "gray";
-                                        Opacity = "80%";
+                                        CardStateClass = "card--unavailable";
                                         Purchaseable = false;
-
                                     }
 
-                                    <td><img id="@card.ImageName" class="card cursorHover" style="width: 100%; border-color: @BorderColor; opacity: @Opacity;" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName", @Purchaseable)' /></td>
-                            
+                                    <td><img id="@card.ImageName" class="card cursorHover @CardStateClass" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName", @Purchaseable)' /></td>
+
                                 }
                              </tr>
-                             <tr>
+                             <tr class="shop-card-row shop-card-row--level2">
                                 @foreach (ICard? card in Model.Level2Cards)
                                 {
                                     if (card == null)
@@ -701,30 +683,25 @@
                                     }
                                     if(Model.Players[playerOrdinal].CanPurchaseCard(card))
                                     {
-                                        BorderColor = "green";
-                                        Opacity = "100%";
+                                        CardStateClass = "card--purchasable";
                                         Purchaseable = true;
-
                                     }
                                     else if (Model.Players[playerOrdinal].CanPurchaseCardWithGold(card))
                                     {
-                                        BorderColor = "yellow";
-                                        Opacity = "80%";
+                                        CardStateClass = "card--purchasable-gold";
                                         Purchaseable = true;
                                     }
                                     else
                                     {
-                                        BorderColor = "gray";
-                                        Opacity = "80%";
+                                        CardStateClass = "card--unavailable";
                                         Purchaseable = false;
-
                                     }
 
-                                    <td><img id="@card.ImageName" class="card cursorHover" style="width: 100%; border-color: @BorderColor; opacity: @Opacity;" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName", @Purchaseable)' /></td>
-                            
+                                    <td><img id="@card.ImageName" class="card cursorHover @CardStateClass" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName", @Purchaseable)' /></td>
+
                                 }
                              </tr>
-                             <tr>
+                             <tr class="shop-card-row shop-card-row--level1">
                                 @foreach (ICard? card in Model.Level1Cards)
                                 {
                                     if (card == null)
@@ -733,79 +710,81 @@
                                     }
                                     if(Model.Players[playerOrdinal].CanPurchaseCard(card))
                                     {
-                                        BorderColor = "green";
-                                        Opacity = "100%";
+                                        CardStateClass = "card--purchasable";
                                         Purchaseable = true;
-
                                     }
                                     else if (Model.Players[playerOrdinal].CanPurchaseCardWithGold(card))
                                     {
-                                        BorderColor = "yellow";
-                                        Opacity = "80%";
+                                        CardStateClass = "card--purchasable-gold";
                                         Purchaseable = true;
                                     }
                                     else
                                     {
-                                        BorderColor = "gray";
-                                        Opacity = "80%";
+                                        CardStateClass = "card--unavailable";
                                         Purchaseable = false;
-
                                     }
-                                    <td><img id="@card.ImageName" class="card cursorHover"  style="width: 100%; border-color: @BorderColor; opacity: @Opacity;" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName", @Purchaseable)' /></td>
-                            
+                                    <td><img id="@card.ImageName" class="card cursorHover @CardStateClass" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/@card.ImageName" alt="@card.ImageName" onclick='CardScreen("@card.ImageName", @Purchaseable)' /></td>
+
                                 }
                              </tr>
                         </table>
+                    </div>
                 </section>
 
         </section>
 
 </section>
-    
 
-
+</div>
+@* Close the main game container div - overlay screens below will be outside this container *@
 
 
 @if (IsCurrentPlayer && !Model.GameOver)
 {
-    <button id="endTurnButton" class="btn-darkPurple btn px-5 fs-3" onclick="endTurn();">End Turn</button>
+    <button id="endTurnButton" class="btn btn-purple btn-lg game-end-turn" onclick="endTurn();">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+        </svg>
+        End Turn
+    </button>
     <audio id="AlertAudio" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/TurnAlert.mp3"></audio>
 
 
     <!--Your Turn Alert-->
-        <div id="turnContainer" class="toast-container position-fixed bottom-0 p-5" data-bs-delay="100">
-            <div id="turnNotification" class="toast align-items-center show" role="alert" aria-live="assertive" aria-atomic="true" style="color: white; background-color: var(--purple)">
-                <div class="d-flex">
-                    <div class="toast-body fs-3 ms-3">
-                        It's your turn!
-                    </div>
+        <div id="turnContainer" class="game-toast-container">
+            <div id="turnNotification" class="game-toast game-toast--turn">
+                <div class="game-toast__icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
                 </div>
+                <span class="game-toast__text">It's your turn!</span>
             </div>
         </div>
 
 
         <script>
-            setTimeout(() => { 
+            setTimeout(() => {
                 document.getElementById("AlertAudio").play();
                 let turnNotification = document.getElementById("turnContainer");
-                turnNotification.style.transform = 'translateX(400px)';
+                turnNotification.classList.add('game-toast-container--visible');
             }, 250);
             setTimeout(() => {
                 let turnNotification = document.getElementById("turnContainer");
-                turnNotification.style.transform = 'translateX(0px)';
-            }, 2000)
-            setTimeout(() => {
-                //document.getElementById("AlertAudio").pause();
-            }, 4000)
+                turnNotification.classList.remove('game-toast-container--visible');
+            }, 3000)
         </script>
 
 
     <!--Last Turn Alert-->
-        <div id="lastTurnContainer" class="toast-container position-fixed">
-            <div id="lastTurnNotification" class="align-items-center show" style="color: white; background-color: var(--darkPurple); width: 100%; height: 100%;">
-                <div class=" v-align text-center" style="width: 100%">
-                    <h1 style="font-size: 200%;">This is your last turn.</h1>
-                </div>
+        <div id="lastTurnContainer" class="game-last-turn-banner">
+            <div class="game-last-turn-banner__content">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <span>This is your last turn!</span>
             </div>
         </div>
 
@@ -813,14 +792,14 @@
         <script>
             True = true; False = false;
             if (@Model.LastRound) {
-                setTimeout(() => { 
+                setTimeout(() => {
                     let turnNotification = document.getElementById("lastTurnContainer");
-                    turnNotification.style.transform = 'translate(-50%, 50%)';
+                    turnNotification.classList.add('game-last-turn-banner--visible');
                 }, 1000);
                 setTimeout(() => {
                     let turnNotification = document.getElementById("lastTurnContainer");
-                    turnNotification.style.transform = 'translate(-50%, -100%)';
-                }, 3000)
+                    turnNotification.classList.remove('game-last-turn-banner--visible');
+                }, 3500)
             }
         </script>
     
@@ -828,8 +807,8 @@
 }
 
 <!--Notify Alert-->
-    <section class="notify align-middle" id="Notify">
-        <div class="v-align" style="width: 100%;">
+    <section class="game-notify" id="Notify">
+        <div class="game-notify__content">
         @{
             int height = 0;
 
@@ -968,21 +947,6 @@
         }
         </div>
     </section>
-     <style>
-         .notify {  
-              z-index: 15;
-              position: fixed;
-              top:0px;
-              width:100%;
-              height: 0;  
-              color:white;  
-              text-align:center;
-              background:rgba(0,0,0,.6);
-              box-sizing:border-box;
-              overflow: hidden;
-              transition:height .2s;
-            }
-     </style>
      <script>
         window.onload = function () {
             // Show notification if: LastTurn exists, it's from another player, AND there's no pending ContinueAction
@@ -1000,37 +964,69 @@
         }
     </script>
 
+@section Overlays {
 <!-- Options Screen -->
 
-    <section id="OptionsScreen" class="OverlayScreen" style="display: none">
-        <div class="mx-auto pt-2 pt-lg-1" style="width: 100%">
-            <h1 id="OptionsHeader" class="mt-3 px-auto text-light display-1 text-center mt-xl-1" style="width: 100%">Options</h1>
-        </div>
-        <div style="margin-top: 22rem; width: 20rem;" class="mt-xl-9 mx-auto text-center">
+    <section id="OptionsScreen" class="game-overlay" style="display: none">
+        <div class="game-overlay__content">
+            <h1 class="game-overlay__title heading-display">Options</h1>
 
-            <div class="mx-auto purple">
-                <button class="mx-auto btn btn-outline-purple btn-lg" style="border: 2px solid var(--purple); width: 100%;" onclick='ToggleScreen("OptionsScreen")'>Back</button> 
-            </div>
-            <div class="mx-auto my-3">
-                <button class="mx-auto btn btn-outline-darkPurple btn-lg" style="width: 100%;" onclick='ToggleScreen("OptionsScreen"); ToggleScreen("GameLogScreen")'>Game Log</button> 
-            </div>
-            <div class="mx-auto my-3">
-                <a class="mx-auto btn btn-outline-secondary btn-lg" style="width: 100%;" onclick='pause(); ToggleScreen("OptionsScreen"); ToggleScreen("PausedScreen")'>Pause</a> 
-            </div>
-            <div class="mx-auto my-3">
-                <a class="mx-auto btn btn-outline-success btn-lg"  style="width: 100%;" href="https://cdn.1j1ju.com/medias/7f/91/ba-splendor-rulebook.pdf" target="_blank" rel="noopener noreferrer" >Rules</a> 
-            </div>
-            <div class="mx-auto my-3">
-                <a class="mx-auto btn btn-outline-danger btn-lg" style="width: 100%;" href="./">Exit Game</a>
+            <div class="game-options-menu">
+                <button class="btn btn-purple btn-lg game-options-btn" onclick='ToggleScreen("OptionsScreen")'>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    Back to Game
+                </button>
+
+                <button class="btn btn-outline-purple btn-lg game-options-btn" onclick='ToggleScreen("OptionsScreen"); ToggleScreen("GameLogScreen")'>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                    Game Log
+                </button>
+
+                <button class="btn btn-outline-darkPurple btn-lg game-options-btn" onclick='pause(); ToggleScreen("OptionsScreen"); ToggleScreen("PausedScreen")'>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="6" y="4" width="4" height="16"/>
+                        <rect x="14" y="4" width="4" height="16"/>
+                    </svg>
+                    Pause Game
+                </button>
+
+                <a class="btn btn-outline-gray btn-lg game-options-btn" href="https://cdn.1j1ju.com/medias/7f/91/ba-splendor-rulebook.pdf" target="_blank" rel="noopener noreferrer">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                    Rules
+                </a>
+
+                <a class="btn btn-outline-danger btn-lg game-options-btn" href="./">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    Exit Game
+                </a>
             </div>
         </div>
     </section>
 
 <!-- Game Log Screen -->
-    <section id="GameLogScreen" class="OverlayScreen" style="display: none; overflow-y:unset;">
-        <button class="btn btn-darkPurple position-absolute btn-lg" style="bottom: 5%; left: 5%; width: 30%; max-width: 10rem;" onclick="ToggleScreen('GameLogScreen')">Back</button>
-        <div style="overflow-y: auto; height: 100%;">
-            <h1 class="display-1 mx-auto text-center mb-5">Game Log</h1>
+    <section id="GameLogScreen" class="game-overlay game-overlay--scrollable" style="display: none">
+        <button class="btn btn-purple btn-lg game-overlay__back-btn" onclick="ToggleScreen('GameLogScreen')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back
+        </button>
+        <div class="game-overlay__scroll-content">
+            <h1 class="game-overlay__title heading-display">Game Log</h1>
             <div class="mx-auto container text-center">
                 @{
                     bool skip = false;
@@ -1195,6 +1191,11 @@
                 };
             }
 
+            // Helper to get token class with empty state
+            function getTokenClass(count) {
+                return count <= 0 ? 'token cursorHover token--empty' : 'token cursorHover';
+            }
+
             let innerHtml = `
                 <h1 class="mt-6 display-3 display-sm-1 text-center
                             mt-lg-4
@@ -1211,12 +1212,12 @@
                         <td id="GoldReturningToken"     class="takingToken" onclick="ReturnTokenClick('ReturningGold',`     + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Gold.png"     alt="GoldToken"     /><h1 id="GoldReturningTokenValue">0</h1></td>
                     </tr>
                     <tr>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Emerald',` + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="PlayerEmeraldTokenValue" >` + displayTokens.Emerald + `</h1></td>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Sapphire',`+ tokensToReturn + `)" ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Sapphire.png" alt="SapphireToken" /><h1 id="PlayerSapphireTokenValue">` + displayTokens.Sapphire + `</h1></td>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Ruby',`    + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Ruby.png"     alt="RubyToken"     /><h1 id="PlayerRubyTokenValue"    >` + displayTokens.Ruby + `</h1></td>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Diamond',` + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="PlayerDiamondTokenValue" >` + displayTokens.Diamond + `</h1></td>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Onyx',`    + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="PlayerOnyxTokenValue"    >` + displayTokens.Onyx + `</h1></td>
-                        <td class="token cursorHover" onclick="ReturnTokenClick('Gold',`    + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Gold.png"     alt="GoldToken"     /><h1 id="PlayerGoldTokenValue"    >` + displayTokens.Gold + `</h1></td>
+                        <td id="PlayerEmeraldToken" class="` + getTokenClass(displayTokens.Emerald) + `" onclick="ReturnTokenClick('Emerald',` + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Emerald.png"  alt="EmeraldToken"  /><h1 id="PlayerEmeraldTokenValue" >` + displayTokens.Emerald + `</h1></td>
+                        <td id="PlayerSapphireToken" class="` + getTokenClass(displayTokens.Sapphire) + `" onclick="ReturnTokenClick('Sapphire',`+ tokensToReturn + `)" ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Sapphire.png" alt="SapphireToken" /><h1 id="PlayerSapphireTokenValue">` + displayTokens.Sapphire + `</h1></td>
+                        <td id="PlayerRubyToken" class="` + getTokenClass(displayTokens.Ruby) + `" onclick="ReturnTokenClick('Ruby',`    + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Ruby.png"     alt="RubyToken"     /><h1 id="PlayerRubyTokenValue"    >` + displayTokens.Ruby + `</h1></td>
+                        <td id="PlayerDiamondToken" class="` + getTokenClass(displayTokens.Diamond) + `" onclick="ReturnTokenClick('Diamond',` + tokensToReturn + `)"  ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Diamond.png"  alt="DiamondToken"  /><h1 id="PlayerDiamondTokenValue" >` + displayTokens.Diamond + `</h1></td>
+                        <td id="PlayerOnyxToken" class="` + getTokenClass(displayTokens.Onyx) + `" onclick="ReturnTokenClick('Onyx',`    + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Onyx.png"     alt="OnyxToken"     /><h1 id="PlayerOnyxTokenValue"    >` + displayTokens.Onyx + `</h1></td>
+                        <td id="PlayerGoldToken" class="` + getTokenClass(displayTokens.Gold) + `" onclick="ReturnTokenClick('Gold',`    + tokensToReturn + `)"     ><img class="p-0" style="width: 100%" src="https://raw.githubusercontent.com/TylerJudson/Portfolio/main/C%23Projects/Splendor/wwwroot/Images/Gold.png"     alt="GoldToken"     /><h1 id="PlayerGoldTokenValue"    >` + displayTokens.Gold + `</h1></td>
                     </tr>
                 </table>
 
@@ -1374,81 +1375,109 @@
     </script>
 
 <!-- Game over screen-->
-    <section id="GameOverScreen" class="OverlayScreen" style="opacity: 0.75;">
-
-        <h1 class="text-center pt-5 splendorHeading" >Game Over</h1>
-        @{
-            List<IPlayer> winners = new List<IPlayer>();
-            winners.Add(Model.Players[0]);
-            for (int j = 1; j < Model.Players.Count; j++)
-            {
-                if (Model.Players[j].PrestigePoints > winners[0].PrestigePoints)
-                {
-                    winners.Clear();
-                    winners.Add(Model.Players[j]);
+    <section id="GameOverScreen" class="game-overlay game-overlay--gameover">
+        <div class="game-overlay__content">
+            <div class="game-gameover">
+                <div class="game-gameover__trophy">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                        <path d="M4 22h16"/>
+                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+                    </svg>
+                </div>
+                <h1 class="game-gameover__title heading-display">Game Over</h1>
+                @{
+                    List<IPlayer> winners = new List<IPlayer>();
+                    winners.Add(Model.Players[0]);
+                    for (int j = 1; j < Model.Players.Count; j++)
+                    {
+                        if (Model.Players[j].PrestigePoints > winners[0].PrestigePoints)
+                        {
+                            winners.Clear();
+                            winners.Add(Model.Players[j]);
+                        }
+                        else if (Model.Players[j].PrestigePoints == winners[0].PrestigePoints)
+                        {
+                            winners.Add(Model.Players[j]);
+                        }
+                    }
                 }
-                else if (Model.Players[j].PrestigePoints == winners[0].PrestigePoints)
+                @if (winners.Count > 2)
                 {
-                    winners.Add(Model.Players[j]);
+                    string winnersString = "";
+                    for (int j = winners.Count - 1; j >= 0; j--)
+                    {
+                        if (j > 0)
+                        {
+                            winnersString += winners[j].Name + ", ";
+                        }
+                        else
+                        {
+                            winnersString += "and " + winners[j].Name;
+                        }
+                    }
+                    <p class="game-gameover__winners">Congratulations @winnersString!</p>
                 }
-            }   
-        }
-        @if (winners.Count > 2)
-        {
-            string winnersString = "";
-            for (int j = winners.Count - 1; j >= 0; j--)
-            {
-                if (j > 0)
+                else if (winners.Count == 2)
                 {
-                    winnersString += winners[j].Name + ", ";
+                    <p class="game-gameover__winners">Congratulations @winners[0].Name and @winners[1].Name!</p>
                 }
                 else
                 {
-                    winnersString += "and " + winners[j].Name;
+                    <p class="game-gameover__winners">Congratulations @winners[0].Name!</p>
+                    <p class="game-gameover__score">Final Score: @winners[0].PrestigePoints points</p>
                 }
-            }
-            <div class="mx-auto mt-5">
-                <h1 class="display-2 text-center mx-auto">Congrats @winnersString!</h1>
-            </div>
-        }
-        else if (winners.Count == 2)
-        {
-            <div class="mx-auto mt-5">
-                <h1 class="display-2 text-center mx-auto">Congrats @winners[0].Name and @winners[1].Name!</h1>
-            </div>
-        }
-        else
-        {
-            <div class="mx-auto mt-5">
-                <h1 class="display-3 text-center mx-auto">Congrats @winners[0].Name!</h1>
-            </div>
-        }
 
-        <a class="btn btn-danger position-absolute fs-5" style="bottom: 10%; left: 50%; width: 50%; max-width: 30rem; transform: translateX(-50%);" asp-controller="Home" asp-action="Index">Exit</a>
+                <a class="btn btn-purple btn-xl game-gameover__btn" asp-controller="Home" asp-action="Index">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                    Return Home
+                </a>
+            </div>
+        </div>
     </section>
     <script>
         True = true; False = false;
         if (@Model.GameOver) {
             setTimeout(() => {
                 OtherScreen = true;
-                document.getElementById("GameOverScreen").style.display = "block";
+                document.getElementById("GameOverScreen").style.display = "flex";
             }, 2000);
         }
     </script>
 
 <!-- Paused screen-->
-    <section id="PausedScreen" class="OverlayScreen" style="display: none; background-color: rgba(23, 23, 23, 0.75)">
-        
-        <h1 class="text-center pt-5 splendorHeading" >Paused</h1>
-        
+    <section id="PausedScreen" class="game-overlay game-overlay--paused" style="display: none">
+        <div class="game-overlay__content">
+            <div class="game-paused">
+                <div class="game-paused__icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="6" y="4" width="4" height="16" rx="1"/>
+                        <rect x="14" y="4" width="4" height="16" rx="1"/>
+                    </svg>
+                </div>
+                <h1 class="game-paused__title heading-display">Game Paused</h1>
+                <p class="game-paused__subtitle">Take your time, we'll be here when you get back.</p>
 
-        <a class="btn btn-purple position-absolute fs-5" style="bottom: 20%; left: 50%; width: 50%; max-width: 30rem; transform: translateX(-50%);" onclick='resume(); renderGameBoard()'>Resume</a>
+                <button class="btn btn-purple btn-xl game-paused__btn" onclick='resume(); renderGameBoard()'>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                    Resume Game
+                </button>
+            </div>
+        </div>
     </section>
 
     <script>
         True = true; False = false;
         if (@Model.IsPaused) {
-            document.getElementById("PausedScreen").style.display = "block";
+            document.getElementById("PausedScreen").style.display = "flex";
         }
     </script>
-</body>
+}
