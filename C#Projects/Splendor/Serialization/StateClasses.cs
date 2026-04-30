@@ -200,6 +200,10 @@ namespace Splendor.Serialization
 
         private ICompletedTurn ProcessCardPurchase(ITurn turn)
         {
+            // Capture whether the card came from the player's reserved pile BEFORE executing the
+            // turn, since the player will remove it from their reserved list as part of the purchase.
+            bool wasReservedCard = _players[CurrentPlayer].ReservedCards.Contains(turn.Card!);
+
             // Execute the turn for the player
             ICompletedTurn playersCompletedTurn = _players[CurrentPlayer].ExecuteTurn(turn, _tokenStacks[Token.Gold] > 0);
 
@@ -209,7 +213,7 @@ namespace Splendor.Serialization
             }
 
             // If the card is not from reserved cards, replace it from the shop
-            if (!_players[CurrentPlayer].ReservedCards.Contains(turn.Card!))
+            if (!wasReservedCard)
             {
                 ReplaceCardFromStack(turn.Card!);
             }
@@ -640,6 +644,12 @@ namespace Splendor.Serialization
                     _tokens[kvp.Key] -= cost;
                     consumedTokens.Add(kvp.Key, cost);
                 }
+            }
+
+            // Remove from reserved cards if applicable
+            if (_reservedCards.Contains(card))
+            {
+                _reservedCards.Remove(card);
             }
 
             // Add the card to the player's collection

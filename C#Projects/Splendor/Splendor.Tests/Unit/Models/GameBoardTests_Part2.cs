@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Splendor.Models;
 using Splendor.Models.Implementation;
+using Splendor.Serialization;
 using Splendor.Tests.TestUtilities.Builders;
 using Splendor.Tests.TestUtilities.Helpers;
 using Splendor.Tests.TestUtilities.Fakes;
@@ -208,6 +209,45 @@ public class GameBoardTests_Part2
         AssertionHelpers.AssertTurnSucceeded(result);
         player.Cards.Should().Contain(reservedCard, "player should have purchased reserved card");
         player.ReservedCards.Should().NotContain(reservedCard, "card should be removed from reserved cards");
+    }
+
+    [Fact]
+    public void PurchaseReservedCard_AfterSerializationRoundTrip_RemovesFromReservedCards()
+    {
+        // Arrange - Build a board, then round-trip through the serializer so players become PlayerState
+        // (matches the production flow where GameRepository deserializes the board on cache miss).
+        var reservedCard = CardBuilder.CheapLevel1Diamond();
+
+        var player = new PlayerBuilder()
+            .WithName("Player1")
+            .WithId(0)
+            .WithTokens(diamond: 3, sapphire: 3, emerald: 3)
+            .WithReservedCard(reservedCard)
+            .Build();
+
+        foreach (var cost in reservedCard.Price)
+        {
+            TestHelpers.SetPlayerTokens(player, cost.Key, cost.Value);
+        }
+
+        var dummyPlayer = new Player("Dummy", 1);
+        var originalBoard = new GameBoard(new List<IPlayer> { player, dummyPlayer }, TestHelpers.CreateMockGameDataService());
+
+        var json = GameBoardSerializer.Serialize(originalBoard);
+        var board = GameBoardSerializer.Deserialize(json);
+
+        var deserializedPlayer = board.Players[0];
+        var deserializedReservedCard = deserializedPlayer.ReservedCards.Single(c => c.ImageName == reservedCard.ImageName);
+
+        var turn = TurnBuilder.PurchaseCard(deserializedReservedCard);
+
+        // Act
+        var result = board.ExecuteTurn(turn);
+
+        // Assert
+        AssertionHelpers.AssertTurnSucceeded(result);
+        deserializedPlayer.Cards.Should().Contain(deserializedReservedCard, "player should have purchased the reserved card");
+        deserializedPlayer.ReservedCards.Should().NotContain(deserializedReservedCard, "reserved card must be removed after purchase even on the deserialized PlayerState path");
     }
 
     [Fact]
