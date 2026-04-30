@@ -483,6 +483,33 @@
                     Diamond: @Model.Players[playerOrdinal].CardTokens[Token.Diamond],
                     Onyx: @Model.Players[playerOrdinal].CardTokens[Token.Onyx]
                 };
+                // All players' tokens + card bonuses, keyed by player id, used when viewing
+                // an opponent's purchasable cards via clicking their name.
+                var AllPlayers = {
+                    @for (int p = 0; p < Model.Players.Count; p++)
+                    {
+                        @:"@Model.Players[p].Id": {
+                        @:    Tokens: {
+                        @:        Emerald: @Model.Players[p].Tokens[Token.Emerald],
+                        @:        Sapphire: @Model.Players[p].Tokens[Token.Sapphire],
+                        @:        Ruby: @Model.Players[p].Tokens[Token.Ruby],
+                        @:        Diamond: @Model.Players[p].Tokens[Token.Diamond],
+                        @:        Onyx: @Model.Players[p].Tokens[Token.Onyx],
+                        @:        Gold: @Model.Players[p].Tokens[Token.Gold]
+                        @:    },
+                        @:    Bonuses: {
+                        @:        Emerald: @Model.Players[p].CardTokens[Token.Emerald],
+                        @:        Sapphire: @Model.Players[p].CardTokens[Token.Sapphire],
+                        @:        Ruby: @Model.Players[p].CardTokens[Token.Ruby],
+                        @:        Diamond: @Model.Players[p].CardTokens[Token.Diamond],
+                        @:        Onyx: @Model.Players[p].CardTokens[Token.Onyx]
+                        @:    }
+                        @:}@(p < Model.Players.Count - 1 ? "," : "")
+                    }
+                };
+                // Currently active perspective for shop highlights. Defaults to self;
+                // toggled by clicking another player's name. Resets on page reload.
+                var ViewingPerspectiveId = PlayerId;
             </script>
 
             @while (count < Model.Players.Count)
@@ -516,7 +543,7 @@
                 <section id="@playerCardId" class="player-card @(i == 0 ? "player-card--starter" : "") @(i == Model.CurrentPlayer && !Model.GameOver ? "player-card--active" : "") @(Model.Players[i].PrestigePoints >= 15 && Model.Players[i].PrestigePoints == mostPoints ? "player-card--winner" : "")">
                     <!-- Player Header -->
                     <div class="player-header">
-                        <span class="player-name">@Model.Players[i].Name</span>
+                        <span class="player-name" data-player-id="@Model.Players[i].Id" onclick="togglePerspective(@Model.Players[i].Id)" title="Click to see this player's purchasable cards">@Model.Players[i].Name</span>
                         <div class="player-prestige">
                             <svg class="prestige-icon" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>

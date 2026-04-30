@@ -302,26 +302,30 @@ function canAffordCardWithGold(cardPrice, playerTokens, playerBonuses, additiona
  */
 function getCardHighlightClass(imageName) {
     const cardPrice = parseCardPrice(imageName);
-    const hasSelectedTokens = CountTokens(TakingTokens) > 0;
-
-    // Use ViewingPlayerTokens (the player viewing the page) instead of PlayerTokens
-    // (which contains current turn player's tokens from the DOM)
+    const isSelfPerspective = (typeof ViewingPerspectiveId === 'undefined') || ViewingPerspectiveId === PlayerId;
+    const perspective = (typeof AllPlayers !== 'undefined' && AllPlayers[ViewingPerspectiveId])
+        ? AllPlayers[ViewingPerspectiveId]
+        : { Tokens: ViewingPlayerTokens, Bonuses: PlayerCardBonuses };
+    const tokens = perspective.Tokens;
+    const bonuses = perspective.Bonuses;
+    // TakingTokens only applies to self — other players aren't taking your selected tokens.
+    const hasSelectedTokens = isSelfPerspective && CountTokens(TakingTokens) > 0;
 
     // 1. Green: Can buy now without gold
-    if (canAffordCardWithoutGold(cardPrice, ViewingPlayerTokens, PlayerCardBonuses, {})) {
+    if (canAffordCardWithoutGold(cardPrice, tokens, bonuses, {})) {
         return 'card--purchasable';
     }
 
-    // 2. Purple: Can buy after taking selected tokens (without gold)
-    if (hasSelectedTokens && canAffordCardWithoutGold(cardPrice, ViewingPlayerTokens, PlayerCardBonuses, TakingTokens)) {
+    // 2. Purple: Can buy after taking selected tokens (without gold) — self-perspective only
+    if (hasSelectedTokens && canAffordCardWithoutGold(cardPrice, tokens, bonuses, TakingTokens)) {
         return 'card--purchasable-potential';
     }
 
     // 3. Yellow: Can buy with gold (now OR after taking tokens)
-    if (canAffordCardWithGold(cardPrice, ViewingPlayerTokens, PlayerCardBonuses, {})) {
+    if (canAffordCardWithGold(cardPrice, tokens, bonuses, {})) {
         return 'card--purchasable-gold';
     }
-    if (hasSelectedTokens && canAffordCardWithGold(cardPrice, ViewingPlayerTokens, PlayerCardBonuses, TakingTokens)) {
+    if (hasSelectedTokens && canAffordCardWithGold(cardPrice, tokens, bonuses, TakingTokens)) {
         return 'card--purchasable-gold';
     }
 
@@ -336,11 +340,22 @@ function updateCardHighlights() {
     // Shop cards - update all
     const shopCards = document.querySelectorAll('.shop-cards-table img.card');
 
-    // Reserved cards - only current player's (ID starts with PlayerId-Reserved:)
+    // Reserved cards only highlight in self-perspective: opponents' reserved cards
+    // aren't visible to us, and our own reserved cards aren't relevant to opponents.
+    const isSelfPerspective = (typeof ViewingPerspectiveId === 'undefined') || ViewingPerspectiveId === PlayerId;
     const reservedCards = document.querySelectorAll('.player-reserved-grid img.card');
-    const myReservedCards = Array.from(reservedCards).filter(img =>
-        img.id && img.id.startsWith(PlayerId + '-Reserved:')
-    );
+    const myReservedCards = isSelfPerspective
+        ? Array.from(reservedCards).filter(img =>
+            img.id && img.id.startsWith(PlayerId + '-Reserved:'))
+        : [];
+
+    // When viewing an opponent, strip any leftover highlight classes from reserved cards.
+    if (!isSelfPerspective) {
+        reservedCards.forEach(img => {
+            img.classList.remove('card--purchasable', 'card--purchasable-potential',
+                                 'card--purchasable-gold', 'card--unavailable');
+        });
+    }
 
     [...shopCards, ...myReservedCards].forEach(img => {
         // For reserved cards, extract image name from ID (format: PlayerId-Reserved:ImageName)
@@ -357,6 +372,38 @@ function updateCardHighlights() {
         const highlightClass = getCardHighlightClass(imageName);
         img.classList.add(highlightClass);
     });
+}
+
+/**
+ * Toggle which player's perspective drives the shop card highlights.
+ * Click another player's name to view their purchasable cards; click again to revert.
+ */
+function togglePerspective(playerId) {
+    if (typeof AllPlayers === 'undefined' || !AllPlayers[playerId]) return;
+
+    if (playerId === ViewingPerspectiveId && playerId !== PlayerId) {
+        // Clicking the active opponent reverts to self
+        ViewingPerspectiveId = PlayerId;
+    } else if (playerId === PlayerId) {
+        // Clicking own name always goes to self (no-op if already self)
+        ViewingPerspectiveId = PlayerId;
+    } else {
+        ViewingPerspectiveId = playerId;
+    }
+
+    // Update visual indicator on player cards
+    document.querySelectorAll('.player-card').forEach(card => {
+        card.classList.remove('player-card--perspective-active');
+    });
+    if (ViewingPerspectiveId !== PlayerId) {
+        const nameEl = document.querySelector('.player-name[data-player-id="' + ViewingPerspectiveId + '"]');
+        if (nameEl) {
+            const card = nameEl.closest('.player-card');
+            if (card) card.classList.add('player-card--perspective-active');
+        }
+    }
+
+    updateCardHighlights();
 }
 
 function SetTokens() {

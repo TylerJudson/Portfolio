@@ -1323,6 +1323,26 @@ td.takingToken h1 {
     font-weight: 700;
     color: var(--text-primary);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: color 0.15s ease, text-shadow 0.15s ease;
+    user-select: none;
+}
+
+.player-name:hover {
+    color: #c9a3ff;
+    text-shadow: 0 0 8px rgba(147, 51, 234, 0.6);
+}
+
+.player-card--perspective-active {
+    outline: 2px solid #9333ea;
+    outline-offset: 2px;
+    box-shadow: 0 0 18px rgba(147, 51, 234, 0.55);
+}
+
+.player-card--perspective-active .player-name::after {
+    content: " 👁";
+    font-size: 0.85em;
+    color: #c9a3ff;
 }
 
 .player-prestige {
